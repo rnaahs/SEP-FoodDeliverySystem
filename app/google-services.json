@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "573803802954",
+    "firebase_url": "https://software-engineering-practice.firebaseio.com",
+    "project_id": "software-engineering-practice",
+    "storage_bucket": "software-engineering-practice.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573803802954:android:aef068d84bc49476",
+        "android_client_info": {
+          "package_name": "com.sep.assignment1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573803802954-a8nfeo62nq6m0d9aq7r4bqg5hm6bkalm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sep.assignment1",
+            "certificate_hash": "ede2f9d0045ea14e661df2db8aa77927955578c8"
+          }
+        },
+        {
+          "client_id": "573803802954-eo55ju76k824dl225ejssc2pv39fm7kb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAXCOJYmByUZaX3TwHA3UIIIYXPyTqBu0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573803802954-eo55ju76k824dl225ejssc2pv39fm7kb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
