@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
                                     startActivity(intent);
                                     LoginActivity.this.finish();
                                     ActivityCompat.finishAffinity(LoginActivity.this);

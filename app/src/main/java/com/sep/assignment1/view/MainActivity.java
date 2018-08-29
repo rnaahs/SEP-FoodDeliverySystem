@@ -10,12 +10,16 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button mBtnLogout;
     private FirebaseAuth mAuth;
+    private FirebaseDatabase mFirebaseInstance;
+    private DatabaseReference mFirebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +27,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBtnLogout = (Button) findViewById(R.id.btn_logout);
-
         mAuth = FirebaseAuth.getInstance();
 
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseInstance.setPersistenceEnabled(true);
 
         mBtnLogout.setOnClickListener(new View.OnClickListener() {
             @Override

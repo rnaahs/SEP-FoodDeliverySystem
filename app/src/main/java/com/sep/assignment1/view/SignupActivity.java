@@ -51,14 +51,14 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(SignupActivity.this, ResetPasswordActivity.class));
             }
-        });
+        });*/
 
         mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             }
-        });*/
+        });
 
         mBtnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +98,7 @@ public class SignupActivity extends AppCompatActivity {
                                     Toast.makeText(SignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    startActivity(new Intent(SignupActivity.this, RestaurantMainActivity.class));
                                     SignupActivity.this.finish();
                                     ActivityCompat.finishAffinity(SignupActivity.this);
                                 }
