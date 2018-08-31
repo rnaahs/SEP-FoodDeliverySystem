@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".view.RestaurantMainActivity"
+    android:padding="10dp">
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/custom_menu_item"
+    >
+    <LinearLayout
+        android:id="@+id/menu_item_icon_layout"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@color/colorAccent">
+        <ImageView
+            android:id="@+id/menu_item_iv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/burger"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/menu_item_body_layout"
+        android:layout_width="220dp"
+        android:layout_height="80dp"
+        android:layout_toRightOf="@id/menu_item_icon_layout"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Angus Beef Burger"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/green"
+            android:text="$22.40"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Fresh vegetable + OZ beef"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/menu_item_body_layout"
+        android:orientation="vertical"
+        android:gravity="top"
+        >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="2dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/menu_item_edit_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@mipmap/edit_menu_item_ico"
+                />
+            <Button
+                android:id="@+id/menu_item_delete_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@mipmap/delete_menu_item_ico"
+                />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OZ Burger" />
+    </LinearLayout>
+</RelativeLayout>
+</RelativeLayout>
