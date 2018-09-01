@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".view.RestaurantMainActivity"
     android:padding="10dp">
@@ -33,25 +33,25 @@
         android:orientation="vertical"
         >
         <TextView
+            android:id="@+id/menu_item_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
-            android:text="Angus Beef Burger"
             />
         <TextView
+            android:id="@+id/menu_item_price_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
             android:textColor="@color/green"
-            android:text="$22.40"
             />
         <TextView
+            android:id="@+id/menu_item_description_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Fresh vegetable + OZ beef"
             />
     </LinearLayout>
 
@@ -83,10 +83,6 @@
                 android:background="@mipmap/delete_menu_item_ico"
                 />
         </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OZ Burger" />
     </LinearLayout>
 </RelativeLayout>
 </RelativeLayout>

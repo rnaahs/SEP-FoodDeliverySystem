@@ -3,6 +3,8 @@ package com.sep.assignment1.view;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,17 +12,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Menu;
+
+import java.util.ArrayList;
 
 public class RestaurantMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private RecyclerView mMenuItemRv;
+    private MenuAdapter mMenuAdapter;
+    private ArrayList<Menu> mMenuList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_main);
+        mMenuList = new ArrayList<>();
+        mMenuItemRv = (RecyclerView) findViewById(R.id.menu_item_recycler_view) ;
+        mMenuItemRv.setLayoutManager(new LinearLayoutManager(this));
+        // Create the adapter and give it some (fixed) data (mTrainList)
+        mMenuAdapter = new MenuAdapter (mMenuList, this);
+        // Link the adapter with the recyclerview
+        mMenuItemRv.setAdapter(mMenuAdapter);
+        setMenuItems();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,6 +58,13 @@ public class RestaurantMainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    private void setMenuItems(){
+        mMenuList.add(new Menu("ME0001", "FD0001", null, "Fresh vegetables with OZ Burger", "burger.jpg"));
+        mMenuList.add(new Menu("ME0002", "FD0002", null, "Delicious OZ pasta","pasta.jpg"));
+        mMenuList.add(new Menu("ME0003", "FD0003", null, "Vegan Salad","salad.png"));
+        mMenuAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -54,7 +76,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
