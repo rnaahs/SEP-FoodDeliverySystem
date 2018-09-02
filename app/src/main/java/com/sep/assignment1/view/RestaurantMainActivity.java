@@ -32,7 +32,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         mMenuItemRv = (RecyclerView) findViewById(R.id.menu_item_recycler_view) ;
         mMenuItemRv.setLayoutManager(new LinearLayoutManager(this));
         // Create the adapter and give it some (fixed) data (mTrainList)
-        mMenuAdapter = new MenuAdapter (mMenuList, this);
+        mMenuAdapter = new MenuAdapter (mMenuList, getApplicationContext());
         // Link the adapter with the recyclerview
         mMenuItemRv.setAdapter(mMenuAdapter);
         setMenuItems();
@@ -59,9 +59,9 @@ public class RestaurantMainActivity extends AppCompatActivity
     }
 
     private void setMenuItems(){
-        mMenuList.add(new Menu("ME0001", "FD0001", null, "Fresh vegetables with OZ Burger", "burger.jpg"));
-        mMenuList.add(new Menu("ME0002", "FD0002", null, "Delicious OZ pasta","pasta.jpg"));
-        mMenuList.add(new Menu("ME0003", "FD0003", null, "Vegan Salad","salad.png"));
+        mMenuList.add(new Menu("ME0001", "FD0001", null, "Fresh vegetables with OZ Burger", "burger"));
+        mMenuList.add(new Menu("ME0002", "FD0002", null, "Delicious OZ pasta","pasta"));
+        mMenuList.add(new Menu("ME0003", "FD0003", null, "Vegan Salad","salad"));
         mMenuAdapter.notifyDataSetChanged();
     }
 

@@ -3,6 +3,7 @@ package com.sep.assignment1.view;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Menu menu = mMenuList.get(position);
         Food food = menu.getFoodById(menu.getFoodId());
-        holder.mImageView.setImageResource(mContext.getResources().getIdentifier("/drawable"+menu.getMenuImgURL(),null , mContext.getPackageName()));
+        holder.mImageView.setImageResource(mContext.getResources().getIdentifier("drawable/"+menu.getMenuImgURL(),null , mContext.getPackageName()));
+        Log.d("TEST","URL: " + menu.getMenuImgURL());
         holder.mNameTv.setText(food.getFoodName());
         holder.mPriceTv.setText("$"+food.getFoodPrice());
         holder.mDescriptionTv.setText(menu.getDescription());
