@@ -60,4 +60,9 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <!-- String related to Delivery -->
+    <string name="customer_location">Customer Location</string>
+    <string name="Resturant_location">Resturant Location</string>
+    <string name="order_number">Order number</string>
 </resources>
