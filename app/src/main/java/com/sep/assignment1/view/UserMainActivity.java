@@ -1,47 +1,42 @@
 package com.sep.assignment1.view;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Menu;
 
-import java.util.ArrayList;
+public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
-public class RestaurantMainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    private Button mBtnLogout;
     private FirebaseAuth mAuth;
-    private RecyclerView mMenuItemRv;
-    private MenuAdapter mMenuAdapter;
-    private ArrayList<Menu> mMenuList;
+    private FirebaseDatabase mFirebaseInstance;
+    private DatabaseReference mFirebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_main);
+        setContentView(R.layout.activity_user_main);
+
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-        mMenuList = new ArrayList<>();
-        mMenuItemRv = (RecyclerView) findViewById(R.id.menu_item_recycler_view) ;
-        mMenuItemRv.setLayoutManager(new LinearLayoutManager(this));
-        // Create the adapter and give it some (fixed) data (mTrainList)
-        mMenuAdapter = new MenuAdapter (mMenuList, getApplicationContext());
-        // Link the adapter with the recyclerview
-        mMenuItemRv.setAdapter(mMenuAdapter);
-        setMenuItems();
+
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseInstance.setPersistenceEnabled(true);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -54,22 +49,16 @@ public class RestaurantMainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setMenuItems(){
-        mMenuList.add(new Menu("ME0001", "FD0001", null, "Fresh vegetables with OZ Burger", "burger"));
-        mMenuList.add(new Menu("ME0002", "FD0002", null, "Delicious OZ pasta","pasta"));
-        mMenuList.add(new Menu("ME0003", "FD0003", null, "Vegan Salad","salad"));
-        mMenuAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void onBackPressed() {
@@ -84,7 +73,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.user_main, menu);
         return true;
     }
 
@@ -123,12 +112,12 @@ public class RestaurantMainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(RestaurantMainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(UserMainActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(RestaurantMainActivity.this);
+            ActivityCompat.finishAffinity(UserMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

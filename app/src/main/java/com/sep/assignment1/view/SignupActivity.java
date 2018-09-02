@@ -31,12 +31,14 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         //Get Firebase mAuth instance
-        mAuth = FirebaseAuth.getInstance();
+        if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
 
-        if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(SignupActivity.this, MainActivity.class));
-            finish();
-        }
+
+
+//        if (mAuth.getCurrentUser() != null) {
+//            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+//            finish();
+//        }
 
 
         mBtnSignIn = (Button) findViewById(R.id.sign_in_button);

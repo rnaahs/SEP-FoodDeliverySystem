@@ -53,7 +53,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_restaurant_main">RestaurantMainActivity</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -65,4 +65,15 @@
     <string name="customer_location">Customer Location</string>
     <string name="Resturant_location">Resturant Location</string>
     <string name="order_number">Order number</string>
+
+    <!-- String related to Signup -->
+    <string name="customer_signup">Customer</string>
+    <string name="resturant_signup">Resturant</string>
+    <string name="delivery_signup">Delivery</string>
+    <string name="signQuestion">Would you like to Sign up as?</string>
+
+    <!-- app header for user screens -->
+    <string name="title_activity_restaurant_main">RestaurantMainActivity</string>
+    <string name="title_activity_delivery_main">DeliveryMainActivity</string>
+    <string name="title_activity_user_main">UserMainActivity</string>
 </resources>
