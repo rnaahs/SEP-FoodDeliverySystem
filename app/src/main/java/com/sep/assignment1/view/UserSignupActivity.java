@@ -18,7 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sep.assignment1.R;
 
-public class SignupActivity extends AppCompatActivity {
+public class UserSignupActivity extends AppCompatActivity {
 
     private EditText mInputEmail, mInputPassword;
     private Button mBtnSignIn, mBtnSignUp, mBtnResetPassword;
@@ -28,7 +28,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_user_signup);
 
         //Get Firebase mAuth instance
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
@@ -58,7 +58,7 @@ public class SignupActivity extends AppCompatActivity {
         mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(UserSignupActivity.this, LoginActivity.class));
             }
         });
 
@@ -88,21 +88,21 @@ public class SignupActivity extends AppCompatActivity {
                 //create user
 
                 mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(UserSignupActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Toast.makeText(SignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the mAuth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(SignupActivity.this, getResources().getString(R.string.signupFail),
+                                    Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(SignupActivity.this, RestaurantMainActivity.class));
-                                    SignupActivity.this.finish();
-                                    ActivityCompat.finishAffinity(SignupActivity.this);
+                                    startActivity(new Intent(UserSignupActivity.this, RestaurantMainActivity.class));
+                                    UserSignupActivity.this.finish();
+                                    ActivityCompat.finishAffinity(UserSignupActivity.this);
                                 }
                             }
                         });

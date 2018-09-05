@@ -13,8 +13,12 @@
         android:id="@+id/openGoogleBtn"
         android:layout_width="385dp"
         android:layout_height="54dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
         android:layout_marginBottom="25dp"
         android:text="Open with Google Maps"
+        android:background="@color/lightGreen"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="-1dp"
         tools:ignore="MissingConstraints" />

@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/customer_signup_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -34,16 +34,16 @@
             android:text="@string/customer_signup" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/restaurant_signup_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:background="@color/colorAccent"
-            android:text="Customer" />
+            android:text="@string/restaurant_txt" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/delivery_signup_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

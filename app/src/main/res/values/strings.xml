@@ -76,4 +76,6 @@
     <string name="title_activity_restaurant_main">RestaurantMainActivity</string>
     <string name="title_activity_delivery_main">DeliveryMainActivity</string>
     <string name="title_activity_user_main">UserMainActivity</string>
+    <string name="restaurant_txt">Restaurant</string>
+    <string name="title_activity_signup_main">MainSignupActivity</string>
 </resources>
