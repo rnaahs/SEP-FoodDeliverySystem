@@ -6,45 +6,28 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".view.UserMainActivity"
-    tools:showIn="@layout/app_bar_delivery_main"
+    tools:showIn="@layout/app_bar_user_main"
     >
 
 
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"
-            android:textStyle="bold"
-            android:textSize="50dp"
-            android:text="Which restuarant would you like to eat from?"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:layout_marginBottom="30dp"
-            android:text="Restaurant 1" />
+            android:textSize="18dp"
+            android:text="Which restuarant would you like to eat from?"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:layout_marginBottom="30dp"
-            android:text="Restaurant 2" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/user_restaurant_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:text="Restaurant 3" />
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

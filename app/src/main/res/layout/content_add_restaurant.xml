@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.AddRestaurantActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/add_restaurant_nameTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/add_restaurant_nameET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Restaurant Name"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/add_restaurant_typeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Type" />
+
+            <EditText
+                android:id="@+id/add_restaurant_typeET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Type"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/add_restaurant_countryTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Country" />
+
+            <EditText
+                android:id="@+id/add_restaurant_countryET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Country"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/add_restaurant_imageTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Image" />
+
+            <EditText
+                android:id="@+id/add_restaurant_imageET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Image"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/add_restaurant_statusTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status" />
+
+            <EditText
+                android:id="@+id/add_restaurant_statusET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Status"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/add_restaurantBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.UserSignupActivity" />
-        <activity android:name=".view.UserMainActivity"
+        <activity
+            android:name=".view.UserMainActivity"
             android:label="@string/title_activity_user_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.LoginActivity">
@@ -25,9 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.DeliveryMainActivity"
+        <activity
+            android:name=".view.DeliveryMainActivity"
             android:label="@string/title_activity_delivery_main"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.RestaurantMainActivity"
             android:label="@string/title_activity_restaurant_main"
@@ -36,6 +38,8 @@
             android:name=".view.MainSignupActivity"
             android:label="@string/title_activity_signup_main"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".view.AddRestaurantActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
