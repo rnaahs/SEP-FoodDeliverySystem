@@ -78,4 +78,7 @@
     <string name="title_activity_user_main">UserMainActivity</string>
     <string name="restaurant_txt">Restaurant</string>
     <string name="title_activity_signup_main">MainSignupActivity</string>
+
+    <!-- String related to add restaurant -->
+    <string name="NameEmpty">Enter name</string>
 </resources>

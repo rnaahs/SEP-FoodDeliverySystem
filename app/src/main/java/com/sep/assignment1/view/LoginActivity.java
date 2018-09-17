@@ -35,6 +35,11 @@ public class LoginActivity extends AppCompatActivity {
         //Get Firebase mAuth instance
         mAuth = FirebaseAuth.getInstance();
 
+        if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(this, UserMainActivity.class));
+            LoginActivity.this.finish();
+        }
+
         // set the view now
         setContentView(R.layout.activity_login);
 
@@ -101,22 +106,25 @@ public class LoginActivity extends AppCompatActivity {
                                     if(mInputEmail.getText().toString().equals("user@gmail.com")){
                                         Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                         startActivity(intent);
+                                        LoginActivity.this.finish();
                                     }
                                     else if(mInputEmail.getText().toString().equals("restaurant@gmail.com")){
                                         Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
                                         startActivity(intent);
+                                        LoginActivity.this.finish();
                                     }
                                     else if(mInputEmail.getText().toString().equals("driver@gmail.com")){
                                         Intent intent = new Intent(LoginActivity.this, DeliveryMainActivity.class);
                                         startActivity(intent);
+                                        LoginActivity.this.finish();
                                     }
                                     else{
                                         Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                         startActivity(intent);
+                                        LoginActivity.this.finish();
                                     }
 
-                                    LoginActivity.this.finish();
-                                    ActivityCompat.finishAffinity(LoginActivity.this);
+
                                 }
                             }
                         });

@@ -1,6 +1,8 @@
 package com.sep.assignment1.view;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -10,22 +12,39 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Restaurant;
+import com.sep.assignment1.model.RestaurantAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
     private Button mBtnLogout;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseDatabase;
+    private DatabaseReference mFirebaseReference;
+
+    private List<Restaurant> mRestaurantList = new ArrayList<>();
+    private RecyclerView mRecycleView;
+    private RestaurantAdapter mRestaurantAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +55,34 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseInstance.setPersistenceEnabled(true);
+        // get reference to 'trips' node
+        mFirebaseReference = mFirebaseInstance.getReference("restaurant");
+        //keeping data fresh
+        mFirebaseReference.keepSynced(true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Recycle View
+        mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
+        mRestaurantAdapter = new RestaurantAdapter(mRestaurantList);
+        mRecycleView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+
+        mRecycleView.setLayoutManager(layoutManager);
+        mRecycleView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecycleView.removeItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecycleView.setItemAnimator(new DefaultItemAnimator());
+        mRecycleView.setAdapter(mRestaurantAdapter);
+
+        //Call method to add restaurants from database
+        addRestaurantChangeListener();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
             }
         });
 
@@ -120,5 +157,51 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    //Restaurant data change listener
+    private void addRestaurantChangeListener(){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                mRestaurantList.add(restaurant);
+                //Check for null
+                if(restaurant == null){
+                    Log.e("UserMainActivity", "There is no data from firebase");
+                    return;
+                }
+
+                Log.e("UserMainActivity","Data has changed" + restaurant.Name + restaurant.ImageUri);
+                mRestaurantAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                mRestaurantList.remove(restaurant);
+                mRestaurantAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }
