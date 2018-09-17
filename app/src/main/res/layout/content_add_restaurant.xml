@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".view.AddRestaurantActivity">
 
 
@@ -74,17 +74,17 @@
                 android:inputType="text" />
 
             <TextView
-                android:id="@+id/add_restaurant_imageTV"
+                android:id="@+id/add_restaurant_addressTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Image" />
+                android:text="Address" />
 
             <EditText
-                android:id="@+id/add_restaurant_imageET"
+                android:id="@+id/add_restaurant_addressET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Image"
+                android:hint="Address"
                 android:inputType="textPersonName" />
 
             <TextView
@@ -101,6 +101,40 @@
                 android:hint="Status"
                 android:inputType="text" />
 
+            <TextView
+                android:id="@+id/add_restaurant_imageTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Image" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/add_restaurant_imageBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose File" />
+
+                <ImageView
+                    android:id="@+id/add_restaurant_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/add_restaurant_ProgressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+            <Button
+                android:id="@+id/add_restaurant_uploadBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Upload" />
             <Button
                 android:id="@+id/add_restaurantBtn"
                 android:layout_width="match_parent"

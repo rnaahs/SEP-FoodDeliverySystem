@@ -82,8 +82,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
             }
         });
@@ -174,7 +172,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     return;
                 }
 
-                Log.e("UserMainActivity","Data has changed" + restaurant.Name);
+                Log.e("UserMainActivity","Data has changed" + restaurant.Name + restaurant.ImageUri);
                 mRestaurantAdapter.notifyDataSetChanged();
             }
 

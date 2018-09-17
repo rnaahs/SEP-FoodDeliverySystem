@@ -1,6 +1,9 @@
 package com.sep.assignment1.model;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sep.assignment1.R;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.List;
@@ -19,7 +23,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
     private List<Restaurant> mRestaurant;
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView name, type, country, status;
+        public TextView name, type, country, status, address;
         public ImageView image;
 
 
@@ -29,6 +33,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
             type = (TextView) view.findViewById(R.id.restaurant_typeTV);
             country = (TextView) view.findViewById(R.id.restaurant_countryTV);
             status = (TextView) view.findViewById(R.id.restaurant_statusTV);
+            address = (TextView) view.findViewById(R.id.restaurant_addressTV);
             image = (ImageView) view.findViewById(R.id.restaurant_imageView);
         }
     }
@@ -55,6 +60,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
         holder.type.setText(restaurant.Type);
         holder.country.setText(restaurant.Country);
         holder.status.setText(restaurant.Status);
+        Picasso.get().load(restaurant.ImageUri).fit().centerCrop().into(holder.image);
+
     }
 
     @Override

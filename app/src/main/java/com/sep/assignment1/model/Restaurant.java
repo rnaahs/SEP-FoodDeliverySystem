@@ -8,16 +8,18 @@ public class Restaurant {
     public String Name;
     public String Type;
     public String Country;
-    public String Image;
+    public String Address;
     public String Status;
+    public String ImageUri;
 
-    public Restaurant(String Id, String name, String type, String country, String image, String status) {
+    public Restaurant(String Id, String name, String type, String country, String image, String status, String ImageUri) {
         this.Id = Id;
         this.Name = name;
         this.Type = type;
         this.Country = country;
-        this.Image = image;
+        this.Address = image;
         this.Status = status;
+        this.ImageUri = ImageUri;
     }
 
     public Restaurant(){
