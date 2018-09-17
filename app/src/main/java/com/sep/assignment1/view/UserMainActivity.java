@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
+import com.sep.assignment1.RecyclerTouchListener;
 import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.RestaurantAdapter;
 
@@ -57,6 +59,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         mFirebaseInstance.setPersistenceEnabled(true);
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
+
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
@@ -77,6 +80,19 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         //Call method to add restaurants from database
         addRestaurantChangeListener();
+
+        mRecycleView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),mRecycleView, new RecyclerTouchListener.ClickListener(){
+            @Override
+            public void onClick(View view, int position) {
+                Restaurant restaurant = mRestaurantList.get(position);
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
