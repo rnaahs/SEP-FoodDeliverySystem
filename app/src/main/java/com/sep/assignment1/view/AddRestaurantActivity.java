@@ -101,6 +101,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         });
 
         mSubmitBtn = (Button) findViewById(R.id.add_restaurantBtn);
+
         mSubmitBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

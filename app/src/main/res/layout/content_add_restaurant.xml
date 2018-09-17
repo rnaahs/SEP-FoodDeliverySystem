@@ -130,11 +130,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp" />
+
             <Button
                 android:id="@+id/add_restaurant_uploadBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Upload" />
+
             <Button
                 android:id="@+id/add_restaurantBtn"
                 android:layout_width="match_parent"
