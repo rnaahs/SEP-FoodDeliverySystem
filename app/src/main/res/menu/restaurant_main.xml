@@ -7,9 +7,4 @@
         android:title="@string/action_settings"
         app:showAsAction="never"
         />
-    <item
-        android:id="@+id/add_menu_btn"
-        android:title="Add"
-        android:icon="@mipmap/add_menu_ico"
-        app:showAsAction="ifRoom" />
 </menu>

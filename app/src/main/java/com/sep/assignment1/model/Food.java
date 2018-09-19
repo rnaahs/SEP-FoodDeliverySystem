@@ -6,6 +6,7 @@ public class Food {
     private double mFoodPrice;
     private String mFoodType;
 
+    public Food() {}
     public Food(String foodId, String foodName, double foodPrice, String foodType) {
         mFoodId = foodId;
         mFoodName = foodName;
@@ -15,6 +16,10 @@ public class Food {
 
     public String getFoodId() {
         return mFoodId;
+    }
+
+    public void setFoodId(String foodId) {
+        mFoodId = foodId;
     }
 
     public String getFoodName() {

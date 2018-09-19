@@ -78,7 +78,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         //Call method to add restaurants from database
         addRestaurantChangeListener();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

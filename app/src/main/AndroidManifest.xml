@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -39,8 +39,12 @@
             android:name=".view.MainSignupActivity"
             android:label="@string/title_activity_signup_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".view.AddRestaurantActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".view.AddRestaurantActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.AddMenuActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

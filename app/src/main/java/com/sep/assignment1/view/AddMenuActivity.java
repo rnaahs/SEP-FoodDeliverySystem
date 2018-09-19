@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,21 +39,23 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Restaurant;
+import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.Menu;
 
 import java.io.IOException;
 
-public class AddRestaurantActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
+public class AddMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
     private StorageReference mStorageReference;
     private FirebaseStorage mStorageInstance;
-    private EditText mNameET, mTypeET, mCountryET, mAddressET, mStatusET;
-    private Button mSubmitBtn, mImageBtn, mUploadBtn;
+    private TextView mMenuImgURLTV;
+    private EditText mFoodNameET, mFoodPriceET, mFoodTypeET, mMenuDescriptionET;
+    private Button mAddMenuBtn, mAddMenuImageBtn;
     private ProgressBar mProgressBar;
     private Uri mFilePath;
-    private ImageView mImageView;
+    private ImageView mMenuImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
     private String mImageUri;
 
@@ -60,7 +63,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_restaurant);
+        setContentView(R.layout.activity_add_menu);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,55 +75,44 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
-        mFirebaseReference = mFirebaseInstance.getReference("restaurant");
+        mFirebaseReference = mFirebaseInstance.getReference("Menu");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
-        mNameET = (EditText) findViewById(R.id.add_restaurant_nameET);
-        mTypeET = (EditText) findViewById(R.id.add_restaurant_typeET);
-        mCountryET = (EditText) findViewById(R.id.add_restaurant_countryET);
-        mAddressET = (EditText) findViewById(R.id.add_restaurant_addressET);
-        mStatusET = (EditText) findViewById(R.id.add_restaurant_statusET);
-        mImageBtn = (Button) findViewById(R.id.add_restaurant_imageBtn);
-        mProgressBar = (ProgressBar) findViewById(R.id.add_restaurant_ProgressBar);
-        mImageView = (ImageView) findViewById(R.id.add_restaurant_imageView);
-
-        mImageBtn.setOnClickListener(new  View.OnClickListener(){
+        mMenuImgURLTV = (TextView) findViewById(R.id.add_menu_image_path_tv);
+        mFoodNameET = (EditText) findViewById(R.id.add_food_name_et);
+        mFoodPriceET = (EditText) findViewById(R.id.add_food_price_et);
+        mFoodTypeET = (EditText) findViewById(R.id.add_food_type_et);
+        mMenuDescriptionET = (EditText) findViewById(R.id.add_menu_description_et);
+        mAddMenuImageBtn = (Button) findViewById(R.id.add_menu_image_btn);
+        mProgressBar = (ProgressBar) findViewById(R.id.add_menu_ProgressBar);
+        mMenuImageView= (ImageView) findViewById(R.id.add_menu_image_iv);
+        mAddMenuImageBtn.setOnClickListener(new  View.OnClickListener(){
             @Override
             public void onClick(View v){
                 openFileChooser();
             }
         });
 
-        mUploadBtn = (Button) findViewById(R.id.add_restaurant_uploadBtn);
-        mUploadBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                uploadFile();
-            }
-        });
-
-        mSubmitBtn = (Button) findViewById(R.id.add_restaurantBtn);
-        mSubmitBtn.setOnClickListener(new View.OnClickListener(){
+        mAddMenuBtn = (Button) findViewById(R.id.add_menu_btn);
+        mAddMenuBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 try{
-                    String restaurantId = mFirebaseReference.push().getKey();
-                    String name = mNameET.getText().toString();
-                    String type = mTypeET.getText().toString();
-                    String country = mCountryET.getText().toString();
-                    String address = mAddressET.getText().toString();
-                    String status = mStatusET.getText().toString();
-                    if(TextUtils.isEmpty(name)){
-                        Toast.makeText(AddRestaurantActivity.this, getResources().getString(R.string.NameEmpty), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    String menuId = mFirebaseReference.push().getKey();
+                    String foodId = mFirebaseReference.push().getKey();
+                    String foodName = mFoodNameET.getText().toString();
+                    double foodPrice = Double.parseDouble(mFoodPriceET.getText().toString());
+                    String foodType = mFoodTypeET.getText().toString();
+                    String menuDescription = mMenuDescriptionET.getText().toString();
 
-                    addRestaurant(restaurantId,name, type,country, address, status, mImageUri);
+                    Food food = new Food(foodId, foodName, foodPrice, foodType);
+                    Menu menu = new Menu(menuId, food, null, menuDescription, mImageUri);
 
+                    mFirebaseReference.child(menuId).setValue(menu);
                 }
                 catch (RuntimeException ex){
-                    Log.e("AddRestaurant", "Exception: ", ex);
+                    Log.e("AddMenu", "Exception: ", ex);
                 }
                 finish();
             }
@@ -128,30 +120,20 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
 
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -195,7 +177,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             ActivityCompat.finishAffinity(this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -218,7 +200,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             mFilePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
-                mImageView.setImageBitmap(bitmap);
+                mMenuImageView.setImageBitmap(bitmap);
             }
             catch (IOException e)
             {
@@ -249,22 +231,20 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
                                     mProgressBar.setProgress(0);
                                 }
                             }, 5000);
-                            Toast.makeText(AddRestaurantActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-
-
-
+                            Toast.makeText(AddMenuActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                             mImageUri = task.getResult().getStorage().getDownloadUrl().toString();
+                            mMenuImgURLTV.setText(mImageUri);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddRestaurantActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -277,12 +257,5 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         }else{
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    //Upload data to Firebase
-    private void addRestaurant(String restaurantId, String name, String type, String country, String address, String status, String imageUri){
-        Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, imageUri);
-
-        mFirebaseReference.child(restaurantId).setValue(restaurant);
     }
 }

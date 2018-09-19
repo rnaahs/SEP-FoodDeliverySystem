@@ -1,4 +1,4 @@
-package com.sep.assignment1.view;
+package com.sep.assignment1.model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Menu;
-import com.sep.assignment1.model.Food;
 
 import java.util.ArrayList;
 
@@ -67,11 +65,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Menu menu = mMenuList.get(position);
-        Food food = menu.getFoodById(menu.getFoodId());
         holder.mImageView.setImageResource(mContext.getResources().getIdentifier("drawable/"+menu.getMenuImgURL(),null , mContext.getPackageName()));
-        Log.d("TEST","URL: " + menu.getMenuImgURL());
-        holder.mNameTv.setText(food.getFoodName());
-        holder.mPriceTv.setText("$"+food.getFoodPrice());
+
+        holder.mNameTv.setText(menu.getFood().getFoodName());
+        holder.mPriceTv.setText("$"+menu.getFood().getFoodPrice());
         holder.mDescriptionTv.setText(menu.getDescription());
     }
 

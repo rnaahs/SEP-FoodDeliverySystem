@@ -17,11 +17,15 @@
         android:id="@+id/menu_item_icon_layout"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="@color/colorAccent">
+        >
         <ImageView
             android:id="@+id/menu_item_iv"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:padding="2dp"
+            android:layout_marginLeft="2dp"
             />
     </LinearLayout>
     <LinearLayout

@@ -26,7 +26,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
         public TextView name, type, country, status, address;
         public ImageView image;
 
-
         public MyViewHolder(View view){
             super(view);
             name = (TextView) view.findViewById(R.id.restaurant_nameTV);
@@ -54,14 +53,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position){
-
         Restaurant restaurant = mRestaurant.get(position);
         holder.name.setText(restaurant.Name);
         holder.type.setText(restaurant.Type);
         holder.country.setText(restaurant.Country);
         holder.status.setText(restaurant.Status);
         Picasso.get().load(restaurant.ImageUri).fit().centerCrop().into(holder.image);
-
     }
 
     @Override
