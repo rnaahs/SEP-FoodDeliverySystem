@@ -3,7 +3,7 @@ package com.sep.assignment1.model;
 import android.support.v7.app.AppCompatActivity;
 
 public class Delivery extends AppCompatActivity {
-
+//tester
     private String driverId;
     private String customerId;
     private String resturantId;
