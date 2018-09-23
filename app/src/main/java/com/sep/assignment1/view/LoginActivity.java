@@ -108,8 +108,15 @@ public class LoginActivity extends AppCompatActivity {
                                         startActivity(intent);
                                         LoginActivity.this.finish();
                                     }
-                                    else if(mInputEmail.getText().toString().equals("restaurant@gmail.com")){
+                                    else if(mInputEmail.getText().toString().equals("restaurant1@gmail.com")){
                                         Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
+                                        intent.putExtra("RestaurantKey", "-LMISe2xeWal_r-jVqnQ");
+                                        startActivity(intent);
+                                        LoginActivity.this.finish();
+                                    }
+                                    else if(mInputEmail.getText().toString().equals("restaurant2@gmail.com")){
+                                        Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
+                                        intent.putExtra("RestaurantKey", "-LMIdLwXhTj3ly-BRE0P");
                                         startActivity(intent);
                                         LoginActivity.this.finish();
                                     }

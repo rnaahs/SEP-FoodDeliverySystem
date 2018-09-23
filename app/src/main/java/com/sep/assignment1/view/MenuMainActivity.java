@@ -27,73 +27,74 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sep.assignment1.MenuRecyclerTouchListener;
+import com.sep.assignment1.FoodRecyclerTouchListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.FoodAdapter;
 import com.sep.assignment1.model.Menu;
-import com.sep.assignment1.model.MenuAdapter;
 
 import java.util.ArrayList;
 
-public class RestaurantMainActivity extends AppCompatActivity
+public class MenuMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
-    private RecyclerView mMenuItemRv;
-    private MenuAdapter mMenuAdapter;
-    private ArrayList<Menu> mMenuArrayList;
+    private RecyclerView mFoodItemRv;
+    private FoodAdapter mFoodAdapter;
+    private ArrayList<Food> mFoodArrayList;
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
-    private String mRestaurantKey;
+    private String mMenuKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_main);
+        setContentView(R.layout.activity_menu_main);
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-        mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
-        mMenuArrayList = new ArrayList<>();
-        mMenuItemRv = (RecyclerView) findViewById(R.id.menu_item_recycler_view) ;
-        mMenuItemRv.setLayoutManager(new LinearLayoutManager(this));
-        mMenuItemRv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
-        mMenuItemRv.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
-        mMenuItemRv.setItemAnimator(new DefaultItemAnimator());
+        mMenuKey = getIntent().getStringExtra("MenuKey");
+        mFoodArrayList = new ArrayList<>();
+        mFoodItemRv = (RecyclerView) findViewById(R.id.food_item_recycler_view) ;
+        mFoodItemRv.setLayoutManager(new LinearLayoutManager(this));
+        mFoodItemRv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        mFoodItemRv.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        mFoodItemRv.setItemAnimator(new DefaultItemAnimator());
 
-        mMenuAdapter = new MenuAdapter (mMenuArrayList, getApplicationContext());
-        mMenuItemRv.setAdapter(mMenuAdapter);
+        mFoodAdapter = new FoodAdapter(mFoodArrayList, getApplicationContext());
+        mFoodItemRv.setAdapter(mFoodAdapter);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseInstance.getReference("Menu");
         mDatabaseReference.keepSynced(true);
 
-        setMenuItemsFromDB();
+        setFoodItemsFromDB();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_menu_btn);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_food_btn);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(RestaurantMainActivity.this, AddMenuActivity.class));
+                startActivity(new Intent(MenuMainActivity.this, AddFoodActivity.class));
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.menu_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mMenuItemRv.addOnItemTouchListener(new MenuRecyclerTouchListener(getApplicationContext(),mMenuItemRv, new MenuRecyclerTouchListener.ClickListener(){
+        mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
             @Override
             public void onClick(View view, int position) {
-                Menu menu = mMenuArrayList.get(position);
-                Intent intent = new Intent(RestaurantMainActivity.this, MenuMainActivity.class);
+                /*
+                Food food = mFoodArrayList.get(position);
+                Intent intent = new Intent(MenuMainActivity.this, MenuMainActivity.class);
                 intent.putExtra("MenuKey", menu.getMenuId());
-                startActivity(intent);
+                startActivity(intent);*/
             }
 
             @Override
@@ -105,7 +106,7 @@ public class RestaurantMainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -116,7 +117,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -155,9 +156,9 @@ public class RestaurantMainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(RestaurantMainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(RestaurantMainActivity.this);
+            ActivityCompat.finishAffinity(MenuMainActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
@@ -166,15 +167,17 @@ public class RestaurantMainActivity extends AppCompatActivity
     }
 
     //Restaurant data change listener
-      private void setMenuItemsFromDB(){
+    private void setFoodItemsFromDB(){
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {//restaurant ID
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {//menu ID
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(dataSnapshot.getKey().toString().equals(mRestaurantKey)){
+                    if(child.getKey().toString().equals(mMenuKey)){
                         Menu menu = child.getValue(Menu.class);
-                        mMenuArrayList.add(menu);
-                        mMenuAdapter.notifyDataSetChanged();
+                        for(Food food : menu.getFoodArrayList()){
+                            mFoodArrayList.add(food);
+                        }
+                        mFoodAdapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -187,10 +190,9 @@ public class RestaurantMainActivity extends AppCompatActivity
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(dataSnapshot.getKey().toString().equals(mRestaurantKey)){
-                        Menu menu = child.getValue(Menu.class);
-                        mMenuArrayList.remove(menu);
-                        mMenuAdapter.notifyDataSetChanged();
+                    if(child.getKey().toString().equals(mMenuKey)){
+                        mFoodArrayList.clear();
+                        mFoodAdapter.notifyDataSetChanged();
                     }
                 }
             }

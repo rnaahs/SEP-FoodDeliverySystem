@@ -3,15 +3,16 @@ package com.sep.assignment1.model;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sep.assignment1.R;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -19,33 +20,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private ArrayList<Menu> mMenuList;
     private Context mContext;
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mNameTv;
-        private TextView mPriceTv;
-        private TextView mDescriptionTv;
-        private Button mEditBtn;
-        private Button mDeleteBtn;
-        private ImageView mImageView;
+        private TextView mMenuNameTv;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mNameTv = (TextView) itemView.findViewById(R.id.menu_item_name_tv);
-            mPriceTv = (TextView) itemView.findViewById(R.id.menu_item_price_tv);
-            mDescriptionTv = (TextView) itemView.findViewById(R.id.menu_item_description_tv);
-            mEditBtn = (Button) itemView.findViewById(R.id.menu_item_edit_btn);
-            mImageView = (ImageView) itemView.findViewById(R.id.menu_item_iv);
-            mEditBtn.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-            mDeleteBtn = (Button) itemView.findViewById(R.id.menu_item_delete_btn);
-            mDeleteBtn.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
+            mMenuNameTv = (TextView) itemView.findViewById(R.id.menu_item_name_tv);
         }
     }
 
@@ -65,11 +44,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Menu menu = mMenuList.get(position);
-        holder.mImageView.setImageResource(mContext.getResources().getIdentifier("drawable/"+menu.getMenuImgURL(),null , mContext.getPackageName()));
-
-        holder.mNameTv.setText(menu.getFood().getFoodName());
-        holder.mPriceTv.setText("$"+menu.getFood().getFoodPrice());
-        holder.mDescriptionTv.setText(menu.getDescription());
+        holder.mMenuNameTv.setText(menu.getMenuName());
     }
 
     @Override

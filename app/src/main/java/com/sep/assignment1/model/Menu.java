@@ -1,64 +1,52 @@
 package com.sep.assignment1.model;
 
+import java.util.ArrayList;
+
 public class Menu {
 
     private String mMenuId;
-    private String mComboMenu;
-    private String mDescription;
-    private String mMenuImgURL;
-    private Food mFood;
+    private String mMenuName;
+    private ArrayList<Food> mFoodArrayList;
+    private Double mTotalPrice;
 
     public Menu(){}
-    public Menu(String menuId, Food food, String comboMenu, String description, String menuImgURL) {
+    public Menu(String menuId, String menuName, ArrayList<Food> foodArrayList, double totalPrice) {
         mMenuId = menuId;
-        mFood = food;
-        mComboMenu = comboMenu;
-        mDescription = description;
-        mMenuImgURL = menuImgURL;
+        mMenuName = menuName;
+        mFoodArrayList = foodArrayList;
+        mTotalPrice = totalPrice;
     }
 
     public String getMenuId() {
         return mMenuId;
     }
 
-    public String getComboMenu() {
-        return mComboMenu;
+    public void setMenuId(String menuId) {
+        mMenuId = menuId;
     }
 
-    public void setComboMenu(String comboMenu) {
-        mComboMenu = comboMenu;
+    public String getMenuName() {
+        return mMenuName;
     }
 
-    public Food getFood() {
-        return mFood;
+    public void setMenuName(String menuName) {
+        mMenuName = menuName;
     }
 
-    public void setFood(Food food) {
-        mFood = food;
+    public Double getTotalPrice() {
+        return mTotalPrice;
     }
 
-    /*public double getMenuPrice() {
-        return mMenuPrice;
+    public void setTotalPrice(Double totalPrice) {
+        mTotalPrice = totalPrice;
     }
 
-    public void setMenuPrice(Double... menuPrice) {
-        for(int i = 0; i<menuPrice.length; i++) mMenuPrice += menuPrice[i];
-    }*/
-
-    public String getDescription() {
-        return mDescription;
+    public ArrayList<Food> getFoodArrayList() {
+        return mFoodArrayList;
     }
 
-    public void setDescription(String description) {
-        mDescription = description;
-    }
-
-    public String getMenuImgURL() {
-        return mMenuImgURL;
-    }
-
-    public void setMenuImgURL(String menuImgURL) {
-        mMenuImgURL = menuImgURL;
+    public void setFoodArrayList(ArrayList<Food> foodArrayList) {
+        mFoodArrayList = foodArrayList;
     }
 
 }

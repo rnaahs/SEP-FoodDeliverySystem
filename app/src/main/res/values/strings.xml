@@ -81,4 +81,6 @@
 
     <!-- String related to add restaurant -->
     <string name="NameEmpty">Enter name</string>
+    <string name="title_activity_add_food">AddFoodActivity</string>
+    <string name="title_activity_menu_main">MenuMainActivity</string>
 </resources>

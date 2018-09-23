@@ -9,12 +9,12 @@ import android.view.View;
 /**
  * RecyclerTouchListener used to listen a user when click on recyclerView
  */
-public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+public class MenuRecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
     private GestureDetector gestureDetector;
     private ClickListener clickListener;
 
-    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
+    public MenuRecyclerTouchListener(Context context, final RecyclerView recyclerView, final ClickListener clickListener) {
         this.clickListener = clickListener;
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override

@@ -5,87 +5,58 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.RestaurantMainActivity"
     android:padding="10dp">
 
-<RelativeLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/custom_menu_item"
-    >
-    <LinearLayout
-        android:id="@+id/menu_item_icon_layout"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        >
-        <ImageView
-            android:id="@+id/menu_item_iv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:padding="2dp"
-            android:layout_marginLeft="2dp"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/menu_item_body_layout"
-        android:layout_width="220dp"
-        android:layout_height="80dp"
-        android:layout_toRightOf="@id/menu_item_icon_layout"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/menu_item_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            />
-        <TextView
-            android:id="@+id/menu_item_price_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:textStyle="bold"
-            android:textColor="@color/green"
-            />
-        <TextView
-            android:id="@+id/menu_item_description_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/menu_item_body_layout"
-        android:orientation="vertical"
-        android:gravity="top"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_food_item"
         >
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="2dp"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/menu_item_edit_btn"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@mipmap/edit_menu_item_ico"
-                />
-            <Button
-                android:id="@+id/menu_item_delete_btn"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
-                android:background="@mipmap/delete_menu_item_ico"
+            android:id="@+id/menu_item_body_layout"
+            android:layout_width="220dp"
+            android:layout_height="80dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/menu_item_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="30sp"
+                android:gravity="center"
                 />
         </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/menu_item_body_layout"
+            android:orientation="vertical"
+            android:gravity="top"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="2dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/menu_item_edit_btn"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@mipmap/edit_menu_item_ico"
+                    />
+                <Button
+                    android:id="@+id/menu_item_delete_btn"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/delete_menu_item_ico"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

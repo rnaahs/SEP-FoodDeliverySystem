@@ -43,22 +43,16 @@ import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Menu;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AddMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
-    private StorageReference mStorageReference;
-    private FirebaseStorage mStorageInstance;
-    private TextView mMenuImgURLTV;
-    private EditText mFoodNameET, mFoodPriceET, mFoodTypeET, mMenuDescriptionET;
-    private Button mAddMenuBtn, mAddMenuImageBtn;
-    private ProgressBar mProgressBar;
+    private EditText mMenuName;
+    private Button mAddMenuBtn;
     private Uri mFilePath;
-    private ImageView mMenuImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private String mImageUri;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,47 +63,24 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         setSupportActionBar(toolbar);
 
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-        // Create a storage reference from our app
-        mStorageInstance = FirebaseStorage.getInstance();
-        mStorageReference = mStorageInstance.getReference();
-
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("Menu");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
-        mMenuImgURLTV = (TextView) findViewById(R.id.add_menu_image_path_tv);
-        mFoodNameET = (EditText) findViewById(R.id.add_food_name_et);
-        mFoodPriceET = (EditText) findViewById(R.id.add_food_price_et);
-        mFoodTypeET = (EditText) findViewById(R.id.add_food_type_et);
-        mMenuDescriptionET = (EditText) findViewById(R.id.add_menu_description_et);
-        mAddMenuImageBtn = (Button) findViewById(R.id.add_menu_image_btn);
-        mProgressBar = (ProgressBar) findViewById(R.id.add_menu_ProgressBar);
-        mMenuImageView= (ImageView) findViewById(R.id.add_menu_image_iv);
-        mAddMenuImageBtn.setOnClickListener(new  View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                openFileChooser();
-            }
-        });
-
-        mAddMenuBtn = (Button) findViewById(R.id.add_menu_btn);
+        mMenuName = (EditText) findViewById(R.id.add_menu_name_et);
+        mAddMenuBtn = (Button) findViewById(R.id.add_menuInstance_btn);
         mAddMenuBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 try{
                     String menuId = mFirebaseReference.push().getKey();
-                    String foodId = mFirebaseReference.push().getKey();
-                    String foodName = mFoodNameET.getText().toString();
-                    double foodPrice = Double.parseDouble(mFoodPriceET.getText().toString());
-                    String foodType = mFoodTypeET.getText().toString();
-                    String menuDescription = mMenuDescriptionET.getText().toString();
-
-                    Food food = new Food(foodId, foodName, foodPrice, foodType);
-                    Menu menu = new Menu(menuId, food, null, menuDescription, mImageUri);
-
+                    String menuName = mMenuName.getText().toString();
+                    ArrayList<Food> foodArrayList = new ArrayList<>();
+                    Menu menu = new Menu(menuId, menuName , foodArrayList ,0.0);
                     mFirebaseReference.child(menuId).setValue(menu);
+                    //getExtra menuName;
                 }
                 catch (RuntimeException ex){
                     Log.e("AddMenu", "Exception: ", ex);
@@ -180,82 +151,5 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    //Choose Image
-    private void openFileChooser(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
-            mFilePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
-                mMenuImageView.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private String getFileExtension(Uri uri){
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    //Upload image to Firebase
-    private void uploadFile(){
-        if(mFilePath != null){
-            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis()+"."+getFileExtension(mFilePath));
-
-            fileReference.putFile(mFilePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable(){
-                                @Override
-                                public void run(){
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 5000);
-                            Toast.makeText(AddMenuActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            mImageUri = task.getResult().getStorage().getDownloadUrl().toString();
-                            mMenuImgURLTV.setText(mImageUri);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-        }else{
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
-        }
     }
 }

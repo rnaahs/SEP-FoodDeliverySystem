@@ -4,14 +4,15 @@ public class Food {
     private String mFoodId;
     private String mFoodName;
     private double mFoodPrice;
-    private String mFoodType;
-
+    private String mFoodDescription;
+    private String mFoodImgURL;
     public Food() {}
-    public Food(String foodId, String foodName, double foodPrice, String foodType) {
+    public Food(String foodId, String foodName, double foodPrice, String foodDescription, String foodImgURL) {
         mFoodId = foodId;
         mFoodName = foodName;
         mFoodPrice = foodPrice;
-        mFoodType = foodType;
+        mFoodDescription = foodDescription;
+        mFoodImgURL = foodImgURL;
     }
 
     public String getFoodId() {
@@ -38,11 +39,19 @@ public class Food {
         mFoodPrice = foodPrice;
     }
 
-    public String getFoodType() {
-        return mFoodType;
+    public String getFoodDescription() {
+        return mFoodDescription;
     }
 
-    public void setFoodType(String foodType) {
-        mFoodType = foodType;
+    public void setFoodDescription(String foodDescription) {
+        mFoodDescription = foodDescription;
+    }
+
+    public String getFoodImgURL() {
+        return mFoodImgURL;
+    }
+
+    public void setFoodImgURL(String foodImgURL) {
+        mFoodImgURL = foodImgURL;
     }
 }
