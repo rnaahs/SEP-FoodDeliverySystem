@@ -83,7 +83,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onClick(View view, int position) {
                 Restaurant restaurant = mRestaurantList.get(position);
-                Intent intent = new Intent(UserMainActivity.this, UserMenuActivity.class);
+                Intent intent = new Intent(UserMainActivity.this, RestaurantMainActivity.class);
+                Log.d("MENUTEST", restaurant.Id);
                 intent.putExtra("RestaurantKey", restaurant.Id);
                 startActivity(intent);
             }
@@ -152,7 +153,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent intent = new Intent(UserMainActivity.this, BalancActivity.class);
+            Intent intent = new Intent(UserMainActivity.this, BalanceActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 

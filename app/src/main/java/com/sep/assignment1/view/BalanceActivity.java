@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,7 +12,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -30,7 +27,7 @@ import com.sep.assignment1.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BalancActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
+public class BalanceActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
@@ -129,9 +126,9 @@ public class BalancActivity extends AppCompatActivity  implements NavigationView
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(BalancActivity.this, LoginActivity.class);
+            Intent intent = new Intent(BalanceActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(BalancActivity.this);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);

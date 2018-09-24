@@ -16,10 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.UserSignupActivity" />
-        <activity
-            android:name=".view.UserMainActivity"
-            android:label="@string/title_activity_user_main"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,16 +49,11 @@
             android:name=".view.MenuMainActivity"
             android:label="@string/title_activity_menu_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".view.UserMenuActivity"
-            android:label="@string/title_activity_user_menu"
+        <activity android:name=".view.UserMainActivity"
+            android:label="@string/title_activity_user_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.UserFoodActivity"
-            android:label="@string/title_activity_user_food"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".view.BalancActivity"
+            android:name=".view.BalanceActivity"
             android:label="@string/title_activity_balanc"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
