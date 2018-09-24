@@ -83,7 +83,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onClick(View view, int position) {
                 Restaurant restaurant = mRestaurantList.get(position);
-                Intent intent = new Intent(UserMainActivity.this, UserMenuActivity.class);
+                Intent intent = new Intent(UserMainActivity.this, RestaurantMainActivity.class);
                 intent.putExtra("RestaurantKey", restaurant.Id);
                 startActivity(intent);
             }
