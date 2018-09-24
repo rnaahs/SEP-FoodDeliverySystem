@@ -3,6 +3,7 @@ package com.sep.assignment1.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +19,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Menu;
+import com.sep.assignment1.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,22 +37,53 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
     private Button mBtnSignup, mBtnLogin, mBtnReset;
+    private FirebaseDatabase mFirebaseInstance;
+    private DatabaseReference mFirebaseReference;
+    private User user;
+    private List<User> mUserList = new ArrayList<>();
+    private String mUserId;
+    private int mRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // set the view now
+        setContentView(R.layout.activity_login);
 
         //Get Firebase mAuth instance
         mAuth = FirebaseAuth.getInstance();
 
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseReference = mFirebaseInstance.getReference("user");
+
+
+
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, UserMainActivity.class));
-            LoginActivity.this.finish();
+            mUserId = mAuth.getUid();
+            getUserProfile();
+            if(mRole == 0){
+                Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
+            else if(mRole == 1){
+                Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
+            else if(mRole == 2){
+                Intent intent = new Intent(LoginActivity.this, DeliveryMainActivity.class);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
+            else {
+                Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
+                startActivity(intent);
+                LoginActivity.this.finish();
+            }
         }
 
-        // set the view now
-        setContentView(R.layout.activity_login);
+
 
         mInputEmail = (EditText) findViewById(R.id.email);
         mInputPassword = (EditText) findViewById(R.id.password);
@@ -135,6 +177,39 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         });
+            }
+        });
+    }
+    private void getUserProfile(){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if(user.getUserid().equals(mUserId)){
+                            mRole = user.getRole();
+                        }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                mUserList.remove(user);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

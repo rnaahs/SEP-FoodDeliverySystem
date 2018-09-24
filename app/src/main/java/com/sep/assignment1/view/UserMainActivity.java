@@ -54,7 +54,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseInstance.setPersistenceEnabled(true);
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
 
