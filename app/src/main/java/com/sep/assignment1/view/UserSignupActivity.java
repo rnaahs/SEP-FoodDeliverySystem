@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
 
 public class UserSignupActivity extends AppCompatActivity {
@@ -24,11 +26,15 @@ public class UserSignupActivity extends AppCompatActivity {
     private Button mBtnSignIn, mBtnSignUp, mBtnResetPassword;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
+    private FirebaseDatabase mFirebaseInstance;
+    private DatabaseReference mFirebaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_signup);
+
+        
 
         //Get Firebase mAuth instance
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
