@@ -5,21 +5,20 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,34 +30,46 @@ import com.sep.assignment1.FoodRecyclerTouchListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.FoodAdapter;
+import com.sep.assignment1.model.FoodAdapterForUser;
 import com.sep.assignment1.model.Menu;
+import com.sep.assignment1.model.MenuAdapter;
+import com.sep.assignment1.model.MenuAdapterForUser;
 
 import java.util.ArrayList;
 
-public class MenuMainActivity extends AppCompatActivity
+public class UserFoodActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     private FirebaseAuth mAuth;
     private RecyclerView mFoodItemRv;
-    private FoodAdapter mFoodAdapter;
+    private RecyclerView mMenuItemRv;
+    private MenuAdapterForUser mMenuAdapter;
+    private FoodAdapterForUser mFoodAdapter;
     private ArrayList<Food> mFoodArrayList;
+    private ArrayList<Menu> mMenuArrayList;
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private String mMenuKey;
+    private String mRestaurantKey;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_main);
+        setContentView(R.layout.activity_user_food);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
         mMenuKey = getIntent().getStringExtra("MenuKey");
         mFoodArrayList = new ArrayList<>();
-        mFoodItemRv = (RecyclerView) findViewById(R.id.food_item_recycler_view) ;
+        mFoodItemRv = (RecyclerView) findViewById(R.id.food_user_RV) ;
         mFoodItemRv.setLayoutManager(new LinearLayoutManager(this));
         mFoodItemRv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
         mFoodItemRv.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
         mFoodItemRv.setItemAnimator(new DefaultItemAnimator());
 
-        mFoodAdapter = new FoodAdapter(mFoodArrayList, getApplicationContext());
+        mFoodAdapter = new FoodAdapterForUser(mFoodArrayList, getApplicationContext());
         mFoodItemRv.setAdapter(mFoodAdapter);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
@@ -68,46 +79,21 @@ public class MenuMainActivity extends AppCompatActivity
 
         setFoodItemsFromDB();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_food_btn);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MenuMainActivity.this, AddFoodActivity.class));
-            }
-        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.menu_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
-            @Override
-            public void onClick(View view, int position) {
-                /*
-                Food food = mFoodArrayList.get(position);
-                Intent intent = new Intent(MenuMainActivity.this, MenuMainActivity.class);
-                intent.putExtra("MenuKey", menu.getMenuId());
-                startActivity(intent);*/
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
     }
+
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -118,7 +104,7 @@ public class MenuMainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.user_main, menu);
         return true;
     }
 
@@ -157,17 +143,16 @@ public class MenuMainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(MenuMainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(UserFoodActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(MenuMainActivity.this);
+            ActivityCompat.finishAffinity(UserFoodActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    //Restaurant data change listener
     private void setFoodItemsFromDB(){
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override

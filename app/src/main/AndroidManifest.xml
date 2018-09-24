@@ -52,6 +52,18 @@
         <activity
             android:name=".view.MenuMainActivity"
             android:label="@string/title_activity_menu_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.UserMenuActivity"
+            android:label="@string/title_activity_user_menu"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.UserFoodActivity"
+            android:label="@string/title_activity_user_food"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.BalancActivity"
+            android:label="@string/title_activity_balanc"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

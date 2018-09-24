@@ -1,25 +1,22 @@
 package com.sep.assignment1.view;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -28,79 +25,46 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
-import com.sep.assignment1.RestaurantRecyclerTouchListener;
-import com.sep.assignment1.model.Restaurant;
-import com.sep.assignment1.model.RestaurantAdapter;
+import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
-
-    private Button mBtnLogout;
+public class BalancActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
-
-    private List<Restaurant> mRestaurantList = new ArrayList<>();
-    private RecyclerView mRecycleView;
-    private RestaurantAdapter mRestaurantAdapter;
+    private TextView mBalanceTV;
+    private List<User> mUserList = new ArrayList<>();
+    private Button mTopupBtn, mWithdrawnBtn;
+    private User user;
+    private String mUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_main);
-
-        if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-
-        mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseInstance.setPersistenceEnabled(true);
-        // get reference to 'trips' node
-        mFirebaseReference = mFirebaseInstance.getReference("restaurant");
-
-        //keeping data fresh
-        mFirebaseReference.keepSynced(true);
-
+        setContentView(R.layout.activity_balanc);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Recycle View
-        mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
-        mRestaurantAdapter = new RestaurantAdapter(mRestaurantList);
-        mRecycleView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        if(FirebaseAuth.getInstance()!=null) {
+            mAuth = FirebaseAuth.getInstance();
+            mUserID = mAuth.getUid();
+        }
 
-        mRecycleView.setLayoutManager(layoutManager);
-        mRecycleView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mRecycleView.removeItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mRecycleView.setItemAnimator(new DefaultItemAnimator());
-        mRecycleView.setAdapter(mRestaurantAdapter);
 
-        //Call method to add restaurants from database
-        addRestaurantChangeListener();
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseReference = mFirebaseInstance.getReference("user");
 
-        mRecycleView.addOnItemTouchListener(new RestaurantRecyclerTouchListener(getApplicationContext(),mRecycleView, new RestaurantRecyclerTouchListener.ClickListener(){
-            @Override
-            public void onClick(View view, int position) {
-                Restaurant restaurant = mRestaurantList.get(position);
-                Intent intent = new Intent(UserMainActivity.this, UserMenuActivity.class);
-                intent.putExtra("RestaurantKey", restaurant.Id);
-                startActivity(intent);
-            }
+        mBalanceTV = (TextView) findViewById(R.id.balanceTV);
+        mTopupBtn = (Button) findViewById(R.id.topupBtn);
+        mWithdrawnBtn = (Button) findViewById(R.id.withdrawnBtn);
 
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
-            }
-        });
+        addBalanceListener();
+        if(user!=null) {
+            Double balance = user.getBalance();
+            mBalanceTV.setText(balance.toString());
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -152,8 +116,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent intent = new Intent(UserMainActivity.this, BalancActivity.class);
-            startActivity(intent);
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -166,9 +129,9 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(UserMainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(BalancActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(UserMainActivity.this);
+            ActivityCompat.finishAffinity(BalancActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -176,21 +139,16 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
-    //Restaurant data change listener
-    private void addRestaurantChangeListener(){
+    private void addBalanceListener(){
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-                mRestaurantList.add(restaurant);
-                //Check for null
-                if(restaurant == null){
-                    Log.e("UserMainActivity", "There is no data from firebase");
-                    return;
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(dataSnapshot.getKey().toString().equals(mUserID)){
+                        User user = child.getValue(User.class);
+                        mUserList.add(user);
+                    }
                 }
-
-                Log.e("UserMainActivity","Data has changed" + restaurant.Name + restaurant.ImageUri);
-                mRestaurantAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -200,9 +158,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-                mRestaurantList.remove(restaurant);
-                mRestaurantAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -215,10 +171,5 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 }

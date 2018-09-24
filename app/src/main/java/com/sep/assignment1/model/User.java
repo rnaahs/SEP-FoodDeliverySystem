@@ -10,14 +10,16 @@ public class User {
     private String email;
     private int role;
     private String address;
+    private double balance;
 
-    public User(String Id, String firstname, String lastname, String email, int role, String address) {
-        this.userid = Id;
+    public User(String userId, String firstname, String lastname, String email, int role, String address, double balance) {
+        this.userid = userId;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.role = role;
         this.address = address;
+        this.balance = balance;
     }
 
     public User(){
@@ -70,5 +72,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 }
