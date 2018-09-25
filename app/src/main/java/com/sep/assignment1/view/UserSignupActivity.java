@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.User;
 
 public class UserSignupActivity extends AppCompatActivity {
 
@@ -34,17 +35,10 @@ public class UserSignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_signup);
 
-        
+
 
         //Get Firebase mAuth instance
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-
-
-
-//        if (mAuth.getCurrentUser() != null) {
-//            startActivity(new Intent(SignupActivity.this, MainActivity.class));
-//            finish();
-//        }
 
 
         mBtnSignIn = (Button) findViewById(R.id.sign_in_button);
@@ -53,6 +47,9 @@ public class UserSignupActivity extends AppCompatActivity {
         mInputPassword = (EditText) findViewById(R.id.password);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mBtnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseReference = mFirebaseInstance.getReference("user");
 
         /*mBtnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +69,7 @@ public class UserSignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String email = mInputEmail.getText().toString().trim();
+                final String email = mInputEmail.getText().toString().trim();
                 String password = mInputPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
@@ -106,7 +103,8 @@ public class UserSignupActivity extends AppCompatActivity {
                                     Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(UserSignupActivity.this, RestaurantMainActivity.class));
+                                    addUserListener(mAuth.getUid(),"","", email, 0, "",0);
+                                    startActivity(new Intent(UserSignupActivity.this, UserMainActivity.class));
                                     UserSignupActivity.this.finish();
                                     ActivityCompat.finishAffinity(UserSignupActivity.this);
                                 }
@@ -131,5 +129,11 @@ public class UserSignupActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance){
+        User user = new User(userId, firstname, lastname, email, role, address,balance);
+       mFirebaseReference.child(userId).setValue(user);
+
     }
 }
