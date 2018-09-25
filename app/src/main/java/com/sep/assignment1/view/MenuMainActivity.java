@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.FoodRecyclerTouchListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
@@ -44,13 +45,20 @@ public class MenuMainActivity extends AppCompatActivity
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private String mMenuKey;
+    private final int REQUEST_CODE = 1;
+    private String mRestaurantKey;
+    private String mMenuName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_main);
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
+
         mMenuKey = getIntent().getStringExtra("MenuKey");
+        mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
+        mMenuName = getIntent().getStringExtra("MenuName");
+
         mFoodArrayList = new ArrayList<>();
         mFoodItemRv = (RecyclerView) findViewById(R.id.food_item_recycler_view) ;
         mFoodItemRv.setLayoutManager(new LinearLayoutManager(this));
@@ -64,9 +72,8 @@ public class MenuMainActivity extends AppCompatActivity
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseInstance.getReference("Menu");
         mDatabaseReference.keepSynced(true);
-
-
         setFoodItemsFromDB();
+        mFoodAdapter.notifyDataSetChanged();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,7 +82,8 @@ public class MenuMainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MenuMainActivity.this, AddFoodActivity.class));
+                Intent intent = new Intent(MenuMainActivity.this, AddFoodActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -112,6 +120,22 @@ public class MenuMainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Food food = (Food) data.getParcelableExtra(Constants.RESULT);
+                mFoodArrayList.add(food);
+                Menu menu = new Menu(mMenuKey, mMenuName, mFoodArrayList, 0.0);
+                mDatabaseReference.child(mRestaurantKey).child(mMenuKey).setValue(menu);
+                Log.d("MENUTEST","Successfully added");
+
+            }
         }
     }
 
@@ -175,12 +199,14 @@ public class MenuMainActivity extends AppCompatActivity
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(child.getKey().toString().equals(mMenuKey)){
                         Menu menu = child.getValue(Menu.class);
-                        for(Food food : menu.getFoodArrayList()){
-                            mFoodArrayList.add(food);
+                        if(menu.getFoodArrayList()!=null){
+                            for(Food food : menu.getFoodArrayList()){
+                                mFoodArrayList.add(food);
+                            }
                         }
-                        mFoodAdapter.notifyDataSetChanged();
                     }
                 }
+                mFoodAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -193,9 +219,9 @@ public class MenuMainActivity extends AppCompatActivity
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(child.getKey().toString().equals(mMenuKey)){
                         mFoodArrayList.clear();
-                        mFoodAdapter.notifyDataSetChanged();
                     }
                 }
+                mFoodAdapter.notifyDataSetChanged();
             }
 
             @Override

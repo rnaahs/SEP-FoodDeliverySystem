@@ -1,11 +1,13 @@
 package com.sep.assignment1.view;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -38,6 +40,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Menu;
@@ -51,6 +54,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     private DatabaseReference mFirebaseReference;
     private EditText mMenuName;
     private Button mAddMenuBtn;
+    private String mRestaurantKey;
     private Uri mFilePath;
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -58,7 +62,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_menu);
-
+        mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -79,8 +83,12 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                     String menuName = mMenuName.getText().toString();
                     ArrayList<Food> foodArrayList = new ArrayList<>();
                     Menu menu = new Menu(menuId, menuName , foodArrayList ,0.0);
-                    mFirebaseReference.child(menuId).setValue(menu);
-                    //getExtra menuName;
+
+
+                    Intent result = new Intent();
+                    result.putExtra(Constants.RESULT, menu);
+                    //set the result RESULT_OK to the result intent
+                    setResult(Activity.RESULT_OK, result);
                 }
                 catch (RuntimeException ex){
                     Log.e("AddMenu", "Exception: ", ex);
@@ -91,7 +99,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
 
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.add_menu_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -104,7 +112,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

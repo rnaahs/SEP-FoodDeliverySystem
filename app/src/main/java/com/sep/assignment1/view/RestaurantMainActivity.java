@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.MenuRecyclerTouchListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
@@ -44,6 +45,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private String mRestaurantKey;
+    private final int REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         mDatabaseReference.keepSynced(true);
 
         setMenuItemsFromDB();
+        mMenuAdapter.notifyDataSetChanged();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,7 +77,9 @@ public class RestaurantMainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(RestaurantMainActivity.this, AddMenuActivity.class));
+                Intent intent = new Intent(RestaurantMainActivity.this, AddMenuActivity.class);
+                intent.putExtra("RestaurantKey", mRestaurantKey);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -93,6 +98,8 @@ public class RestaurantMainActivity extends AppCompatActivity
                 Menu menu = mMenuArrayList.get(position);
                 Intent intent = new Intent(RestaurantMainActivity.this, MenuMainActivity.class);
                 intent.putExtra("MenuKey", menu.getMenuId());
+                intent.putExtra("MenuName", menu.getMenuName());
+                intent.putExtra("RestaurantKey", mRestaurantKey);
                 startActivity(intent);
             }
 
@@ -110,6 +117,20 @@ public class RestaurantMainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Menu menu = (Menu) data.getParcelableExtra(Constants.RESULT);
+                mMenuArrayList.add(menu);
+                mDatabaseReference.child(mRestaurantKey).child(menu.getMenuId()).setValue(menu);
+                Log.d("MENUTEST","Successfully added");
+            }
         }
     }
 
@@ -174,9 +195,9 @@ public class RestaurantMainActivity extends AppCompatActivity
                     if(dataSnapshot.getKey().toString().equals(mRestaurantKey)){
                         Menu menu = child.getValue(Menu.class);
                         mMenuArrayList.add(menu);
-                        mMenuAdapter.notifyDataSetChanged();
                     }
                 }
+                mMenuAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -190,9 +211,9 @@ public class RestaurantMainActivity extends AppCompatActivity
                     if(dataSnapshot.getKey().toString().equals(mRestaurantKey)){
                         Menu menu = child.getValue(Menu.class);
                         mMenuArrayList.remove(menu);
-                        mMenuAdapter.notifyDataSetChanged();
                     }
                 }
+                mMenuAdapter.notifyDataSetChanged();
             }
 
             @Override
