@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -48,6 +49,8 @@ public class MenuMainActivity extends AppCompatActivity
     private final int REQUEST_CODE = 1;
     private String mRestaurantKey;
     private String mMenuName;
+    private LoginActivity loginActivity;
+    private int mRole = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class MenuMainActivity extends AppCompatActivity
         mMenuName = getIntent().getStringExtra("MenuName");
 
         mFoodArrayList = new ArrayList<>();
+
         mFoodItemRv = (RecyclerView) findViewById(R.id.food_item_recycler_view) ;
         mFoodItemRv.setLayoutManager(new LinearLayoutManager(this));
         mFoodItemRv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
@@ -82,8 +86,16 @@ public class MenuMainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MenuMainActivity.this, AddFoodActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
+
+
+                if(mRole==0) {
+                    Intent intent1 = new Intent(MenuMainActivity.this, CartActivity.class);
+                    startActivity(intent1);
+                }
+                else {
+                    Intent intent = new Intent(MenuMainActivity.this, AddFoodActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
+                }
             }
         });
 
@@ -96,9 +108,23 @@ public class MenuMainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.menu_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        try{
+            mRole = loginActivity.mRole;
+            if(mRole == 0){
+
+            }
+        }catch (Exception ex){
+            Log.e("Exception", "mRole is null: ", ex );
+        }
+
+
+
+
         mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
             @Override
             public void onClick(View view, int position) {
+
+
                 /*
                 Food food = mFoodArrayList.get(position);
                 Intent intent = new Intent(MenuMainActivity.this, MenuMainActivity.class);
@@ -216,12 +242,7 @@ public class MenuMainActivity extends AppCompatActivity
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(child.getKey().toString().equals(mMenuKey)){
-                        mFoodArrayList.clear();
-                    }
-                }
-                mFoodAdapter.notifyDataSetChanged();
+
             }
 
             @Override

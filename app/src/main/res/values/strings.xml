@@ -87,4 +87,16 @@
     <string name="title_activity_user_food">UserFoodActivity</string>
     <string name="title_activity_balanc">BalancActivity</string>
     <string name="title_activity_balance_topup">BalanceTopupActivity</string>
+    <string name="title_activity_cart">CartActivity</string>
+
+    <string-array name="quantity_arrays">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
 </resources>
