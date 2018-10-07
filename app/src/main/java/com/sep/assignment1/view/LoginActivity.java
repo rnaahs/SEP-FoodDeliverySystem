@@ -83,8 +83,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-
-
         mInputEmail = (EditText) findViewById(R.id.email);
         mInputPassword = (EditText) findViewById(R.id.password);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);

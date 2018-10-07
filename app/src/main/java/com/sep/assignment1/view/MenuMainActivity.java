@@ -134,7 +134,7 @@ public class MenuMainActivity extends AppCompatActivity
                 Menu menu = new Menu(mMenuKey, mMenuName, mFoodArrayList, 0.0);
                 mDatabaseReference.child(mRestaurantKey).child(mMenuKey).setValue(menu);
                 Log.d("MENUTEST","Successfully added");
-
+                mFoodAdapter.notifyDataSetChanged();
             }
         }
     }

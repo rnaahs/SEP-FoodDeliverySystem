@@ -16,7 +16,7 @@
 
     <string name="btn_forgot_password">Forgot Password?</string>
     <string name="btn_link_to_login">Login here!</string>
-    <string name="signupSuccess">Sigped up successfully</string>
+    <string name="signupSuccess">Signed up successfully</string>
     <string name="signupFail">Authentication failed.</string>
     <string name="FailRead">Failed to read data</string>
     <string name="tripChange">Data is changed</string>

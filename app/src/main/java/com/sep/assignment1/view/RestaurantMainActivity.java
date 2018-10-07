@@ -129,7 +129,7 @@ public class RestaurantMainActivity extends AppCompatActivity
                 Menu menu = (Menu) data.getParcelableExtra(Constants.RESULT);
                 mMenuArrayList.add(menu);
                 mDatabaseReference.child(mRestaurantKey).child(menu.getMenuId()).setValue(menu);
-                Log.d("MENUTEST","Successfully added");
+                mMenuAdapter.notifyDataSetChanged();
             }
         }
     }

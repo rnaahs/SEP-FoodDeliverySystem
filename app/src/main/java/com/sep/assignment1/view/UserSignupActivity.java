@@ -70,7 +70,7 @@ public class UserSignupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final String email = mInputEmail.getText().toString().trim();
-                String password = mInputPassword.getText().toString().trim();
+                final String password = mInputPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.EmailEmpty), Toast.LENGTH_SHORT).show();
@@ -104,6 +104,7 @@ public class UserSignupActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     addUserListener(mAuth.getUid(),"","", email, 0, "",0);
+                                    mAuth.signInWithEmailAndPassword(email,password);
                                     startActivity(new Intent(UserSignupActivity.this, UserMainActivity.class));
                                     UserSignupActivity.this.finish();
                                     ActivityCompat.finishAffinity(UserSignupActivity.this);
