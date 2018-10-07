@@ -14,7 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -28,21 +28,23 @@ import com.sep.assignment1.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BalanceActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
+public class BalanceTopupActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
-    private TextView mBalanceTV;
-    private List<User> mUserList = new ArrayList<>();
-    private Button mTopupBtn, mWithdrawnBtn;
-    private User user;
     private String mUserID;
+    private EditText mCardNumET, mCardExpireET, mCardCCVET, mNameET, mAmountET;
+    private Button mTopupBtn;
+    private List<User> mUserList = new ArrayList<>();
     private Double mBalance;
+    private User user;
+    private int mPosition;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_balance);
+        setContentView(R.layout.activity_balance_topup);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,25 +53,25 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
             mUserID = mAuth.getUid();
         }
 
-        if(mBalance!=null) {
-            mBalanceTV.setText(mBalance.toString());
-        }
-
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseReference = mFirebaseInstance.getReference("user");
 
-        mBalanceTV = (TextView) findViewById(R.id.balanceTV);
+        mCardNumET = (EditText) findViewById(R.id.topup_card_numET);
+        mCardExpireET = (EditText) findViewById(R.id.topup_card_expireET);
+        mCardCCVET = (EditText) findViewById(R.id.topup_card_ccvET);
+        mNameET = (EditText) findViewById(R.id.topup_nameET);
+        mAmountET = (EditText) findViewById(R.id.topup_amountET);
         mTopupBtn = (Button) findViewById(R.id.topupBtn);
         mTopupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BalanceActivity.this, BalanceTopupActivity.class);
-                startActivity(intent);
+                Double amount = Double.parseDouble(mAmountET.getText().toString());
+                uploadBalanceListener(amount);
+
             }
         });
-        mWithdrawnBtn = (Button) findViewById(R.id.withdrawnBtn);
 
-        addBalanceListener();
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,8 +81,6 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
     }
 
 
@@ -136,9 +136,9 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(BalanceActivity.this, LoginActivity.class);
+            Intent intent = new Intent(BalanceTopupActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(BalanceActivity.this);
+            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -146,16 +146,16 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         return true;
     }
 
-    private void addBalanceListener() {
+    private void uploadBalanceListener(Double amount){
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 if (user.getUserid().equals(mUserID)) {
                     mUserList.add(user);
+                    mPosition = mUserList.indexOf(user);
                     mBalance = user.getBalance();
-                    mBalanceTV.setText(mBalance.toString());
                     return;
                 }
 
@@ -163,24 +163,12 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User user = dataSnapshot.getValue(User.class);
-                if (user.getUserid().equals(mUserID)) {
-                    mUserList.add(user);
-                    mBalance = user.getBalance();
-                    mBalanceTV.setText(mBalance.toString());
-                    return;
-                }
+
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (user.getUserid().equals(mUserID)) {
-                    mUserList.remove(user);
-                    mBalance = user.getBalance();
-                    mBalanceTV.setText(mBalance.toString());
-                    return;
-                }
+
             }
 
             @Override
@@ -193,5 +181,17 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
             }
         });
+        if(mBalance!=null){
+            Double balance = mBalance + amount;
+            user = mUserList.get(mPosition);
+            user = new User(user.getUserid(), user.getFirstname(), user.getLastname(),user.getEmail(), user.getRole(), user.getAddress(),balance);
+            mFirebaseReference.child(mUserID).setValue(user);
+            finish();
+        }
+
     }
 }
+
+
+
+

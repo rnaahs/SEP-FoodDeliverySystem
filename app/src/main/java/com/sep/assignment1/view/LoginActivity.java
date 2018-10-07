@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.User;
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private User user;
     private List<User> mUserList = new ArrayList<>();
     private String mUserId;
-    private int mRole;
+    public int mRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
