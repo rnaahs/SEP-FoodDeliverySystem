@@ -192,17 +192,24 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 
-
+                //For Customer
                 if(mRole == 0) {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        for(DataSnapshot grandchild : child.getChildren()){
+                            restaurant = grandchild.getValue(Restaurant.class);
+                            mRestaurantList.add(restaurant);
+                        }
+                    }
+
+
                     restaurant = dataSnapshot.getValue(Restaurant.class);
                     mRestaurantList.add(restaurant);
 
-                } else if(mRole == 1) {
+                } else if(mRole == 1) { //For Restaurant
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        if (child.getKey().toString().equals(mAuth.getUid())) {
+                        if (child.child(mAuth.getUid()).getKey().toString().equals(mAuth.getUid())) {
                             restaurant = child.getValue(Restaurant.class);
                             mRestaurantList.add(restaurant);
-
                         }
                     }
 
