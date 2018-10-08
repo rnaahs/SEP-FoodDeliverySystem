@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".view.BalanceWithdrawn"
+    tools:showIn="@layout/activity_balance_withdrawn">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/withdrawn_bsbET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="BSB Number"/>
+
+            <EditText
+                    android:id="@+id/withdrawn_account_numberET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:hint="Account Number"/>
+
+            <EditText
+                android:id="@+id/withdrawn_nameET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Name"/>
+
+            <EditText
+                android:id="@+id/withdrawn_amountET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Enter Amount"/>
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/withdrawnBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:text="Withdrawn"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
