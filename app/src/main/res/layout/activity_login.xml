@@ -14,7 +14,8 @@
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin"
         tools:layout_editor_absoluteX="460dp"
-        tools:layout_editor_absoluteY="0dp">
+        tools:layout_editor_absoluteY="0dp"
+        tools:ignore="MissingConstraints">
 
 
         <ImageView

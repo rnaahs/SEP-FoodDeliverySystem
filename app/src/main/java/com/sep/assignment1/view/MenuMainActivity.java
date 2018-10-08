@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +28,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.FoodRecyclerTouchListener;
@@ -45,6 +43,7 @@ import java.util.List;
 
 public class MenuMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     private FirebaseAuth mAuth;
     private RecyclerView mFoodItemRv;
     private FoodAdapter mFoodAdapter;
@@ -70,10 +69,10 @@ public class MenuMainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_menu_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setContentView(R.layout.activity_menu_main);
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
 
         mMenuKey = getIntent().getStringExtra("MenuKey");
@@ -100,48 +99,27 @@ public class MenuMainActivity extends AppCompatActivity
         setFoodItemsFromDB();
         mFoodAdapter.notifyDataSetChanged();
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_food_btn);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                if(mRole==0) {
-                    Intent intent1 = new Intent(MenuMainActivity.this, CartActivity.class);
-                    startActivity(intent1);
-                }
-                else {
-                    Intent intent = new Intent(MenuMainActivity.this, AddFoodActivity.class);
-                    startActivityForResult(intent, REQUEST_CODE);
-                }
+                Intent intent = new Intent(MenuMainActivity.this, AddFoodActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.menu_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
         }
-
-        try{
-            mRole = loginActivity.mRole;
-            if(mRole == 0){
-
-            }
-        }catch (Exception ex){
-            Log.e("Exception", "mRole is null: ", ex );
-        }
-
-
-
 
         mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
             @Override
@@ -190,7 +168,7 @@ public class MenuMainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.menu_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -214,10 +192,11 @@ public class MenuMainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.user_main, menu);
         return true;
     }
 
@@ -229,8 +208,9 @@ public class MenuMainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_cart) {
+            Intent intent = new Intent(MenuMainActivity.this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -263,7 +243,7 @@ public class MenuMainActivity extends AppCompatActivity
             ActivityCompat.finishAffinity(MenuMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -317,6 +297,10 @@ public class MenuMainActivity extends AppCompatActivity
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mRole = user.getRole();
+                    FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_food_btn);
+                    if(mRole == 0) {
+                        floatingActionButton.setVisibility(View.GONE);
+                    }
                 }
             }
 

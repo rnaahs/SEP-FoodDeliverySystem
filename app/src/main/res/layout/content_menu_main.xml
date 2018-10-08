@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".view.MenuMainActivity"
-    tools:showIn="@layout/app_bar_menu_main"
-    android:padding="15dp">
+    tools:showIn="@layout/app_bar_menu_main">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/food_item_recycler_view"

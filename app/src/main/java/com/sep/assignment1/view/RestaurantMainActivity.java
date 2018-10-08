@@ -51,6 +51,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     private String mRestaurantKey;
     private final int REQUEST_CODE = 1;
     private DatabaseReference mFirebaseUserReference;
+    private int mRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         if (mAuth.getCurrentUser() != null) {
@@ -146,7 +147,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.user_main, menu);
         return true;
     }
 
@@ -157,9 +158,9 @@ public class RestaurantMainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_cart) {
+            Intent intent = new Intent(RestaurantMainActivity.this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -192,7 +193,7 @@ public class RestaurantMainActivity extends AppCompatActivity
             ActivityCompat.finishAffinity(RestaurantMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -204,7 +205,7 @@ public class RestaurantMainActivity extends AppCompatActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//restaurant ID
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(dataSnapshot.getKey().toString().equals(mRestaurantKey)){
+                    if(dataSnapshot.getKey().equals(mRestaurantKey)){
                         Menu menu = child.getValue(Menu.class);
                         mMenuArrayList.add(menu);
                     }
@@ -250,6 +251,11 @@ public class RestaurantMainActivity extends AppCompatActivity
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
+                    FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_menu_btn);
+                    if(mRole == 0) {
+                        floatingActionButton.setVisibility(View.GONE);
+                    }
                 }
             }
 

@@ -21,9 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.User;
 
-public class UserSignupActivity extends AppCompatActivity {
+public class RestaurantSignupActivity extends AppCompatActivity {
 
-    private EditText mInputEmail, mInputPassword, mInputFirstname, mInputLastname, mInputAddress;
+    private EditText mInputEmail, mInputPassword, mInputFirstname, mInputLastname, mInputAddress, mInputBSB;
     private Button mBtnSignIn, mBtnSignUp, mBtnResetPassword;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
@@ -33,7 +33,7 @@ public class UserSignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_signup);
+        setContentView(R.layout.activity_restaurant_signup);
 
 
 
@@ -48,6 +48,7 @@ public class UserSignupActivity extends AppCompatActivity {
         mInputFirstname = (EditText) findViewById(R.id.firstname);
         mInputLastname = (EditText) findViewById(R.id.lastname);
         mInputAddress = (EditText) findViewById(R.id.address);
+        mInputBSB = (EditText) findViewById(R.id.bsb);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mBtnResetPassword = (Button) findViewById(R.id.btn_reset_password);
 
@@ -64,7 +65,7 @@ public class UserSignupActivity extends AppCompatActivity {
         mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(UserSignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(RestaurantSignupActivity.this, LoginActivity.class));
             }
         });
 
@@ -77,6 +78,7 @@ public class UserSignupActivity extends AppCompatActivity {
                 final String firstname = mInputFirstname.getText().toString().trim();
                 final String lastname = mInputLastname.getText().toString().trim();
                 final String address = mInputAddress.getText().toString().trim();
+                final String bsb = mInputBSB.getText().toString();
 
 
                 if (TextUtils.isEmpty(email)) {
@@ -98,23 +100,23 @@ public class UserSignupActivity extends AppCompatActivity {
                 //create user
 
                 mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(UserSignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(RestaurantSignupActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RestaurantSignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the mAuth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupFail),
+                                    Toast.makeText(RestaurantSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 0, address,0, "");
+                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 1, address,0, bsb);
                                     mAuth.signInWithEmailAndPassword(email,password);
-                                    startActivity(new Intent(UserSignupActivity.this, UserMainActivity.class));
-                                    UserSignupActivity.this.finish();
-                                    ActivityCompat.finishAffinity(UserSignupActivity.this);
+                                    startActivity(new Intent(RestaurantSignupActivity.this, UserMainActivity.class));
+                                    RestaurantSignupActivity.this.finish();
+                                    ActivityCompat.finishAffinity(RestaurantSignupActivity.this);
                                 }
                             }
                         });
@@ -139,9 +141,9 @@ public class UserSignupActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String bsb){
-        User user = new User(userId, firstname, lastname, email, role, address,balance, "");
-       mFirebaseReference.child(userId).setValue(user);
+    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB){
+        User user = new User(userId, firstname, lastname, email, role, address,balance, BSB);
+        mFirebaseReference.child(userId).setValue(user);
 
     }
 }

@@ -34,7 +34,8 @@ public class MainSignupActivity extends AppCompatActivity {
         mRestaurantSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainSignupActivity.this, RestaurantSignupActivity.class);
+                startActivity(intent);
             }
         });
 
