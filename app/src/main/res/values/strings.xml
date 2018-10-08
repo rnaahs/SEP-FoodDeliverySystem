@@ -102,4 +102,5 @@
         <item>8</item>
     </string-array>
     <string name="title_activity_order">OrderActivity</string>
+    <string name="title_activity_balance_withdrawn">BalanceWithdrawn</string>
 </resources>
