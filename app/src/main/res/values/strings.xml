@@ -16,7 +16,7 @@
 
     <string name="btn_forgot_password">Forgot Password?</string>
     <string name="btn_link_to_login">Login here!</string>
-    <string name="signupSuccess">Sigped up successfully</string>
+    <string name="signupSuccess">Signed up successfully</string>
     <string name="signupFail">Authentication failed.</string>
     <string name="FailRead">Failed to read data</string>
     <string name="tripChange">Data is changed</string>
@@ -86,4 +86,18 @@
     <string name="title_activity_user_menu">UserMenuActivity</string>
     <string name="title_activity_user_food">UserFoodActivity</string>
     <string name="title_activity_balanc">BalancActivity</string>
+    <string name="title_activity_balance_topup">BalanceTopupActivity</string>
+    <string name="title_activity_cart">CartActivity</string>
+
+    <string-array name="quantity_arrays">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string name="title_activity_account">AccountActivity</string>
 </resources>

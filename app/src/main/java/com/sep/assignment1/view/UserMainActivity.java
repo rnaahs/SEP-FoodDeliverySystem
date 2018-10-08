@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,6 +32,7 @@ import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.RestaurantAdapter;
+import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,18 +47,18 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private List<Restaurant> mRestaurantList = new ArrayList<>();
     private RecyclerView mRecycleView;
     private RestaurantAdapter mRestaurantAdapter;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_main);
 
-        if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseInstance.setPersistenceEnabled(true);
+        if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
@@ -111,18 +113,12 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
@@ -152,18 +148,17 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
+
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(UserMainActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(UserMainActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
             Intent intent = new Intent(UserMainActivity.this, BalanceActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+            ActivityCompat.finishAffinity(UserMainActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -218,8 +213,38 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
+
 }

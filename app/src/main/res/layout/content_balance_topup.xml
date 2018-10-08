@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".view.BalanceTopupActivity"
+    tools:showIn="@layout/activity_balance_topup">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/topup_card_numET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Card Number"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/topup_card_expireET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dp"
+                    android:hint="MM/YY"/>
+                <EditText
+                    android:id="@+id/topup_card_ccvET"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:hint="CCV"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/topup_nameET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Name on Card"/>
+
+            <EditText
+                android:id="@+id/topup_amountET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Enter Amount"/>
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/topupBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:text="Top Up"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

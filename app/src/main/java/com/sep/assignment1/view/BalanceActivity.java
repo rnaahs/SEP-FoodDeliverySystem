@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -30,17 +31,18 @@ import java.util.List;
 public class BalanceActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseReference;
     private TextView mBalanceTV;
     private List<User> mUserList = new ArrayList<>();
     private Button mTopupBtn, mWithdrawnBtn;
     private User user;
     private String mUserID;
+    private Double mBalance;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_balanc);
+        setContentView(R.layout.activity_balance);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,19 +51,25 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
             mUserID = mAuth.getUid();
         }
 
+        if(mBalance!=null) {
+            mBalanceTV.setText(mBalance.toString());
+        }
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseReference = mFirebaseInstance.getReference("user");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         mBalanceTV = (TextView) findViewById(R.id.balanceTV);
         mTopupBtn = (Button) findViewById(R.id.topupBtn);
+        mTopupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BalanceActivity.this, BalanceTopupActivity.class);
+                startActivity(intent);
+            }
+        });
         mWithdrawnBtn = (Button) findViewById(R.id.withdrawnBtn);
 
         addBalanceListener();
-        if(user!=null) {
-            Double balance = user.getBalance();
-            mBalanceTV.setText(balance.toString());
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -71,12 +79,17 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
+
     }
 
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -112,17 +125,17 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(BalanceActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(BalanceActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
 
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -136,15 +149,65 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         return true;
     }
 
-    private void addBalanceListener(){
-        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+    private void addBalanceListener() {
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(dataSnapshot.getKey().toString().equals(mUserID)){
-                        User user = child.getValue(User.class);
-                        mUserList.add(user);
-                    }
+
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getUserid().equals(mUserID)) {
+                    mUserList.add(user);
+                    mBalance = user.getBalance();
+                    mBalanceTV.setText(mBalance.toString());
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getUserid().equals(mUserID)) {
+                    mUserList.add(user);
+                    mBalance = user.getBalance();
+                    mBalanceTV.setText(mBalance.toString());
+                    return;
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getUserid().equals(mUserID)) {
+                    mUserList.remove(user);
+                    mBalance = user.getBalance();
+                    mBalanceTV.setText(mBalance.toString());
+                    return;
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
                 }
             }
 
@@ -155,7 +218,6 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
             }
 
             @Override

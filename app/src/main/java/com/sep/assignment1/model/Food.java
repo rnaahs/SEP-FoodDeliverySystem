@@ -1,6 +1,9 @@
 package com.sep.assignment1.model;
-//fod food2 fdgldfg food
-public class Food {
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Food implements Parcelable {
     private String mFoodId;
     private String mFoodName;
     private double mFoodPrice;
@@ -14,6 +17,26 @@ public class Food {
         mFoodDescription = foodDescription;
         mFoodImgURL = foodImgURL;
     }
+
+    protected Food(Parcel in) {
+        mFoodId = in.readString();
+        mFoodName = in.readString();
+        mFoodPrice = in.readDouble();
+        mFoodDescription = in.readString();
+        mFoodImgURL = in.readString();
+    }
+
+    public static final Creator<Food> CREATOR = new Creator<Food>() {
+        @Override
+        public Food createFromParcel(Parcel in) {
+            return new Food(in);
+        }
+
+        @Override
+        public Food[] newArray(int size) {
+            return new Food[size];
+        }
+    };
 
     public String getFoodId() {
         return mFoodId;
@@ -53,5 +76,19 @@ public class Food {
 
     public void setFoodImgURL(String foodImgURL) {
         mFoodImgURL = foodImgURL;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mFoodId);
+        dest.writeString(mFoodName);
+        dest.writeDouble(mFoodPrice);
+        dest.writeString(mFoodDescription);
+        dest.writeString(mFoodImgURL);
     }
 }

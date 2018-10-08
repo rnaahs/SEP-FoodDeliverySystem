@@ -5,18 +5,16 @@ public class Order {
     private String FoodName;
     private String Quantity;
     private String Price;
-    private String Discount;
 
     public Order(){
 
     }
 
-    public Order(String foodID, String foodName, String quantity, String price, String discount){
+    public Order(String foodID, String foodName, String quantity, String price){
         FoodID = foodID;
         FoodName = foodName;
         Quantity = quantity;
         Price = price;
-        Discount = discount;
     }
 
     public String getFoodID() {
@@ -51,11 +49,4 @@ public class Order {
         Price = price;
     }
 
-    public String getDiscount() {
-        return Discount;
-    }
-
-    public void setDiscount(String discount) {
-        Discount = discount;
-    }
 }

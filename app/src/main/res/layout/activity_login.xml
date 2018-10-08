@@ -12,7 +12,9 @@
         android:background="@color/colorPrimary"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/activity_horizontal_margin">
+        android:padding="@dimen/activity_horizontal_margin"
+        tools:layout_editor_absoluteX="460dp"
+        tools:layout_editor_absoluteY="0dp">
 
 
         <ImageView

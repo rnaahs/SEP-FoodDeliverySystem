@@ -1,13 +1,16 @@
 package com.sep.assignment1.view;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -31,16 +34,25 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.Menu;
+import com.sep.assignment1.model.User;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddFoodActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
@@ -56,13 +68,16 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
     private ImageView mFoodImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
     private String mImageUri;
+    private String mMenuKey;
+    private List<User> mUserList = new ArrayList<>();
+    private DatabaseReference mFirebaseUserReference;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
-
+        mMenuKey = getIntent().getStringExtra("MenuKey");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,6 +89,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("Menu");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
@@ -100,10 +116,13 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
                     String foodName = mFoodNameET.getText().toString();
                     Double foodPrice = Double.parseDouble(mFoodPriceET.getText().toString());
                     String foodDescription = mFoodDescriptionET.getText().toString();
+                    String foodImgURL = mFoodImgURLTV.getText().toString();
+                    Food food = new Food(foodId, foodName, foodPrice, foodDescription, foodImgURL);
 
-                    //Food food = new Food(foodId, foodName, foodPrice, foodDescription);
-
-                    //mFirebaseReference.child(foodId).setValue(food);
+                    Intent result = new Intent();
+                    result.putExtra(Constants.RESULT, food);
+                    //set the result RESULT_OK to the result intent
+                    setResult(Activity.RESULT_OK, result);
                 }
                 catch (RuntimeException ex){
                     Log.e("AddFood", "Exception: ", ex);
@@ -120,14 +139,19 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.food_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.add_food, menu);
         return true;
     }
 
@@ -152,26 +176,28 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(AddFoodActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddFoodActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(AddFoodActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddFoodActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(AddFoodActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddFoodActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(AddFoodActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(this);
+            ActivityCompat.finishAffinity(AddFoodActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.food_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -251,5 +277,41 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         }else{
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
     }
 }

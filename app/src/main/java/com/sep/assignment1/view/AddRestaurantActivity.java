@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +33,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,8 +44,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Restaurant;
+import com.sep.assignment1.model.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddRestaurantActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
@@ -55,6 +63,8 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private ImageView mImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
     private String mImageUri;
+    private List<User> mUserList = new ArrayList<>();
+    private DatabaseReference mFirebaseUserReference;
 
 
     @Override
@@ -73,6 +83,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
@@ -137,16 +148,11 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
         }
+
     }
 
     @Override
@@ -177,23 +183,25 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(AddRestaurantActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddRestaurantActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(AddRestaurantActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddRestaurantActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(AddRestaurantActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddRestaurantActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(AddRestaurantActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(this);
+            ActivityCompat.finishAffinity(AddRestaurantActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -285,5 +293,39 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, imageUri);
 
         mFirebaseReference.child(restaurantId).setValue(restaurant);
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

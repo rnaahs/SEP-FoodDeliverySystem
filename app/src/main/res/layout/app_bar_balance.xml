@@ -10,7 +10,7 @@
 
 
     <include
-        layout="@layout/content_balanc"
+        layout="@layout/content_balance"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_user_main"
-        app:menu="@menu/activity_user_main_drawer" />
+        app:headerLayout="@layout/nav_header_balance"
+        app:menu="@menu/activity_balance" />
 
 </android.support.v4.widget.DrawerLayout>
