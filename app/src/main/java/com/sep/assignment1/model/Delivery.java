@@ -3,7 +3,7 @@ package com.sep.assignment1.model;
 import android.support.v7.app.AppCompatActivity;
 
 public class Delivery extends AppCompatActivity {
-//tester
+//tester7
     private String driverId;
     private String customerId;
     private String resturantId;
@@ -67,4 +67,5 @@ public class Delivery extends AppCompatActivity {
     public void setStatus(String status) {
         this.status = status;
     }
+
 }
