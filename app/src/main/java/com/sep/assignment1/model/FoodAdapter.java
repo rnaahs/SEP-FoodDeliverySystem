@@ -123,7 +123,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         try {
             mFoodCartList.add(food);
 
-
             mDatabaseReference.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

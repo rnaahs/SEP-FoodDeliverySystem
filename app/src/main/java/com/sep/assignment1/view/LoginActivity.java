@@ -58,13 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         if (mAuth.getCurrentUser() != null) {
-            getUserProfile();
-            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-            startActivity(intent);
-            LoginActivity.this.finish();
-        }
-
-        if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
             getUserProfile();
             if(mRole == 0){
@@ -188,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        User user = dataSnapshot.getValue(User.class);
+                User user = dataSnapshot.getValue(User.class);
                         if(user.getUserid().equals(mUserId)){
                             mRole = user.getRole();
                         }

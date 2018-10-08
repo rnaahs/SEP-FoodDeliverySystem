@@ -11,8 +11,9 @@ public class User {
     private int role;
     private String address;
     private double balance;
+    private String bsb;
 
-    public User(String userId, String firstname, String lastname, String email, int role, String address, double balance) {
+    public User(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB) {
         this.userid = userId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -20,10 +21,18 @@ public class User {
         this.role = role;
         this.address = address;
         this.balance = balance;
+        this.bsb = BSB;
     }
 
     public User(){}
 
+    public String getBsb() {
+        return bsb;
+    }
+
+    public void setBsb(String bsb) {
+        this.bsb = bsb;
+    }
 
     public String getUserid() {
         return userid;

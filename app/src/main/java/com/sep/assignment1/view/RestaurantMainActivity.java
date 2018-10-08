@@ -95,7 +95,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         if (mAuth.getCurrentUser() != null) {
@@ -192,7 +192,7 @@ public class RestaurantMainActivity extends AppCompatActivity
             ActivityCompat.finishAffinity(RestaurantMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

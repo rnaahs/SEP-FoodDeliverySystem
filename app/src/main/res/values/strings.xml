@@ -100,4 +100,10 @@
         <item>8</item>
     </string-array>
     <string name="title_activity_account">AccountActivity</string>
+    <string name="title_activity_balance">BalanceActivity</string>
+    <string name="title_activity_restaurant_signup">RestaurantSignupActivity</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="address">Address</string>
+    <string name="bsb">bsb</string>
 </resources>
