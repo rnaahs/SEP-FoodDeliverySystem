@@ -24,6 +24,7 @@ public class User {
         this.bsb = BSB;
     }
 
+
     public User(){}
 
     public String getBsb() {

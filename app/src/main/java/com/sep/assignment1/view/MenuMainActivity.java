@@ -30,9 +30,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.FoodRecyclerTouchListener;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Cart;
 import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.FoodAdapter;
 import com.sep.assignment1.model.Menu;
@@ -47,6 +49,9 @@ public class MenuMainActivity extends AppCompatActivity
     private RecyclerView mFoodItemRv;
     private FoodAdapter mFoodAdapter;
     private ArrayList<Food> mFoodArrayList;
+    private ArrayList<Food> mFoodCartList= new ArrayList<>();
+    private ArrayList<Cart> mCartList;
+    private Food food;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
@@ -58,10 +63,16 @@ public class MenuMainActivity extends AppCompatActivity
     private int mRole = 0;
     private DatabaseReference mFirebaseReference;
     private DatabaseReference mFirebaseUserReference;
+    private DatabaseReference mFirebaseCartReference;
+    private double mCurrentPrice;
+    private String mQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         setContentView(R.layout.activity_menu_main);
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
 
@@ -84,13 +95,10 @@ public class MenuMainActivity extends AppCompatActivity
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseInstance.getReference("Menu");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
+        mFirebaseCartReference = mFirebaseInstance.getReference("cart");
         mDatabaseReference.keepSynced(true);
         setFoodItemsFromDB();
         mFoodAdapter.notifyDataSetChanged();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_food_btn);
@@ -139,6 +147,32 @@ public class MenuMainActivity extends AppCompatActivity
             @Override
             public void onClick(View view, int position) {
 
+
+                try {
+
+                    food = mFoodArrayList.get(position);
+                    mFoodCartList.add(food);
+
+
+                    mFirebaseCartReference.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Cart currentCart = dataSnapshot.getValue(Cart.class);
+                            mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    double newPrice = mCurrentPrice + food.getFoodPrice();
+
+                    Cart cart = new Cart(mAuth.getUid(), mFoodCartList, mQuantity, String.valueOf(newPrice), null, mRestaurantKey);
+                    mFirebaseCartReference.child(mAuth.getUid()).setValue(cart);
+                }catch (Exception ex){
+                    Log.e("Food Adapter", "Exception:" + ex);
+                }
 
                 /*
                 Food food = mFoodArrayList.get(position);
@@ -282,6 +316,7 @@ public class MenuMainActivity extends AppCompatActivity
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

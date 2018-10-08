@@ -11,15 +11,17 @@ public class Cart implements Parcelable {
     private String mQuantity;
     private String mPrice;
     private String mDiscount;
+    private String mRestaurantID;
 
     public Cart(){}
 
-    public Cart(String CartID, ArrayList<Food> FoodArrayList, String Quantity, String Price, String Discount) {
+    public Cart(String CartID, ArrayList<Food> FoodArrayList, String Quantity, String Price, String Discount, String RestaurantID) {
         this.mCartID = CartID;
         this.mFoodArrayList = FoodArrayList;
         this.mQuantity = Quantity;
         this.mPrice = Price;
         this.mDiscount = Discount;
+        this.mRestaurantID = RestaurantID;
     }
 
     protected Cart(Parcel in) {
@@ -28,6 +30,7 @@ public class Cart implements Parcelable {
         this.mQuantity = in.readString();
         this.mPrice = in.readString();
         this.mDiscount = in.readString();
+        this.mRestaurantID = in.readString();
     }
 
     public static final Creator<Cart> CREATOR = new Creator<Cart>() {
@@ -82,6 +85,14 @@ public class Cart implements Parcelable {
         this.mDiscount = mDiscount;
     }
 
+    public String getmRestaurantID() {
+        return mRestaurantID;
+    }
+
+    public void setmRestaurantID(String mRestaurantID) {
+        this.mRestaurantID = mRestaurantID;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -94,5 +105,6 @@ public class Cart implements Parcelable {
         dest.writeString(mQuantity);
         dest.writeString(mPrice);
         dest.writeString(mDiscount);
+        dest.writeString(mRestaurantID);
         }
     }

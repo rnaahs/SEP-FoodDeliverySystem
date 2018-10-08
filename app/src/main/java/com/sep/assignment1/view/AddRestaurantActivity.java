@@ -292,7 +292,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private void addRestaurant(String restaurantId, String name, String type, String country, String address, String status, String imageUri){
         Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, imageUri);
 
-        mFirebaseReference.child(restaurantId).setValue(restaurant);
+        mFirebaseReference.child(mAuth.getUid()).child(restaurantId).setValue(restaurant);
     }
 
     private void getUserProfile(final View headerView){
