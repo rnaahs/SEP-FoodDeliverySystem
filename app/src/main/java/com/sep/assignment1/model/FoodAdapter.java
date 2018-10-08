@@ -26,16 +26,11 @@ import java.util.ArrayList;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private ArrayList<Food> mFoodList;
-    private ArrayList<Food> mFoodCartList= new ArrayList<>();
-    private ArrayList<Cart> mCartList;
     private Context mContext;
     private int mRole;
     private Food food;
-    private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private FirebaseAuth mAuth;
-    private String mQuantity;
-    private double mCurrentPrice;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView mFoodNameTv;
@@ -90,8 +85,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        mFirebaseInstance = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseInstance.getReference("cart");
 
         food = mFoodList.get(position);
         Log.d("MENUTEST", "Food Id: " + food.getFoodId());
@@ -100,16 +93,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         holder.mFoodNameTv.setText(food.getFoodName());
         holder.mFoodPriceTv.setText("$"+food.getFoodPrice());
         holder.mFoodDescriptionTv.setText(food.getFoodDescription());
-        mQuantity = holder.mQuantitySpi.getSelectedItem().toString();
 
 
-        ((ViewHolder)holder).mCartBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                addToCart(food, mQuantity);
-            }
-        });
 
 
     }
@@ -119,31 +104,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         return mFoodList.size();
     }
 
-    private void addToCart(Food food, String mQuantity){
-        try {
-            mFoodCartList.add(food);
 
-
-            mDatabaseReference.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Cart currentCart = dataSnapshot.getValue(Cart.class);
-                    mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-            double newPrice = mCurrentPrice + food.getFoodPrice();
-
-            Cart cart = new Cart(mAuth.getUid(), mFoodCartList, mQuantity, String.valueOf(newPrice), null);
-            mDatabaseReference.child(mAuth.getUid()).setValue(cart);
-        }catch (Exception ex){
-            Log.e("Food Adapter", "Exception:" + ex);
-        }
-
-    }
 }
 
