@@ -86,17 +86,19 @@ public class DeliveryMainActivity extends AppCompatActivity implements Navigatio
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(DeliveryMainActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(DeliveryMainActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(DeliveryMainActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(DeliveryMainActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(DeliveryMainActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(DeliveryMainActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -105,7 +107,7 @@ public class DeliveryMainActivity extends AppCompatActivity implements Navigatio
             ActivityCompat.finishAffinity(DeliveryMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.delivery_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

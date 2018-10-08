@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -33,8 +34,10 @@ import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.MenuAdapter;
+import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantMainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,10 +45,12 @@ public class RestaurantMainActivity extends AppCompatActivity
     private RecyclerView mMenuItemRv;
     private MenuAdapter mMenuAdapter;
     private ArrayList<Menu> mMenuArrayList;
+    private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private String mRestaurantKey;
     private final int REQUEST_CODE = 1;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,7 @@ public class RestaurantMainActivity extends AppCompatActivity
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseInstance.getReference("Menu");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
         mDatabaseReference.keepSynced(true);
 
         setMenuItemsFromDB();
@@ -91,7 +97,10 @@ public class RestaurantMainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.restaurant_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
         mMenuItemRv.addOnItemTouchListener(new MenuRecyclerTouchListener(getApplicationContext(),mMenuItemRv, new MenuRecyclerTouchListener.ClickListener(){
             @Override
             public void onClick(View view, int position) {
@@ -162,17 +171,19 @@ public class RestaurantMainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(RestaurantMainActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(RestaurantMainActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(RestaurantMainActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(RestaurantMainActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(RestaurantMainActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(RestaurantMainActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -181,10 +192,11 @@ public class RestaurantMainActivity extends AppCompatActivity
             ActivityCompat.finishAffinity(RestaurantMainActivity.this);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.restaurant_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     //Restaurant data change listener
       private void setMenuItemsFromDB(){
@@ -223,6 +235,40 @@ public class RestaurantMainActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

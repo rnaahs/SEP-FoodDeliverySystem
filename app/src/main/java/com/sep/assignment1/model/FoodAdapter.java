@@ -58,16 +58,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             mFoodNameTv = (TextView) itemView.findViewById(R.id.food_item_name_tv);
             mFoodPriceTv = (TextView) itemView.findViewById(R.id.food_item_price_tv);
             mFoodDescriptionTv = (TextView) itemView.findViewById(R.id.food_item_description_tv);
-            mFoodEditBtn = (Button) itemView.findViewById(R.id.food_item_edit_btn);
             mFoodImageView = (ImageView) itemView.findViewById(R.id.food_item_iv);
             mFoodEditBtn.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-            mFoodDeleteBtn = (Button) itemView.findViewById(R.id.food_item_delete_btn);
-            mFoodDeleteBtn.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
 

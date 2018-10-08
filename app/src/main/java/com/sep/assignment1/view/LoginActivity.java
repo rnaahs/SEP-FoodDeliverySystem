@@ -39,11 +39,11 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Button mBtnSignup, mBtnLogin, mBtnReset;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseReference;
     private User user;
     private List<User> mUserList = new ArrayList<>();
     private String mUserId;
     public int mRole;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,14 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseReference = mFirebaseInstance.getReference("user");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
-
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile();
+            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            LoginActivity.this.finish();
+        }
 
         if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
@@ -180,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     private void getUserProfile(){
-        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         User user = dataSnapshot.getValue(User.class);

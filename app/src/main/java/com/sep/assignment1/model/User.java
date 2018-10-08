@@ -22,9 +22,8 @@ public class User {
         this.balance = balance;
     }
 
-    public User(){
+    public User(){}
 
-    }
 
     public String getUserid() {
         return userid;

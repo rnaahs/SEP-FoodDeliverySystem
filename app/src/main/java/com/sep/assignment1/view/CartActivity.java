@@ -52,7 +52,9 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private Button orderBtn;
     private ArrayList<Food> mFoodCartArrayList;
     private ArrayList<Cart> mCartArrayList;
+    private List<User> mUserList = new ArrayList<>();
     private CartAdapter mCartAdapter;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseReference = mFirebaseInstance.getReference("cart");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         mFoodCartArrayList = new ArrayList<>();
         mCartArrayList = new ArrayList<>();
@@ -98,6 +101,10 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
     }
 
 
@@ -139,17 +146,19 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(CartActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(CartActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(CartActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(CartActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(CartActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(CartActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -196,6 +205,40 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                     }
                 }
                 mCartAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
 
             @Override

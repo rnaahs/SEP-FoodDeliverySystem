@@ -31,13 +31,13 @@ import java.util.List;
 public class BalanceActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseReference;
     private TextView mBalanceTV;
     private List<User> mUserList = new ArrayList<>();
     private Button mTopupBtn, mWithdrawnBtn;
     private User user;
     private String mUserID;
     private Double mBalance;
+    private DatabaseReference mFirebaseUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         }
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseReference = mFirebaseInstance.getReference("user");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         mBalanceTV = (TextView) findViewById(R.id.balanceTV);
         mTopupBtn = (Button) findViewById(R.id.topupBtn);
@@ -79,7 +79,10 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
 
     }
 
@@ -122,17 +125,17 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(BalanceActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(BalanceActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
 
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -147,7 +150,7 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
     }
 
     private void addBalanceListener() {
-        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -181,6 +184,40 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
                     mBalanceTV.setText(mBalance.toString());
                     return;
                 }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
 
             @Override

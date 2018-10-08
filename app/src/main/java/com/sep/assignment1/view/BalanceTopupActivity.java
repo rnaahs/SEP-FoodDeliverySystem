@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,7 +32,6 @@ import java.util.List;
 public class BalanceTopupActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseReference;
     private String mUserID;
     private EditText mCardNumET, mCardExpireET, mCardCCVET, mNameET, mAmountET;
     private Button mTopupBtn;
@@ -39,6 +39,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
     private Double mBalance;
     private User user;
     private int mPosition;
+    private DatabaseReference mFirebaseUserReference;
 
 
     @Override
@@ -54,7 +55,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         }
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseReference = mFirebaseInstance.getReference("user");
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
         mCardNumET = (EditText) findViewById(R.id.topup_card_numET);
         mCardExpireET = (EditText) findViewById(R.id.topup_card_expireET);
@@ -81,6 +82,10 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
     }
 
 
@@ -122,17 +127,19 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(BalanceTopupActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(BalanceTopupActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(BalanceTopupActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
@@ -147,7 +154,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
     }
 
     private void uploadBalanceListener(Double amount){
-        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -185,10 +192,42 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
             Double balance = mBalance + amount;
             user = mUserList.get(mPosition);
             user = new User(user.getUserid(), user.getFirstname(), user.getLastname(),user.getEmail(), user.getRole(), user.getAddress(),balance);
-            mFirebaseReference.child(mUserID).setValue(user);
+            mFirebaseUserReference.child(mUserID).setValue(user);
             finish();
         }
+    }
+    private void getUserProfile(final View headerView){
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user.getUserid().equals(mAuth.getUid())) {
+                    TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
+                    TextView email = (TextView) headerView.findViewById(R.id.email);
+                    fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
+                    email.setText(user.getEmail());
+                }
+            }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
 
