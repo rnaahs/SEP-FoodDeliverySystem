@@ -60,26 +60,9 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
             getUserProfile();
-            if(mRole == 0){
-                Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-                startActivity(intent);
-                LoginActivity.this.finish();
-            }
-            else if(mRole == 1){
-                Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                startActivity(intent);
-                LoginActivity.this.finish();
-            }
-            else if(mRole == 2){
-                Intent intent = new Intent(LoginActivity.this, DeliveryMainActivity.class);
-                startActivity(intent);
-                LoginActivity.this.finish();
-            }
-            else {
-                Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                startActivity(intent);
-                LoginActivity.this.finish();
-            }
+            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            LoginActivity.this.finish();
         }
 
         mInputEmail = (EditText) findViewById(R.id.email);

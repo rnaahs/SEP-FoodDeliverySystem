@@ -55,20 +55,16 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_user_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
-
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
-
 
         if(FirebaseAuth.getInstance()!=null) {
             mAuth = FirebaseAuth.getInstance();
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,13 +75,10 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
+
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
         }
-
-
-
-
 
         //Recycle View
         mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
@@ -108,7 +101,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             public void onClick(View view, int position) {
                 Restaurant restaurant = mRestaurantList.get(position);
                 Intent intent = new Intent(UserMainActivity.this, RestaurantMainActivity.class);
-                Log.d("MENUTEST", restaurant.Id);
                 intent.putExtra("RestaurantKey", restaurant.Id);
                 startActivity(intent);
             }
@@ -119,20 +111,13 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             }
         }));
 
-        if(mRole == 0){
-            Log.d("TEST", "You are in");
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
-            fab.setVisibility(View.GONE);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
-                }
-            });
-        }
-
-
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
+            }
+        });
 
     }
 
@@ -152,8 +137,9 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_cart) {
+            Intent intent = new Intent(UserMainActivity.this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -195,21 +181,15 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             private Restaurant restaurant;
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-
-
-                if(mRole == 0) {
-                    restaurant = dataSnapshot.getValue(Restaurant.class);
-                    mRestaurantList.add(restaurant);
-
-                } else if(mRole == 1) {
-                    for (DataSnapshot child : dataSnapshot.getChildren()) {
-                        if (child.getKey().toString().equals(mAuth.getUid())) {
-                            restaurant = child.getValue(Restaurant.class);
-                            mRestaurantList.add(restaurant);
-
-                        }
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    if(mRole == 0) {
+                        restaurant = ds.getValue(Restaurant.class);
+                        mRestaurantList.add(restaurant);
                     }
-
+                    else if(mRole == 1 && mAuth.getUid().equals(dataSnapshot.getKey())){
+                        restaurant = ds.getValue(Restaurant.class);
+                        mRestaurantList.add(restaurant);
+                    }
                 }
                 //Check for null
                 if (restaurant == null) {
@@ -256,6 +236,12 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mRole = user.getRole();
+                    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
+                    if(mRole == 0){
+                        fab.setVisibility(View.GONE);
+                    } else if(mRole == 1) {
+                        fab.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
