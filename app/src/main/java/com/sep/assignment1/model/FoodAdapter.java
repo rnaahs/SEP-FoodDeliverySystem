@@ -41,8 +41,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         private TextView mFoodNameTv;
         private TextView mFoodPriceTv;
         private TextView mFoodDescriptionTv;
-        private Button mFoodEditBtn;
-        private Button mFoodDeleteBtn;
         private Button mCartBtn;
         private Spinner mQuantitySpi;
         private ImageView mFoodImageView;
@@ -59,12 +57,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             mFoodPriceTv = (TextView) itemView.findViewById(R.id.food_item_price_tv);
             mFoodDescriptionTv = (TextView) itemView.findViewById(R.id.food_item_description_tv);
             mFoodImageView = (ImageView) itemView.findViewById(R.id.food_item_iv);
-            mFoodEditBtn.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
 
-                }
-            });
 
             mCartBtn = (Button) itemView.findViewById(R.id.addCartBtn);
             mQuantitySpi = (Spinner) itemView.findViewById(R.id.quantity_spinner);
@@ -72,13 +65,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             try{
                 mRole = 0;
                 if(mRole == 0){
-                    mFoodEditBtn.setVisibility(View.GONE);
-                    mFoodDeleteBtn.setVisibility(View.GONE);
                     mCartBtn.setVisibility(View.VISIBLE);
                 }
                 else if (mRole == 1){
-                    mFoodEditBtn.setVisibility(View.VISIBLE);
-                    mFoodDeleteBtn.setVisibility(View.VISIBLE);
                     mCartBtn.setVisibility(View.INVISIBLE);
                 }
             }catch (Exception ex){
