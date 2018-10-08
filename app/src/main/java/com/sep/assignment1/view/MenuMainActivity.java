@@ -77,6 +77,7 @@ public class MenuMainActivity extends AppCompatActivity
         mFoodItemRv.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
         mFoodItemRv.setItemAnimator(new DefaultItemAnimator());
 
+
         mFoodAdapter = new FoodAdapter(mFoodArrayList, getApplicationContext());
         mFoodItemRv.setAdapter(mFoodAdapter);
 
@@ -89,6 +90,8 @@ public class MenuMainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_food_btn);
         fab.setOnClickListener(new View.OnClickListener() {

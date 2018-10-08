@@ -46,8 +46,8 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private String mUserID;
+    private String mRestaurantID;
     private TextView txtTotalPrice;
     private Button orderBtn;
     private ArrayList<Food> mFoodCartArrayList;
@@ -89,6 +89,15 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
         txtTotalPrice = (TextView) findViewById(R.id.cart_totalTV);
         orderBtn = (Button) findViewById(R.id.placeOrderBtn);
+        orderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
+                intent.putExtra("CartID", mUserID);
+                intent.putExtra("RestaurantID", mRestaurantID);
+                startActivity(intent);
+            }
+        });
 
 
 

@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.view.LoginActivity;
+import com.sep.assignment1.view.RestaurantMainActivity;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private ArrayList<Food> mFoodCartList= new ArrayList<>();
     private ArrayList<Cart> mCartList;
     private Context mContext;
-    private LoginActivity loginActivity;
     private int mRole;
     private Food food;
     private DatabaseReference mDatabaseReference;
@@ -50,7 +50,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-
 
 
             mFoodNameTv = (TextView) itemView.findViewById(R.id.food_item_name_tv);
@@ -102,6 +101,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         holder.mFoodPriceTv.setText("$"+food.getFoodPrice());
         holder.mFoodDescriptionTv.setText(food.getFoodDescription());
         mQuantity = holder.mQuantitySpi.getSelectedItem().toString();
+
 
         ((ViewHolder)holder).mCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
