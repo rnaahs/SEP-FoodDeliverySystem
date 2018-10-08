@@ -119,13 +119,17 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             }
         }));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
-            }
-        });
+        if(mRole == 0){
+            Log.d("TEST", "You are in");
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
+            fab.setVisibility(View.GONE);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
+                }
+            });
+        }
 
 
 

@@ -54,10 +54,6 @@
             android:label="@string/title_activity_user_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.BalanceActivity"
-            android:label="@string/title_activity_balanc"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".view.BalanceTopupActivity"
             android:label="@string/title_activity_balance_topup"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -69,7 +65,12 @@
             android:name=".view.AccountActivity"
             android:label="@string/title_activity_account"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".DriverMain"></activity>
+        <activity android:name=".DriverMain" />
+        <activity
+            android:name=".view.BalanceActivity"
+            android:label="@string/title_activity_balance"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".view.RestaurantSignupActivity"></activity>
     </application>
 
 </manifest>

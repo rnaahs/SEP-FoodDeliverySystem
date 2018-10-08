@@ -191,7 +191,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         if(mBalance!=null){
             Double balance = mBalance + amount;
             user = mUserList.get(mPosition);
-            user = new User(user.getUserid(), user.getFirstname(), user.getLastname(),user.getEmail(), user.getRole(), user.getAddress(),balance);
+            user = new User(user.getUserid(), user.getFirstname(), user.getLastname(),user.getEmail(), user.getRole(), user.getAddress(),balance, null);
             mFirebaseUserReference.child(mUserID).setValue(user);
             finish();
         }
