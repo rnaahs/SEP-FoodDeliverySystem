@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -42,10 +41,8 @@ import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
-import com.sep.assignment1.model.Menu;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 public class AddFoodActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
@@ -161,7 +158,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_balance) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

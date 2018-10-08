@@ -75,6 +75,9 @@ public class DeliveryMainActivity extends AppCompatActivity implements Navigatio
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_cart){
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -86,7 +89,7 @@ public class DeliveryMainActivity extends AppCompatActivity implements Navigatio
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_balance) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

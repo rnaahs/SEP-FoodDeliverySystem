@@ -2,10 +2,7 @@ package com.sep.assignment1.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -30,7 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.MenuRecyclerTouchListener;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.MenuAdapter;
 
@@ -151,6 +147,9 @@ public class RestaurantMainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_cart){
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -162,7 +161,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_balance) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

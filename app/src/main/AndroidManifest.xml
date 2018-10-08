@@ -64,6 +64,10 @@
         <activity
             android:name=".view.CartActivity"
             android:label="@string/title_activity_cart"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.OrderActivity"
+            android:label="@string/title_activity_order"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

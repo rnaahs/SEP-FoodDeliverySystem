@@ -130,6 +130,9 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_cart){
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -141,7 +144,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_balance) {
             Intent intent = new Intent(UserMainActivity.this, BalanceActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
