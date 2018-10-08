@@ -88,21 +88,21 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_balance) {
+        if (id == R.id.nav_home) {
+            Intent intent = new Intent(OrderActivity.this, UserMainActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderActivity.this);
+        } else if (id == R.id.nav_manage_account) {
+            Intent intent = new Intent(OrderActivity.this, AccountActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderActivity.this);
+        } else if (id == R.id.nav_manage_balance) {
 
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent (OrderActivity.this, LoginActivity.class);
+            Intent intent = new Intent(OrderActivity.this, LoginActivity.class);
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderActivity.this);
         }
