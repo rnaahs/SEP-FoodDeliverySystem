@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,13 +31,10 @@ import com.sep.assignment1.R;
 import com.sep.assignment1.model.Cart;
 import com.sep.assignment1.model.CartAdapter;
 import com.sep.assignment1.model.Food;
-import com.sep.assignment1.model.Order;
 import com.sep.assignment1.model.User;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class CartActivity extends AppCompatActivity   implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;

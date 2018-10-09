@@ -140,7 +140,7 @@ public class UserSignupActivity extends AppCompatActivity {
     }
 
     private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String bsb){
-        User user = new User(userId, firstname, lastname, email, role, address,balance, "");
+        User user = new User(userId, firstname, lastname, email, role, address,balance, 0);
        mFirebaseReference.child(userId).setValue(user);
 
     }

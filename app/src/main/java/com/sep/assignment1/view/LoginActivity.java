@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -18,15 +16,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
@@ -39,10 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Button mBtnSignup, mBtnLogin, mBtnReset;
     private FirebaseDatabase mFirebaseInstance;
-    private User user;
     private List<User> mUserList = new ArrayList<>();
     private String mUserId;
-    public int mRole;
     private DatabaseReference mFirebaseUserReference;
 
     @Override
@@ -59,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
-            getUserProfile();
             Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
             startActivity(intent);
             LoginActivity.this.finish();
@@ -82,13 +74,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-/*        mBtnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
-            }
-        });*/
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,39 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         });
-            }
-        });
-    }
-    private void getUserProfile(){
-        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User user = dataSnapshot.getValue(User.class);
-                        if(user.getUserid().equals(mUserId)){
-                            mRole = user.getRole();
-                        }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                mUserList.remove(user);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }

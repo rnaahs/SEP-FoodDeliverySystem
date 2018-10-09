@@ -1,14 +1,12 @@
 package com.sep.assignment1.view;
 
-import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,8 +32,6 @@ import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.User;
 
-import java.util.ArrayList;
-
 public class AccountActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
@@ -40,7 +39,11 @@ public class AccountActivity extends AppCompatActivity
     private DatabaseReference mFirebaseUserReference;
     private StorageReference mStorageReference;
     private FirebaseStorage mStorageInstance;
-    private ArrayList<User> mUserList = new ArrayList<>();
+    private EditText mFirstNameEt, mLastNameEt, mEmailEt, mAddressEt, mBSBEt;
+    private TextInputLayout mBSBTil;
+    private Button mEditAccBtn;
+    private int mRole;
+    private double mBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +59,52 @@ public class AccountActivity extends AppCompatActivity
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFirstNameEt = findViewById(R.id.firstname_et);
+        mLastNameEt = findViewById(R.id.lastname_et);
+        mEmailEt = findViewById(R.id.email_et);
+        mAddressEt = findViewById(R.id.address_et);
+        mBSBEt = findViewById(R.id.bsb_et);
+        mEditAccBtn = findViewById(R.id.edit_account_btn);
+        mBSBTil = findViewById(R.id.bsb_til);
+        mEditAccBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                String firstname = mFirstNameEt.getText().toString();
+                String lastname = mLastNameEt.getText().toString();
+                String email = mEmailEt.getText().toString();
+                int bsb = Integer.parseInt(mBSBEt.getText().toString());
+                String address = mAddressEt.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.EmailEmpty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(firstname)) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.FirstNameEmpty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(lastname)) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.LastNameEmpty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(address)) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.AddressEmpty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(mBSBEt.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.BSBEmpty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                else {
+                    User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, bsb);
+                    mFirebaseUserReference.child(mAuth.getUid()).removeValue();
+                    mFirebaseUserReference.child(mAuth.getUid()).setValue(user);
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.EditAccountSuccess), Toast.LENGTH_SHORT).show();
+                }
             }
+
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -151,7 +193,19 @@ public class AccountActivity extends AppCompatActivity
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mFirstNameEt.setText(user.getFirstname());
+                    mLastNameEt.setText(user.getLastname());
+                    mEmailEt.setText(user.getEmail());
+                    mAddressEt.setText(user.getAddress());
+                    mBSBEt.setText(String.valueOf(user.getBsb()));
+                    mRole = user.getRole();
+                    mBalance = user.getBalance();
+                    if(mRole == 0) {
+                        mBSBEt.setVisibility(View.GONE);
+                        mBSBTil.setVisibility(View.GONE);
+                    }
                 }
+
             }
 
             @Override

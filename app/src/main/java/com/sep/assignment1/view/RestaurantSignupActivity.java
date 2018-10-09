@@ -78,7 +78,7 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                 final String firstname = mInputFirstname.getText().toString().trim();
                 final String lastname = mInputLastname.getText().toString().trim();
                 final String address = mInputAddress.getText().toString().trim();
-                final String bsb = mInputBSB.getText().toString();
+                final int bsb = Integer.parseInt(mInputBSB.getText().toString());
 
 
                 if (TextUtils.isEmpty(email)) {
@@ -141,7 +141,7 @@ public class RestaurantSignupActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB){
+    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, int BSB){
         User user = new User(userId, firstname, lastname, email, role, address,balance, BSB);
         mFirebaseReference.child(userId).setValue(user);
 
