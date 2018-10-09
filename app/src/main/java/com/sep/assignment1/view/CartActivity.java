@@ -177,22 +177,24 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     }
 
     private void setCartItemsFromDB(){
-        mFirebaseReference.child(mUserID).addChildEventListener(new ChildEventListener() {
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(child.getKey().toString().equals(mUserID)){
-                        Cart cart = child.getValue(Cart.class);
+                    if(dataSnapshot.getKey().toString().equals(mUserID)) {
+                        Cart cart = dataSnapshot.getValue(Cart.class);
                         mCartArrayList.add(cart);
-                        if(cart.getmFoodArrayList()!=null){
-                            for(Food food : cart.getmFoodArrayList()){
+                        txtTotalPrice.setText(cart.getmPrice());
+
+                        if (cart.getmFoodArrayList() != null) {
+                            for (Food food : cart.getmFoodArrayList()) {
                                 mFoodCartArrayList.add(food);
-                                Log.e("Cart","Data has changed" + food.getFoodName() + food.getFoodPrice());
+                                Log.e("Cart", "Data has changed" + food.getFoodName() + food.getFoodPrice());
                             }
                         }
                     }
-                }
+
                 mCartAdapter.notifyDataSetChanged();
+
                 Log.e("Cart","No Data has changed");
             }
 
