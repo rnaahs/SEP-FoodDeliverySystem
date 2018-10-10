@@ -75,6 +75,15 @@
             android:name=".view.FirebaseImageActivity"
             android:label="@string/title_activity_firebase_image"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.DriverSignupActivity"
+            android:label="@string/driver_signup_activity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.OrderActivity"
+            android:label="@string/orderactivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

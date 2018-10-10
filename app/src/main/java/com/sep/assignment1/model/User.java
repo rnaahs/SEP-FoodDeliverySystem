@@ -11,9 +11,13 @@ public class User {
     private int role;
     private String address;
     private double balance;
-    private int bsb;
+    private String bsb;
+    private String vehicle;
+    private String licenceDr;
 
-    public User(String userId, String firstname, String lastname, String email, int role, String address, double balance, int BSB) {
+
+
+    public User(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB, String licenceDr, String vehicle) {
         this.userid = userId;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -22,16 +26,33 @@ public class User {
         this.address = address;
         this.balance = balance;
         this.bsb = BSB;
+        this.licenceDr = licenceDr;
+        this.vehicle = vehicle;
     }
 
+    public String getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(String vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public String getLicenceDr() {
+        return licenceDr;
+    }
+
+    public void setLicenceDr(String licenceDr) {
+        this.licenceDr = licenceDr;
+    }
 
     public User(){}
 
-    public int getBsb() {
+    public String getBsb() {
         return bsb;
     }
 
-    public void setBsb(int bsb) {
+    public void setBsb(String bsb) {
         this.bsb = bsb;
     }
 

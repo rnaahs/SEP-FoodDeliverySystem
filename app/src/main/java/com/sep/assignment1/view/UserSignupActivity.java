@@ -110,7 +110,7 @@ public class UserSignupActivity extends AppCompatActivity {
                                     Toast.makeText(UserSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 0, address,0, "");
+                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 0, address,0, "", 0, "");
                                     mAuth.signInWithEmailAndPassword(email,password);
                                     startActivity(new Intent(UserSignupActivity.this, UserMainActivity.class));
                                     UserSignupActivity.this.finish();
@@ -139,9 +139,9 @@ public class UserSignupActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String bsb){
-        User user = new User(userId, firstname, lastname, email, role, address,balance, 0);
-       mFirebaseReference.child(userId).setValue(user);
+    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB, int licence, String vehicle){
+        User user = new User(userId, firstname, lastname, email, role, address,balance, BSB, "","");
+        mFirebaseReference.child(userId).setValue(user);
 
     }
 }

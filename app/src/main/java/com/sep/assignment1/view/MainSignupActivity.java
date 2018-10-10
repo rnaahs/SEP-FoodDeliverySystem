@@ -27,7 +27,9 @@ public class MainSignupActivity extends AppCompatActivity {
         mDeliverySignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                Intent intent = new Intent(MainSignupActivity.this, DriverSignupActivity.class);
+                startActivity(intent);
+
             }
         });
         mRestaurantSignupBtn = (Button) findViewById(R.id.restaurant_signup_btn);

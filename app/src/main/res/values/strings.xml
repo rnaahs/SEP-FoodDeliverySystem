@@ -23,12 +23,7 @@
     <string name="tripNull">Trip is null</string>
     <string name="NoticeDialogFragment">NoticeDialogFragment</string>
     <string name="EmailEmpty">Enter email address!</string>
-    <string name="FirstNameEmpty">Enter first name!</string>
-    <string name="LastNameEmpty">Enter last name!</string>
     <string name="PasswordEmpty">Enter password!</string>
-    <string name="AddressEmpty">Enter Address!</string>
-    <string name="BSBEmpty">Enter BSB!</string>
-    <string name="EditAccountSuccess">Successfully Edited Account!</string>
     <string name="PasswordFormat">Password too short, enter minimum 6 characters!</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
@@ -43,7 +38,6 @@
     <string name="hint_password">Password</string>
     <string name="hint_name">Fullname</string>
     <string name="btn_login">LOGIN</string>
-    <string name="edit_account">Edit Account</string>
     <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
     <string name="btn_reset_password">Reset Password</string>
@@ -112,5 +106,6 @@
     <string name="last_name">Last Name</string>
     <string name="address">Address</string>
     <string name="bsb">bsb</string>
-    <string name="title_activity_firebase_image">FirebaseImageActivity</string>
+    <string name="driver_signup_activity">DriverSignupActivity</string>
+    <string name="orderactivity">OrderActivity</string>
 </resources>
