@@ -21,9 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.User;
 
-public class RestaurantSignupActivity extends AppCompatActivity {
+public class DriverSignupActivity extends AppCompatActivity {
 
-    private EditText mInputEmail, mInputPassword, mInputFirstname, mInputLastname, mInputAddress, mInputBSB;
+    private EditText mInputEmail, mInputPassword, mInputFirstname, mInputLastname, mInputAddress, mLicence, mVehicle;
     private Button mBtnSignIn, mBtnSignUp, mBtnResetPassword;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
@@ -33,7 +33,7 @@ public class RestaurantSignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_signup);
+        setContentView(R.layout.driver_signup);
 
 
 
@@ -48,12 +48,18 @@ public class RestaurantSignupActivity extends AppCompatActivity {
         mInputFirstname = (EditText) findViewById(R.id.firstname);
         mInputLastname = (EditText) findViewById(R.id.lastname);
         mInputAddress = (EditText) findViewById(R.id.address);
-        mInputBSB = (EditText) findViewById(R.id.bsb);
+
+        mLicence = (EditText) findViewById(R.id.licence);
+       mVehicle = (EditText) findViewById(R.id.vehicle);
+
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mBtnResetPassword = (Button) findViewById(R.id.btn_reset_password);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseReference = mFirebaseInstance.getReference("user");
+
+
+
 
         /*mBtnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,10 +68,11 @@ public class RestaurantSignupActivity extends AppCompatActivity {
             }
         });*/
 
+
         mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RestaurantSignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(DriverSignupActivity.this, LoginActivity.class));
             }
         });
 
@@ -78,7 +85,8 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                 final String firstname = mInputFirstname.getText().toString().trim();
                 final String lastname = mInputLastname.getText().toString().trim();
                 final String address = mInputAddress.getText().toString().trim();
-                final String bsb = mInputBSB.getText().toString();
+                final String licence = mLicence.getText().toString().trim();
+                final String vehicle = mVehicle.getText().toString().trim();
 
 
                 if (TextUtils.isEmpty(email)) {
@@ -100,23 +108,23 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                 //create user
 
                 mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(RestaurantSignupActivity.this, new OnCompleteListener<AuthResult>() {
+                        .addOnCompleteListener(DriverSignupActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Toast.makeText(RestaurantSignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DriverSignupActivity.this, getResources().getString(R.string.signupSuccess), Toast.LENGTH_SHORT).show();
                                 mProgressBar.setVisibility(View.GONE);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the mAuth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(RestaurantSignupActivity.this, getResources().getString(R.string.signupFail),
+                                    Toast.makeText(DriverSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 0, address,0, "","","");
+                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 2, address,0, "" , licence,vehicle);
                                     mAuth.signInWithEmailAndPassword(email,password);
-                                    startActivity(new Intent(RestaurantSignupActivity.this, UserMainActivity.class));
-                                    RestaurantSignupActivity.this.finish();
-                                    ActivityCompat.finishAffinity(RestaurantSignupActivity.this);
+                                    startActivity(new Intent(DriverSignupActivity.this, UserMainActivity.class));
+                                    DriverSignupActivity.this.finish();
+                                    ActivityCompat.finishAffinity(DriverSignupActivity.this);
                                 }
                             }
                         });
@@ -141,8 +149,8 @@ public class RestaurantSignupActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String BSB, String licence, String vehicle){
-        User user = new User(userId, firstname, lastname, email, role, address,balance, BSB,"","" );
+    private void addUserListener(String userId, String firstname, String lastname, String email, int role, String address, double balance, String bsb, String licence, String vehicle){
+        User user = new User(userId, firstname, lastname, email, role, address,balance, "", licence, vehicle);
         mFirebaseReference.child(userId).setValue(user);
 
     }

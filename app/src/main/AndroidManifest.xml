@@ -71,6 +71,15 @@
             android:name=".view.MenuMainActivity"
             android:label="@string/title_activity_menu_main"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.DriverSignupActivity"
+            android:label="@string/driver_signup_activity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.OrderActivity"
+            android:label="@string/orderactivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

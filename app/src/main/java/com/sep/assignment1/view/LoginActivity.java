@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,8 +61,14 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
             getUserProfile();
-            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-            startActivity(intent);
+            if(mRole == 0 || mRole == 1) {
+                Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
+                startActivity(intent);
+            }
+            else {
+                Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
+                startActivity(intent);
+            }
             LoginActivity.this.finish();
         }
 
@@ -125,35 +132,16 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    if(mInputEmail.getText().toString().equals("user@gmail.com")){
+                                    if(mRole == 0 || mRole == 1) {
                                         Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                         startActivity(intent);
-                                        LoginActivity.this.finish();
                                     }
-                                    else if(mInputEmail.getText().toString().equals("restaurant1@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                                        intent.putExtra("RestaurantKey", "-LMISe2xeWal_r-jVqnQ");
+                                    else {
+                                        Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
                                         startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else if(mInputEmail.getText().toString().equals("restaurant2@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                                        intent.putExtra("RestaurantKey", "-LMIdLwXhTj3ly-BRE0P");
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else if(mInputEmail.getText().toString().equals("driver@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, DeliveryMainActivity.class);
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else{
-                                        Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
                                     }
 
-
+                                    LoginActivity.this.finish();
                                 }
                             }
                         });
@@ -167,6 +155,7 @@ public class LoginActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                         if(user.getUserid().equals(mUserId)){
                             mRole = user.getRole();
+                            Log.d("TEST", "Role is "+ mRole);
                         }
 
             }

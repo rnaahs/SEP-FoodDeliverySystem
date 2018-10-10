@@ -106,4 +106,6 @@
     <string name="last_name">Last Name</string>
     <string name="address">Address</string>
     <string name="bsb">bsb</string>
+    <string name="driver_signup_activity">DriverSignupActivity</string>
+    <string name="orderactivity">OrderActivity</string>
 </resources>
