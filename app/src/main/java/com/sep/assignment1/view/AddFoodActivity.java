@@ -280,7 +280,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
     }
 
     private void getUserProfile(final View headerView){
-        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {

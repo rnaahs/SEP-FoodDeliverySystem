@@ -30,7 +30,6 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.MyViewHolder>
             super(view);
             name = (TextView) view.findViewById(R.id.cart_item_name);
             price = (TextView) view.findViewById(R.id.cart_item_price);
-            count = (TextView) view.findViewById(R.id.cart_item_count);
             image = (ImageView) view.findViewById(R.id.cart_item_iv);
         }
     }
