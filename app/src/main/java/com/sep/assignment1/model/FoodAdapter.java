@@ -1,6 +1,8 @@
 package com.sep.assignment1.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,16 +14,22 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.R;
 import com.sep.assignment1.view.LoginActivity;
 import com.sep.assignment1.view.RestaurantMainActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
@@ -29,7 +37,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     private Context mContext;
     private int mRole;
     private Food food;
-    private FirebaseDatabase mFirebaseInstance;
     private FirebaseAuth mAuth;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -87,9 +94,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         food = mFoodList.get(position);
-        Log.d("MENUTEST", "Food Id: " + food.getFoodId());
-        Log.d("MENUTEST", "Food Id: " + food.getFoodName());
-        holder.mFoodImageView.setImageResource(mContext.getResources().getIdentifier("drawable/"+food.getFoodImgURL(),null , mContext.getPackageName()));
+        // Get the data from an ImageView as bytes
+        holder.mFoodImageView.setDrawingCacheEnabled(true);
+        holder.mFoodImageView.buildDrawingCache();
         holder.mFoodNameTv.setText(food.getFoodName());
         holder.mFoodPriceTv.setText("$"+food.getFoodPrice());
         holder.mFoodDescriptionTv.setText(food.getFoodDescription());

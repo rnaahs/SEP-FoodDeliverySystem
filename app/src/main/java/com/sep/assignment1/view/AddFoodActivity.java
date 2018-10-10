@@ -218,6 +218,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
                 mFoodImageView.setImageBitmap(bitmap);
+                uploadFile();
             }
             catch (IOException e)
             {

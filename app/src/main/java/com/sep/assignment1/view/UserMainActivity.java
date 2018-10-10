@@ -82,7 +82,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         //Recycle View
         mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
-        mRestaurantAdapter = new RestaurantAdapter(mRestaurantList);
+        mRestaurantAdapter = new RestaurantAdapter(mRestaurantList, this);
         mRecycleView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
 
@@ -162,6 +162,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             startActivity(intent);
             ActivityCompat.finishAffinity(UserMainActivity.this);
         } else if (id == R.id.nav_order_history) {
+            Intent intent = new Intent(UserMainActivity.this, FirebaseImageActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();

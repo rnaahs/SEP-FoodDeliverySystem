@@ -27,7 +27,7 @@ public class MainSignupActivity extends AppCompatActivity {
         mDeliverySignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                
             }
         });
         mRestaurantSignupBtn = (Button) findViewById(R.id.restaurant_signup_btn);

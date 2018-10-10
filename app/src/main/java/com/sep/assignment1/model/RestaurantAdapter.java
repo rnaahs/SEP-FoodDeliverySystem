@@ -21,6 +21,7 @@ import java.util.List;
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.MyViewHolder>{
 
     private List<Restaurant> mRestaurant;
+    private Context mContext;
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView name, type, country, status, address;
@@ -37,8 +38,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
         }
     }
 
-    public RestaurantAdapter(List<Restaurant> mRestaurants){
+    public RestaurantAdapter(List<Restaurant> mRestaurants, Context context){
         this.mRestaurant = mRestaurants;
+        this.mContext = context;
     }
 
 
@@ -58,7 +60,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
         holder.type.setText(restaurant.Type);
         holder.country.setText(restaurant.Country);
         holder.status.setText(restaurant.Status);
-        Picasso.get().load(restaurant.ImageUri).fit().centerCrop().into(holder.image);
+        //Picasso.get().load(restaurant.ImageUri).fit().centerCrop().into(holder.image);
+        Picasso.with(mContext).load(restaurant.ImageUri).into(holder.image);
     }
 
     @Override

@@ -110,35 +110,10 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    if(mInputEmail.getText().toString().equals("user@gmail.com")){
+
                                         Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                         startActivity(intent);
                                         LoginActivity.this.finish();
-                                    }
-                                    else if(mInputEmail.getText().toString().equals("restaurant1@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                                        intent.putExtra("RestaurantKey", "-LMISe2xeWal_r-jVqnQ");
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else if(mInputEmail.getText().toString().equals("restaurant2@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, RestaurantMainActivity.class);
-                                        intent.putExtra("RestaurantKey", "-LMIdLwXhTj3ly-BRE0P");
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else if(mInputEmail.getText().toString().equals("driver@gmail.com")){
-                                        Intent intent = new Intent(LoginActivity.this, DeliveryMainActivity.class);
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-                                    else{
-                                        Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-                                        startActivity(intent);
-                                        LoginActivity.this.finish();
-                                    }
-
-
                                 }
                             }
                         });
