@@ -1,60 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin">
 
 
+    <ImageView
+        android:id="@+id/restaurant_imageView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="15dp"
+        />
 
     <LinearLayout
         android:id="@+id/linear2"
+        android:layout_marginTop="15dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="15dp">
-        <ImageView
-            android:id="@+id/restaurant_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="80dp"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/restaurant_nameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="McDonald's"
             android:textColor="@color/black"
-            android:textSize="15dp"
-            android:text="McDonald's"/>
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/restaurant_typeTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="Fast-Food"/>
+            android:text="Fast-Food"
+            android:textSize="15dp" />
+
         <TextView
             android:id="@+id/restaurant_countryTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="USA"/>
+            android:text="USA"
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/restaurant_statusTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/restaurant_addressTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
 
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

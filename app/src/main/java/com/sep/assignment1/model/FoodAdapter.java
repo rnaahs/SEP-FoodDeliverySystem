@@ -28,6 +28,7 @@ import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.R;
 import com.sep.assignment1.view.LoginActivity;
 import com.sep.assignment1.view.RestaurantMainActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -52,14 +53,10 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
-
-
             mFoodNameTv = (TextView) itemView.findViewById(R.id.food_item_name_tv);
             mFoodPriceTv = (TextView) itemView.findViewById(R.id.food_item_price_tv);
             mFoodDescriptionTv = (TextView) itemView.findViewById(R.id.food_item_description_tv);
             mFoodImageView = (ImageView) itemView.findViewById(R.id.food_item_iv);
-
-
             mCartBtn = (Button) itemView.findViewById(R.id.addCartBtn);
             mQuantitySpi = (Spinner) itemView.findViewById(R.id.quantity_spinner);
 
@@ -100,9 +97,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         holder.mFoodNameTv.setText(food.getFoodName());
         holder.mFoodPriceTv.setText("$"+food.getFoodPrice());
         holder.mFoodDescriptionTv.setText(food.getFoodDescription());
-
-
-
+        if(!food.getFoodImgURL().equals(""))  Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.mFoodImageView);
 
     }
 

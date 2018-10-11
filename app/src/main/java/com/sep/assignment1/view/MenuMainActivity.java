@@ -50,19 +50,17 @@ public class MenuMainActivity extends AppCompatActivity
     private ArrayList<Food> mFoodCartList= new ArrayList<>();
     private ArrayList<Cart> mCartList;
     private Food food;
-    private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mDatabaseReference;
     private FirebaseDatabase mFirebaseInstance;
     private String mMenuKey;
     private final int REQUEST_CODE = 1;
     private String mRestaurantKey;
     private String mMenuName;
-    private LoginActivity loginActivity;
-    private int mRole = 0;
-    private DatabaseReference mFirebaseReference;
     private DatabaseReference mFirebaseUserReference;
     private DatabaseReference mFirebaseCartReference;
     private double mCurrentPrice;
+    private String mMenuURL;
+    private int mRole;
     private String mQuantity;
 
     @Override
@@ -77,6 +75,7 @@ public class MenuMainActivity extends AppCompatActivity
         mMenuKey = getIntent().getStringExtra("MenuKey");
         mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
         mMenuName = getIntent().getStringExtra("MenuName");
+        mMenuURL = getIntent().getStringExtra("MenuImgURL");
 
         mFoodArrayList = new ArrayList<>();
 
@@ -91,7 +90,7 @@ public class MenuMainActivity extends AppCompatActivity
         mFoodItemRv.setAdapter(mFoodAdapter);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseInstance.getReference("Menu");
+        mDatabaseReference = mFirebaseInstance.getReference("menu");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
         mFirebaseCartReference = mFirebaseInstance.getReference("cart");
         mDatabaseReference.keepSynced(true);
@@ -151,11 +150,6 @@ public class MenuMainActivity extends AppCompatActivity
                     Log.e("Food Adapter", "Exception:" + ex);
                 }
 
-                /*
-                Food food = mFoodArrayList.get(position);
-                Intent intent = new Intent(MenuMainActivity.this, MenuMainActivity.class);
-                intent.putExtra("MenuKey", menu.getMenuId());
-                startActivity(intent);*/
             }
 
             @Override
@@ -183,7 +177,7 @@ public class MenuMainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 Food food = (Food) data.getParcelableExtra(Constants.RESULT);
                 mFoodArrayList.add(food);
-                Menu menu = new Menu(mMenuKey, mMenuName, mFoodArrayList, 0.0);
+                Menu menu = new Menu(mMenuKey, mMenuURL, mMenuName, mFoodArrayList, 0.0);
                 mDatabaseReference.child(mRestaurantKey).child(mMenuKey).setValue(menu);
                 Log.d("MENUTEST","Successfully added");
                 mFoodAdapter.notifyDataSetChanged();
@@ -251,6 +245,7 @@ public class MenuMainActivity extends AppCompatActivity
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//menu ID
+                mFoodArrayList.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(child.getKey().toString().equals(mMenuKey)){
                         Menu menu = child.getValue(Menu.class);
@@ -297,7 +292,7 @@ public class MenuMainActivity extends AppCompatActivity
                     email.setText(user.getEmail());
                     mRole = user.getRole();
                     FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.add_food_btn);
-                    if(mRole == 0) {
+                    if(mRole == 0 || mRole == 2) {
                         floatingActionButton.setVisibility(View.GONE);
                     }
                 }

@@ -77,6 +77,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <Spinner
@@ -89,10 +90,11 @@
 
             <Button
                 android:id="@+id/addCartBtn"
+                android:layout_marginTop="10dp"
                 android:layout_width="50dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
+                android:layout_height="50dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:background="@mipmap/cart"
                 android:visibility="visible" />
         </LinearLayout>
