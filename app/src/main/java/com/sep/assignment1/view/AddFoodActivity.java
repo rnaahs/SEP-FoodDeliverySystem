@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +46,7 @@ import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.Upload;
 import com.sep.assignment1.model.User;
 
 import java.io.IOException;
@@ -85,7 +87,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
-        mFirebaseReference = mFirebaseInstance.getReference("Menu");
+        mFirebaseReference = mFirebaseInstance.getReference("menu");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
@@ -235,45 +237,38 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
 
     //Upload image to Firebase
     private void uploadFile(){
-        if(mFilePath != null){
-            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis()+"."+getFileExtension(mFilePath));
+        if(mFilePath != null) {
+            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mFilePath));
 
-            fileReference.putFile(mFilePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable(){
-                                @Override
-                                public void run(){
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 5000);
-                            Toast.makeText(AddFoodActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            mImageUri = task.getResult().getStorage().getDownloadUrl().toString();
-                            mFoodImgURLTV.setText(mImageUri);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddFoodActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-        }else{
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+            UploadTask uploadTask = fileReference.putFile(mFilePath);
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        mImageUri = task.getResult().toString();
+                        mFoodImgURLTV.setText(mImageUri);
+                        Toast.makeText(AddFoodActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddFoodActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(AddFoodActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(AddFoodActivity.this, "No File selected", Toast.LENGTH_SHORT).show();
         }
     }
 

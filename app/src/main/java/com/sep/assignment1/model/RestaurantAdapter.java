@@ -60,8 +60,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.My
         holder.type.setText(restaurant.Type);
         holder.country.setText(restaurant.Country);
         holder.status.setText(restaurant.Status);
-        //Picasso.get().load(restaurant.ImageUri).fit().centerCrop().into(holder.image);
-        Picasso.with(mContext).load(restaurant.ImageUri).into(holder.image);
+        if(!restaurant.ImageUri.equals("")) Picasso.with(mContext).load(restaurant.ImageUri).into(holder.image);
     }
 
     @Override

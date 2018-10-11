@@ -42,7 +42,39 @@
                 android:layout_width="match_parent"
                 android:gravity="bottom"
                 android:ems="10"
-                android:inputType="text"
+                android:inputType="text" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/add_menu_image_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose File" />
+
+                <ImageView
+                    android:id="@+id/add_menu_image_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/add_menu_image_path_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+
+            <ProgressBar
+                android:id="@+id/add_food_ProgressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
             />
 
         </LinearLayout>

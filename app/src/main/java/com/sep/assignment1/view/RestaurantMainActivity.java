@@ -67,7 +67,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         mMenuItemRv.setAdapter(mMenuAdapter);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseInstance.getReference("Menu");
+        mDatabaseReference = mFirebaseInstance.getReference("menu");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
         mDatabaseReference.keepSynced(true);
 
@@ -107,6 +107,7 @@ public class RestaurantMainActivity extends AppCompatActivity
                 intent.putExtra("MenuKey", menu.getMenuId());
                 intent.putExtra("MenuName", menu.getMenuName());
                 intent.putExtra("RestaurantKey", mRestaurantKey);
+                intent.putExtra("MenuImgURL", menu.getImageURL());
                 startActivity(intent);
             }
 
@@ -201,6 +202,7 @@ public class RestaurantMainActivity extends AppCompatActivity
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//restaurant ID
+                mMenuArrayList.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(dataSnapshot.getKey().equals(mRestaurantKey)){
                         Menu menu = child.getValue(Menu.class);

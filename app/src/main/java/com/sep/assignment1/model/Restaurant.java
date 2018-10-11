@@ -1,9 +1,12 @@
 package com.sep.assignment1.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Restaurant {
+public class Restaurant implements Parcelable{
     public String Id;
     public String Name;
     public String Type;
@@ -26,59 +29,41 @@ public class Restaurant {
 
     }
 
-    public String getId() {
-        return Id;
+    protected Restaurant(Parcel in) {
+        Id = in.readString();
+        Name = in.readString();
+        Type = in.readString();
+        Country = in.readString();
+        Address = in.readString();
+        Status = in.readString();
+        ImageUri = in.readString();
     }
 
-    public void setId(String id) {
-        Id = id;
+    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
+        @Override
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        @Override
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
-    public String getType() {
-        return Type;
-    }
-
-    public void setType(String type) {
-        Type = type;
-    }
-
-    public String getCountry() {
-        return Country;
-    }
-
-    public void setCountry(String country) {
-        Country = country;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
-    }
-
-    public String getStatus() {
-        return Status;
-    }
-
-    public void setStatus(String status) {
-        Status = status;
-    }
-
-    public String getImageUri() {
-        return ImageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        ImageUri = imageUri;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Id);
+        dest.writeString(Name);
+        dest.writeString(Type);
+        dest.writeString(Country);
+        dest.writeString(Address);
+        dest.writeString(Status);
+        dest.writeString(ImageUri);
     }
 }

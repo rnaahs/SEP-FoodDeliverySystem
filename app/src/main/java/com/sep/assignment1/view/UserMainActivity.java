@@ -28,8 +28,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
+import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.RestaurantAdapter;
 import com.sep.assignment1.model.User;
@@ -47,6 +49,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private RecyclerView mRecycleView;
     private RestaurantAdapter mRestaurantAdapter;
     private DatabaseReference mFirebaseUserReference;
+    private final int REQUEST_CODE = 1;
     private int mRole;
 
     @Override
@@ -115,7 +118,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserMainActivity.this, AddRestaurantActivity.class));
+                startActivityForResult(new Intent(UserMainActivity.this, AddRestaurantActivity.class), REQUEST_CODE);
             }
         });
 
@@ -162,7 +165,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             startActivity(intent);
             ActivityCompat.finishAffinity(UserMainActivity.this);
         } else if (id == R.id.nav_order_history) {
-            Intent intent = new Intent(UserMainActivity.this, FirebaseImageActivity.class);
+            Intent intent = new Intent(UserMainActivity.this, OrderActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
@@ -177,12 +180,28 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Restaurant restaurant = (Restaurant) data.getParcelableExtra(Constants.RESULT);
+                mRestaurantList.add(restaurant);
+                Log.d("TEST", "Restaurant name is " + restaurant.Name);
+                mFirebaseReference.child(mAuth.getUid()).child(restaurant.Id).setValue(restaurant);
+                mRestaurantAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
     //Restaurant data change listener
     private void addRestaurantChangeListener(){
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
                 private Restaurant restaurant;
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                mRestaurantList.clear();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     if(mRole == 0) {
                         restaurant = ds.getValue(Restaurant.class);
@@ -239,7 +258,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     email.setText(user.getEmail());
                     mRole = user.getRole();
                     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
-                    if(mRole == 0){
+                    if(mRole == 0 || mRole == 2){
                         fab.setVisibility(View.GONE);
                     } else if(mRole == 1) {
                         fab.setVisibility(View.VISIBLE);

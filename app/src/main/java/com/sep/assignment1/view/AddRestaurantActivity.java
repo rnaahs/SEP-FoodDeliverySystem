@@ -1,11 +1,13 @@
 package com.sep.assignment1.view;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,6 +45,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
@@ -65,6 +69,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private String mImageUri;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
+    private TextView mImagePath;
 
 
     @Override
@@ -95,6 +100,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         mImageBtn = (Button) findViewById(R.id.add_restaurant_imageBtn);
         mProgressBar = (ProgressBar) findViewById(R.id.add_restaurant_ProgressBar);
         mImageView = (ImageView) findViewById(R.id.add_restaurant_imageView);
+        mImagePath = (TextView) findViewById(R.id.add_restaurant_path_tv);
 
         mImageBtn.setOnClickListener(new  View.OnClickListener(){
             @Override
@@ -127,8 +133,12 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
                         Toast.makeText(AddRestaurantActivity.this, getResources().getString(R.string.NameEmpty), Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, mImageUri);
 
-                    addRestaurant(restaurantId,name, type,country, address, status, mImageUri);
+                    Intent result = new Intent();
+                    result.putExtra(Constants.RESULT, restaurant);
+                    //set the result RESULT_OK to the result intent
+                    setResult(Activity.RESULT_OK, result);
 
                 }
                 catch (RuntimeException ex){
@@ -228,6 +238,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
                 mImageView.setImageBitmap(bitmap);
+                uploadFile();
             }
             catch (IOException e)
             {
@@ -243,56 +254,39 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     }
 
     //Upload image to Firebase
-    private void uploadFile(){
-        if(mFilePath != null){
-            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis()+"."+getFileExtension(mFilePath));
+    private void uploadFile() {
+        if (mFilePath != null) {
+            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mFilePath));
 
-            fileReference.putFile(mFilePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable(){
-                                @Override
-                                public void run(){
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 5000);
-                            Toast.makeText(AddRestaurantActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-
-
-
-                        }
-                    })
-                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            mImageUri = task.getResult().getStorage().getDownloadUrl().toString();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddRestaurantActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-        }else{
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+            UploadTask uploadTask = fileReference.putFile(mFilePath);
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        mImageUri = task.getResult().toString();
+                        mImagePath.setText(mImageUri);
+                        Toast.makeText(AddRestaurantActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddRestaurantActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(AddRestaurantActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(AddRestaurantActivity.this, "No File selected", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    //Upload data to Firebase
-    private void addRestaurant(String restaurantId, String name, String type, String country, String address, String status, String imageUri){
-        Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, imageUri);
-
-        mFirebaseReference.child(mAuth.getUid()).child(restaurantId).setValue(restaurant);
     }
 
     private void getUserProfile(final View headerView){

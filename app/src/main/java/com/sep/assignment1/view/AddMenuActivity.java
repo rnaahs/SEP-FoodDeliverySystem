@@ -1,9 +1,14 @@
 package com.sep.assignment1.view;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -16,36 +21,58 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AddMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
+    private StorageReference mStorageReference;
+    private FirebaseStorage mStorageInstance;
     private EditText mMenuName;
     private Button mAddMenuBtn;
     private String mRestaurantKey;
+    private ImageView mImageView;
     private Uri mFilePath;
     private static final int PICK_IMAGE_REQUEST = 1;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
+    private String mImageUri;
+    private Button mImageUploadBtn;
+    private TextView mImagePath;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,23 +85,37 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
-        mFirebaseReference = mFirebaseInstance.getReference("Menu");
+        mFirebaseReference = mFirebaseInstance.getReference("menu");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
+        mStorageInstance = FirebaseStorage.getInstance();
+        mStorageReference = mStorageInstance.getReference();
+        mImageView = (ImageView) findViewById(R.id.add_menu_image_iv);
+        mImageUploadBtn = (Button) findViewById(R.id.add_menu_image_btn);
         mMenuName = (EditText) findViewById(R.id.add_menu_name_et);
         mAddMenuBtn = (Button) findViewById(R.id.add_menuInstance_btn);
+        mImagePath = (TextView) findViewById(R.id.add_menu_image_path_tv);
+        mProgressBar = (ProgressBar) findViewById(R.id.add_food_ProgressBar);
+        mImageUploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                openFileChooser();
+            }
+        });
+
+
         mAddMenuBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 try{
                     String menuId = mFirebaseReference.push().getKey();
                     String menuName = mMenuName.getText().toString();
+                    String menuImgURL = mImageUri;
+
                     ArrayList<Food> foodArrayList = new ArrayList<>();
-                    Menu menu = new Menu(menuId, menuName , foodArrayList ,0.0);
-
-
+                    Menu menu = new Menu(menuId, menuImgURL , menuName , foodArrayList ,0.0);
                     Intent result = new Intent();
                     result.putExtra(Constants.RESULT, menu);
                     //set the result RESULT_OK to the result intent
@@ -86,8 +127,6 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                 finish();
             }
         });
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.add_menu_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -101,7 +140,117 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
         }
+    }
 
+    //Choose Image
+    private void openFileChooser(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            mFilePath = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
+                mImageView.setImageBitmap(bitmap);
+                uploadFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //Upload image to Firebase
+    private void uploadFile(){
+        if(mFilePath != null) {
+            final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mFilePath));
+
+            fileReference.putFile(mFilePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(0);
+                        }
+                    }, 5000);
+                    mImageUri = taskSnapshot.toString();
+                    mImagePath.setText(mImageUri);
+                    Toast.makeText(AddMenuActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()/ taskSnapshot.getTotalByteCount());
+                    mProgressBar.setProgress((int) progress);
+                }
+            });
+
+            /*final UploadTask uploadTask = fileReference.putFile(mFilePath);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    task.getResult()
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(0);
+                        }
+                    }, 5000);
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        mImageUri = task.getResult().toString();
+                        mImagePath.setText(mImageUri);
+                        Toast.makeText(AddMenuActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddMenuActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });*/
+        }
+        else {
+            Toast.makeText(AddMenuActivity.this, "No File selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getFileExtension(Uri uri){
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
     @Override

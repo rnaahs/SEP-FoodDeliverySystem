@@ -11,16 +11,19 @@ public class Menu implements Parcelable {
     private String mMenuName;
     private ArrayList<Food> mFoodArrayList;
     private Double mTotalPrice;
+    private String mImageURL;
 
     public Menu(){}
-    public Menu(String menuId, String menuName, ArrayList<Food> foodArrayList, double totalPrice) {
+    public Menu(String menuId, String imageURL, String menuName, ArrayList<Food> foodArrayList, double totalPrice) {
         mMenuId = menuId;
+        mImageURL = imageURL;
         mMenuName = menuName;
         mFoodArrayList = foodArrayList;
         mTotalPrice = totalPrice;
     }
 
     protected Menu(Parcel in) {
+        mImageURL = in.readString();
         mMenuId = in.readString();
         mMenuName = in.readString();
         mFoodArrayList = in.createTypedArrayList(Food.CREATOR);
@@ -42,6 +45,14 @@ public class Menu implements Parcelable {
             return new Menu[size];
         }
     };
+
+    public String getImageURL() {
+        return mImageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        mImageURL = imageURL;
+    }
 
     public String getMenuId() {
         return mMenuId;
@@ -86,6 +97,7 @@ public class Menu implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mImageURL);
         dest.writeString(mMenuId);
         dest.writeString(mMenuName);
         dest.writeTypedList(mFoodArrayList);

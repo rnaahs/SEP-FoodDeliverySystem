@@ -112,7 +112,7 @@ public class RestaurantSignupActivity extends AppCompatActivity {
                                     Toast.makeText(RestaurantSignupActivity.this, getResources().getString(R.string.signupFail),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 0, address,0, "","","");
+                                    addUserListener(mAuth.getUid(),firstname,lastname, email, 1, address,0, "","","");
                                     mAuth.signInWithEmailAndPassword(email,password);
                                     startActivity(new Intent(RestaurantSignupActivity.this, UserMainActivity.class));
                                     RestaurantSignupActivity.this.finish();
