@@ -24,15 +24,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Order;
+import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class OrderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private String mUserID;
     private DatabaseReference mFirebaseUserReference;
+    private DatabaseReference mFirebaseOrderReference;
+    private DatabaseReference mFirebaseRestaurantReference;
+    private TextView mOrderIDTV, mDateTV, mTimeTV, mAmountTV, mRestaurantTV, mStatusTV, mCustomerAddressTV, mRestaurantAddressTV;
     private int mRole;
-
+    private String mRestaurantID;
+    private ArrayList<Restaurant> mRestaurantList = new ArrayList<>();
+    private String mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +53,13 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mRestaurantID = getIntent().getStringExtra("RestaurantID");
+        mOrderID = getIntent().getStringExtra("OrderID");
+
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
+        mFirebaseOrderReference = mFirebaseInstance.getReference("order");
+        mFirebaseRestaurantReference = mFirebaseInstance.getReference("restaurant");
 
         if(FirebaseAuth.getInstance()!=null) {
             mAuth = FirebaseAuth.getInstance();
@@ -61,6 +79,43 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
         }
+        getRestaurantDetails();
+        getOrderDetails();
+
+        mDateTV = (TextView) findViewById(R.id.order_date);
+        mTimeTV = (TextView) findViewById(R.id.order_time);
+        mOrderIDTV = (TextView) findViewById(R.id.order_ID);
+        mAmountTV = (TextView) findViewById(R.id.order_Amount);
+        mRestaurantTV = (TextView) findViewById(R.id.order_restaurant_name);
+        mStatusTV = (TextView) findViewById(R.id.order_Status);
+        mCustomerAddressTV = (TextView) findViewById(R.id.order_customer_address);
+        mRestaurantAddressTV = (TextView) findViewById(R.id.order_restaurant_address);
+
+
+        //Get date for start time
+        if(mStartTime!=null){
+            try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            Date getDate = dateFormat.parse(mStartTime);
+            Date getTime = timeFormat.parse(mStartTime);
+
+            String date = getDate.toString();
+            String time = getTime.toString();
+            mDateTV.setText(date);
+            mTimeTV.setText(time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        mOrderIDTV.setText(mOrderID);
+        mAmountTV.setText(mAmount);
+        mRestaurantTV.setText(mRestaurantName);
+        mCustomerAddressTV.setText(mCustomerAddress);
+        mRestaurantAddressTV.setText(mRestaurantAddress);
+        mStatusTV.setText(mStatus);
+
+
     }
 
 
@@ -162,5 +217,75 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
             }
         });
     }
+    private void getRestaurantDetails(){
+        mFirebaseRestaurantReference.addChildEventListener(new ChildEventListener() {
+            private Restaurant restaurant;
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    if(mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())){
+                        restaurant = ds.getValue(Restaurant.class);
+                        mRestaurantList.add(restaurant);
+                        mRestaurantName = restaurant.getName();
+                    }
+                }
+            }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getOrderDetails(){
+        mFirebaseOrderReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(mOrderID.equals(dataSnapshot.getKey())){
+                    Order order = dataSnapshot.getValue(Order.class);
+                    mStartTime = order.getStartTime();
+                    mRestaurantID = order.getRestaurantID();
+                    mAmount = order.getPrice();
+                    mStatus = order.getStatus();
+                    mRestaurantAddress = order.getRestaurantAddress();
+                    mCustomerAddress = order.getCustomerAddress();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

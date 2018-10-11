@@ -180,7 +180,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     //Restaurant data change listener
     private void addRestaurantChangeListener(){
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
-            private Restaurant restaurant;
+                private Restaurant restaurant;
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
