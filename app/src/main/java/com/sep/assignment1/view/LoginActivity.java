@@ -61,14 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             mUserId = mAuth.getUid();
             getUserProfile();
-            if(mRole == 0 || mRole == 1) {
-                Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
-                startActivity(intent);
-            }
-            else {
-                Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+            startActivity(intent);
             LoginActivity.this.finish();
         }
 
@@ -89,13 +83,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-/*        mBtnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
-            }
-        });*/
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,15 +119,8 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    if(mRole == 0 || mRole == 1) {
-                                        Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-                                        startActivity(intent);
-                                    }
-                                    else {
-                                        Intent intent = new Intent(LoginActivity.this, OrderActivity.class);
-                                        startActivity(intent);
-                                    }
-
+                                    Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+                                    startActivity(intent);
                                     LoginActivity.this.finish();
                                 }
                             }

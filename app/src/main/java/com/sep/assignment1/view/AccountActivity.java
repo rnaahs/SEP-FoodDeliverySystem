@@ -98,7 +98,7 @@ public class AccountActivity extends AppCompatActivity
                 }
 
                 else {
-                    User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, bsb);
+                    User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, String.valueOf(bsb), "", "");
                     mFirebaseUserReference.child(mAuth.getUid()).removeValue();
                     mFirebaseUserReference.child(mAuth.getUid()).setValue(user);
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.EditAccountSuccess), Toast.LENGTH_SHORT).show();
