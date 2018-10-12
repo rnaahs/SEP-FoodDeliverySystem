@@ -1,5 +1,8 @@
 package com.sep.assignment1.view;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -66,6 +70,9 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private String mCustomerAddress;
     private String mPrice;
     private String mStatus = "Placed";
+    private int mRole;
+    private double mBalance;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +134,14 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             public void onClick(View v) {
                 addressBtn.setVisibility(View.GONE);
                 mAddressET.setBackgroundColor(getResources().getColor(R.color.transparent));
-                mRestaurantAddress = mAddressET.getText().toString();
+                mCustomerAddress = mAddressET.getText().toString();
             }
         });
+        if(mCartArrayList!=null){
+            //Get Restaurant Name
+            getRestaurantDetails();
+        }
+
 
         txtTotalPrice = (TextView) findViewById(R.id.cart_totalTV);
         orderBtn = (Button) findViewById(R.id.placeOrderBtn);
@@ -137,12 +149,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             @Override
             public void onClick(View v) {
                 submitOrder();
-                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
-                intent.putExtra("CartID", mUserID);
-                intent.putExtra("RestaurantID", mRestaurantID);
-                intent.putExtra("OrderID", mOrderID);
-                startActivity(intent);
-                finish();
+
             }
         });
 
@@ -272,19 +279,26 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 if(user.getUserid().equals(mAuth.getUid())) {
                     TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mCustomerAddress = user.getAddress();
+                    mBalance = user.getBalance();
+                    mRole = user.getRole();
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                user = dataSnapshot.getValue(User.class);
+                if (user.getUserid().equals(mUserID)) {
+                    mUserList.add(user);
+                    mBalance = user.getBalance();
+                    return;
+                }
             }
 
             @Override
@@ -307,17 +321,48 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         try{
             //Get Random number for orderID
             Random random = new Random();
-            mOrderID = "O" + String.valueOf(random.nextInt(9999));
+            mOrderID = "U" + String.valueOf(random.nextInt(9999));
 
             //Get date for start time
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
             String startTime = dateFormat.format(Calendar.getInstance().getTime());
 
-            //Get Restaurant Name
-            getRestaurantDetails();
+            if(mBalance < Double.parseDouble(mPrice)){
+                AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
 
-            Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
-            mFirebaseOrderReferencce.child(mOrderID).setValue(order);
+                builder.setMessage("Balance has not enough credit. Please top up now")
+                        .setTitle("Not Enough Balance")
+                        // Set the action buttons
+                        .setPositiveButton("Top up", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(CartActivity.this, BalanceActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                 AlertDialog dialog = builder.create();
+                 dialog.show();
+            }else{
+                double newBalance = mBalance - Double.parseDouble(mPrice);
+                updateBalance(user, newBalance);
+                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
+                mFirebaseOrderReferencce.child(mOrderID).setValue(order);
+
+                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
+                intent.putExtra("CartID", mUserID);
+                intent.putExtra("RestaurantID", mRestaurantID);
+                intent.putExtra("OrderID", mOrderID);
+                startActivity(intent);
+                finish();
+            }
+
         }catch (Exception ex){
             Log.e("Submit Order", "Exception:" + ex);
         }
@@ -329,11 +374,15 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             private Restaurant restaurant;
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if(mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())){
-                        restaurant = ds.getValue(Restaurant.class);
-                        mRestaurantAddress = restaurant.getAddress();
+                try {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if (mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())) {
+                            restaurant = ds.getValue(Restaurant.class);
+                            mRestaurantAddress = restaurant.Address;
+                        }
                     }
+                }catch (Exception ex){
+                    Log.e("Cart", "Exception: " + ex);
                 }
             }
 
@@ -357,6 +406,11 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
             }
         });
+    }
+
+    private void updateBalance(User user, double newBalance){
+        user = new User(user.getUserid(),user.getFirstname(),user.getLastname(),user.getEmail(),user.getRole(),user.getAddress(),newBalance,user.getBsb(),user.getLicenceDr(),user.getVehicle());
+        mFirebaseUserReference.child(mUserID).setValue(user);
     }
 }
 

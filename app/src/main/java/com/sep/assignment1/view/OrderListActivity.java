@@ -10,11 +10,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,55 +26,42 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Order;
+import com.sep.assignment1.model.OrderListAdapter;
+import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class BalanceTopupActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
+public class OrderListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private String mUserID;
-    private EditText mCardNumET, mCardExpireET, mCardCCVET, mNameET, mAmountET;
-    private Button mTopupBtn;
-    private List<User> mUserList = new ArrayList<>();
-    private Double mBalance;
-    private User user;
-    private int mPosition;
+    private RecyclerView recyclerView;
     private DatabaseReference mFirebaseUserReference;
-
+    private DatabaseReference mFirebaseOrderReference;
+    private DatabaseReference mFirebaseRestaurantReference;
+    private ArrayList<Order> mOrderList = new ArrayList<>();
+    private ArrayList<Restaurant> mRestaurantList = new ArrayList<>();
+    private OrderListAdapter mOrderListAdapter;
+    private String mRestaurantID, mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_balance_topup);
+        setContentView(R.layout.activity_order_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseUserReference = mFirebaseInstance.getReference("user");
+        mFirebaseOrderReference = mFirebaseInstance.getReference("order");
+        mFirebaseRestaurantReference = mFirebaseInstance.getReference("restaurant");
 
         if(FirebaseAuth.getInstance()!=null) {
             mAuth = FirebaseAuth.getInstance();
             mUserID = mAuth.getUid();
         }
-
-        mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseUserReference = mFirebaseInstance.getReference("user");
-
-        mCardNumET = (EditText) findViewById(R.id.topup_card_numET);
-        mCardExpireET = (EditText) findViewById(R.id.topup_card_expireET);
-        mCardCCVET = (EditText) findViewById(R.id.topup_card_ccvET);
-        mNameET = (EditText) findViewById(R.id.topup_nameET);
-        mAmountET = (EditText) findViewById(R.id.topup_amountET);
-        mTopupBtn = (Button) findViewById(R.id.topupBtn);
-        mTopupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Double amount = Double.parseDouble(mAmountET.getText().toString());
-                uploadBalanceListener(amount);
-                finish();
-            }
-        });
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,12 +72,26 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
+
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
         }
+
+        recyclerView = (RecyclerView) findViewById(R.id.listOrderRV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mOrderListAdapter = new OrderListAdapter(mOrderList, getApplicationContext());
+        recyclerView.setAdapter(mOrderListAdapter);
+
+
+
+        getOrderList();
+
+        mOrderListAdapter.notifyDataSetChanged();
     }
-
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -116,6 +119,8 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_cart){
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,24 +133,22 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent intent = new Intent(BalanceTopupActivity.this, UserMainActivity.class);
+            Intent intent = new Intent(OrderListActivity.this, UserMainActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+            ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_manage_account) {
-            Intent intent = new Intent(BalanceTopupActivity.this, AccountActivity.class);
+            Intent intent = new Intent(OrderListActivity.this, AccountActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+            ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_manage_balance) {
-            Intent intent = new Intent(BalanceTopupActivity.this, BalanceActivity.class);
-            startActivity(intent);
-            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+
         } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(BalanceTopupActivity.this, LoginActivity.class);
+            Intent intent = new Intent(OrderListActivity.this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
+            ActivityCompat.finishAffinity(OrderListActivity.this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -153,50 +156,6 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         return true;
     }
 
-    private void uploadBalanceListener(Double amount){
-        mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                user = dataSnapshot.getValue(User.class);
-                if (user.getUserid().equals(mUserID)) {
-                    mUserList.add(user);
-                    mPosition = mUserList.indexOf(user);
-                    mBalance = user.getBalance();
-                    return ;
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        if(mBalance!=null){
-            Double balance = mBalance + amount;
-            if(user.getUserid().equals(mUserID)) {
-                user = mUserList.get(mPosition);
-                user = new User(user.getUserid(), user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole(), user.getAddress(), balance, null, user.getLicenceDr(), user.getVehicle());
-                mFirebaseUserReference.child(mUserID).setValue(user);
-            }
-        }
-    }
     private void getUserProfile(final View headerView){
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -230,8 +189,35 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
             }
         });
     }
+    private void getOrderList(){
+        mFirebaseOrderReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Order order = dataSnapshot.getValue(Order.class);
+                mOrderList.add(order);
+
+                mOrderListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
-
-
-
-

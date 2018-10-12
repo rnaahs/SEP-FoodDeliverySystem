@@ -94,10 +94,12 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         mRecycleView.removeItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
         mRecycleView.setAdapter(mRestaurantAdapter);
-
+        try {
             //Call method to add restaurants from database
             addRestaurantChangeListener();
-
+        }catch (Exception ex){
+            Log.e("Exception", "onCreate: ",ex );
+        }
 
         mRecycleView.addOnItemTouchListener(new RestaurantRecyclerTouchListener(getApplicationContext(),mRecycleView, new RestaurantRecyclerTouchListener.ClickListener(){
             @Override
@@ -258,9 +260,15 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     email.setText(user.getEmail());
                     mRole = user.getRole();
                     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
-                    if(mRole == 0 || mRole == 2){
+                    if(mRole == 0){
                         fab.setVisibility(View.GONE);
-                    } else if(mRole == 1) {
+                    }
+                    else if (mRole == 2){
+                        Intent intent = new Intent(UserMainActivity.this, OrderListActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else if(mRole == 1) {
                         fab.setVisibility(View.VISIBLE);
                     }
                 }

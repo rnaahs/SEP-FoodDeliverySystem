@@ -11,7 +11,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -24,7 +29,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.CartAdapter;
+import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Order;
+import com.sep.assignment1.model.OrderAdapter;
 import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
 
@@ -38,14 +46,18 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private String mUserID;
+    private RecyclerView recyclerView;
     private DatabaseReference mFirebaseUserReference;
     private DatabaseReference mFirebaseOrderReference;
     private DatabaseReference mFirebaseRestaurantReference;
-    private TextView mOrderIDTV, mDateTV, mTimeTV, mAmountTV, mRestaurantTV, mStatusTV, mCustomerAddressTV, mRestaurantAddressTV;
+    private OrderAdapter mOrderAdapter;
+    private ArrayList<Food> mFoodArrayList = new ArrayList<>();
+    private TextView mOrderIDTV, mDateTV, mTimeTV, mAmountTV, mRestaurantTV, mCustomerAddressTV, mBalanceTV;
     private int mRole;
     private String mRestaurantID;
     private ArrayList<Restaurant> mRestaurantList = new ArrayList<>();
     private String mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
+    private double mBalance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,36 +96,22 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
 
         mDateTV = (TextView) findViewById(R.id.order_date);
         mTimeTV = (TextView) findViewById(R.id.order_time);
-        mOrderIDTV = (TextView) findViewById(R.id.order_ID);
         mAmountTV = (TextView) findViewById(R.id.order_Amount);
         mRestaurantTV = (TextView) findViewById(R.id.order_restaurant_name);
-        mStatusTV = (TextView) findViewById(R.id.order_Status);
         mCustomerAddressTV = (TextView) findViewById(R.id.order_customer_address);
-        mRestaurantAddressTV = (TextView) findViewById(R.id.order_restaurant_address);
+        mBalanceTV = (TextView) findViewById(R.id.order_balance);
 
+        recyclerView = (RecyclerView) findViewById(R.id.listFoodinOrder);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //Get date for start time
-        if(mStartTime!=null){
-            try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-            Date getDate = dateFormat.parse(mStartTime);
-            Date getTime = timeFormat.parse(mStartTime);
+        mOrderAdapter = new OrderAdapter(mFoodArrayList, getApplicationContext());
+        recyclerView.setAdapter(mOrderAdapter);
 
-            String date = getDate.toString();
-            String time = getTime.toString();
-            mDateTV.setText(date);
-            mTimeTV.setText(time);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        mOrderIDTV.setText(mOrderID);
-        mAmountTV.setText(mAmount);
-        mRestaurantTV.setText(mRestaurantName);
-        mCustomerAddressTV.setText(mCustomerAddress);
-        mRestaurantAddressTV.setText(mRestaurantAddress);
-        mStatusTV.setText(mStatus);
+        mOrderAdapter.notifyDataSetChanged();
+
 
 
     }
@@ -194,6 +192,9 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mRole = user.getRole();
+                    mBalance = user.getBalance();
+                    String balance = String.valueOf(mBalance);
+                    mBalanceTV.setText("$" + balance);
                 }
             }
 
@@ -226,7 +227,8 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
                     if(mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())){
                         restaurant = ds.getValue(Restaurant.class);
                         mRestaurantList.add(restaurant);
-                        mRestaurantName = restaurant.getName();
+                        mRestaurantName = restaurant.Name;
+                        mRestaurantTV.setText(mRestaurantName);
                     }
                 }
             }
@@ -264,7 +266,34 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
                     mStatus = order.getStatus();
                     mRestaurantAddress = order.getRestaurantAddress();
                     mCustomerAddress = order.getCustomerAddress();
+
+                    //Get date for start time
+                    if(mStartTime!=null){
+                        try {
+                            SimpleDateFormat datetimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                            Date startDate = datetimeFormat.parse(mStartTime);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                            String getDate = dateFormat.format(startDate);
+                            String getTime = timeFormat.format(startDate);
+
+                            mDateTV.setText(getDate);
+                            mTimeTV.setText(getTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mAmountTV.setText("$" + mAmount);
+                    mCustomerAddressTV.setText(mCustomerAddress);
+
+                    if (order.getFoodArrayList() != null) {
+                        for (Food food : order.getFoodArrayList()) {
+                            mFoodArrayList.add(food);
+                            Log.e("Cart", "Data has changed" + food.getFoodName() + food.getFoodPrice());
+                        }
+                    }
                 }
+                mOrderAdapter.notifyDataSetChanged();
             }
 
             @Override

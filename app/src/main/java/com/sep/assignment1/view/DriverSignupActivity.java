@@ -122,7 +122,7 @@ public class DriverSignupActivity extends AppCompatActivity {
                                 } else {
                                     addUserListener(mAuth.getUid(),firstname,lastname, email, 2, address,0, "" , licence,vehicle);
                                     mAuth.signInWithEmailAndPassword(email,password);
-                                    startActivity(new Intent(DriverSignupActivity.this, UserMainActivity.class));
+                                    startActivity(new Intent(DriverSignupActivity.this, OrderListActivity.class));
                                     DriverSignupActivity.this.finish();
                                     ActivityCompat.finishAffinity(DriverSignupActivity.this);
                                 }

@@ -16,18 +16,23 @@ import java.util.List;
 public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
     private List<Order> mOrderList;
     private Context mContext;
+    private ArrayList<Food> mFoodList;
+    private Food food;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mMenuNameTv;
+        private TextView mFoodNameTV, mFoodPriceTV;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mMenuNameTv = (TextView) itemView.findViewById(R.id.menu_item_name_tv);
+            mFoodNameTV = (TextView) itemView.findViewById(R.id.order_item_name);
+            mFoodPriceTV = (TextView) itemView.findViewById(R.id.order_item_price);
+
         }
     }
 
-    public OrderAdapter(ArrayList<Order> orders, Context context) {
-        mOrderList = orders;
+    public OrderAdapter(ArrayList<Food> foods, Context context) {
+        mFoodList = foods;
         mContext = context;
     }
 
@@ -41,11 +46,16 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull OrderAdapter.ViewHolder holder, int position) {
+        food = mFoodList.get(position);
+        // Get the data from an ImageView as bytes
+        holder.mFoodNameTV.setText(food.getFoodName());
+        holder.mFoodPriceTV.setText("$"+food.getFoodPrice());
+
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mFoodList.size();
     }
 }

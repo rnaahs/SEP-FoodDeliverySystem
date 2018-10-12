@@ -58,11 +58,20 @@ public class LoginActivity extends AppCompatActivity {
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
 
-        if (mAuth.getCurrentUser() != null) {
+        if(mAuth.getUid()!=null){
             mUserId = mAuth.getUid();
             getUserProfile();
-            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
-            startActivity(intent);
+        }
+
+
+        if (mAuth.getCurrentUser() != null) {
+            if(mRole == 0 || mRole == 1) {
+                Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+                startActivity(intent);
+            }else if(mRole == 2){
+                Intent intent = new Intent(LoginActivity.this, OrderListActivity.class);
+                startActivity(intent);
+            }
             LoginActivity.this.finish();
         }
 
@@ -119,9 +128,15 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
+                                    getUserProfile();
+                                    if(mRole==2){
+                                        Intent intent = new Intent (LoginActivity.this, OrderListActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }else{
                                     Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                     startActivity(intent);
-                                    LoginActivity.this.finish();
+                                    LoginActivity.this.finish();}
                                 }
                             }
                         });
@@ -133,10 +148,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 User user = dataSnapshot.getValue(User.class);
-                        if(user.getUserid().equals(mUserId)){
-                            mRole = user.getRole();
-                            Log.d("TEST", "Role is "+ mRole);
-                        }
+                if(user.getUserid().equals(mUserId)){
+                    mUserList.add(user);
+                    mRole = user.getRole();
+                    Log.d("Login", "Role is "+ mRole);
+                }
 
             }
 
