@@ -29,7 +29,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnBack"
+            android:id="@+id/btnFinish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/buttonGoogle"
@@ -69,6 +69,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="Customer location"
                 android:textSize="18dp"
+                android:textColor="@color/white"
                 />
 
             <EditText
@@ -77,7 +78,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:text=""
+                android:inputType="textPersonName"
+                />
         </LinearLayout>
 
 
@@ -92,7 +95,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:text="Resturant location"
-                android:textSize="18dp" />
+                android:textSize="18dp"
+                android:textColor="@color/white"/>
 
             <EditText
                 android:id="@+id/resturant_location_input"
@@ -112,20 +116,20 @@
             <TextView
                 android:id="@+id/order_text"
                 android:layout_width="109dp"
-                android:layout_height="102dp"
+                android:layout_height="136dp"
+                android:background="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
                 android:text="Order Details"
-                android:textSize="25dp"
-                android:background="@color/white"
-                android:backgroundTint="@color/colorPrimary"/>
+                android:textColor="@color/white"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/order_number_input"
                 android:layout_width="wrap_content"
-                android:layout_height="116dp"
+                android:layout_height="102dp"
                 android:layout_weight="1"
                 android:inputType="textPersonName"
-                android:text="#1396"
                 android:textSize="30dp" />
         </LinearLayout>
 

@@ -25,7 +25,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.DriverMain;
 import com.sep.assignment1.R;
+import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Order;
 import com.sep.assignment1.model.OrderListAdapter;
 import com.sep.assignment1.model.Restaurant;
@@ -87,6 +89,23 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
         recyclerView.setAdapter(mOrderListAdapter);
 
 
+        recyclerView.addOnItemTouchListener(new RestaurantRecyclerTouchListener(getApplicationContext(), recyclerView, new RestaurantRecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Order order = mOrderList.get(position);
+                Intent intent = new Intent(OrderListActivity.this, DriverMain.class);
+                intent.putExtra("CustomerAddress", order.getCustomerAddress());
+                intent.putExtra("ResturantAddress", order.getRestaurantAddress());
+                intent.putExtra("OrderNumber", order.getOrderID());
+
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
         getOrderList();
 
