@@ -135,7 +135,11 @@ public class MenuMainActivity extends AppCompatActivity
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Cart currentCart = dataSnapshot.getValue(Cart.class);
-                            mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
+                            try {
+                                mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
+                            }catch (Exception ex){
+                                Log.e("Menu", "onDataChange: ", ex);
+                            }
                         }
 
                         @Override

@@ -54,6 +54,10 @@
             android:label="@string/title_activity_balance_topup"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".view.BalanceWithdrawn"
+            android:label="@string/title_activity_balance_withdraw"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".view.CartActivity"
             android:label="@string/title_activity_cart"
             android:theme="@style/AppTheme.NoActionBar" />

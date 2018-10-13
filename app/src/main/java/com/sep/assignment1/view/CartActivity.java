@@ -281,6 +281,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 user = dataSnapshot.getValue(User.class);
                 if(user.getUserid().equals(mAuth.getUid())) {
+                    mUserList.add(user);
                     TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
@@ -288,6 +289,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                     mCustomerAddress = user.getAddress();
                     mBalance = user.getBalance();
                     mRole = user.getRole();
+
                 }
             }
 
@@ -351,10 +353,15 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                  dialog.show();
             }else{
                 double newBalance = mBalance - Double.parseDouble(mPrice);
-                updateBalance(user, newBalance);
+                for(User user : mUserList) {
+                    if (user.getUserid().equals(mUserID)) {
+                        updateBalance(user, newBalance);
+                    }
+                }
                 Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
                 mFirebaseOrderReferencce.child(mOrderID).setValue(order);
-
+                mCartArrayList.clear();
+                mFirebaseReference.child(mUserID).removeValue();
                 Intent intent = new Intent(CartActivity.this, OrderActivity.class);
                 intent.putExtra("CartID", mUserID);
                 intent.putExtra("RestaurantID", mRestaurantID);

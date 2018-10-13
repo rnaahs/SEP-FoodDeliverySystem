@@ -91,11 +91,10 @@
             <Button
                 android:id="@+id/addCartBtn"
                 android:layout_marginTop="10dp"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:background="@mipmap/cart"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ic_add_shopping_cart_black_24dp"
                 android:visibility="visible" />
         </LinearLayout>
 
