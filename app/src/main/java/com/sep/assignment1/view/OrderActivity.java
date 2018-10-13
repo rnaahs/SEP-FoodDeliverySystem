@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.CartAdapter;
 import com.sep.assignment1.model.Food;
@@ -130,7 +131,8 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        if(Constants.ROLE == 1 || Constants.ROLE == 2) menu.clear();
         return true;
     }
 
@@ -166,9 +168,14 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderActivity.this);
         } else if (id == R.id.nav_manage_balance) {
-
+            Intent intent = new Intent(OrderActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(OrderActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(OrderActivity.this, LoginActivity.class);
@@ -277,8 +284,8 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
                             String getDate = dateFormat.format(startDate);
                             String getTime = timeFormat.format(startDate);
 
-                            mDateTV.setText(getDate);
-                            mTimeTV.setText(getTime);
+                            mDateTV.setText("Start Date: " + getDate);
+                            mTimeTV.setText("Start Time:" + getTime);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }

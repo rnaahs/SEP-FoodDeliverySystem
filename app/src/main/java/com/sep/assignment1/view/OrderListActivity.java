@@ -15,6 +15,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,7 +26,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.Order;
 import com.sep.assignment1.model.OrderListAdapter;
 import com.sep.assignment1.model.Restaurant;
@@ -44,6 +47,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     private ArrayList<Order> mOrderList = new ArrayList<>();
     private ArrayList<Restaurant> mRestaurantList = new ArrayList<>();
     private OrderListAdapter mOrderListAdapter;
+    private int mRole;
     private String mRestaurantID, mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
 
     @Override
@@ -75,7 +79,9 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
 
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView);
+
         }
+
 
         recyclerView = (RecyclerView) findViewById(R.id.listOrderRV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -105,7 +111,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -141,9 +147,9 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_manage_balance) {
-
-        } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(OrderListActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(OrderListActivity.this, LoginActivity.class);
@@ -194,8 +200,15 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
-                mOrderList.add(order);
-
+                    if(Constants.ROLE == 0 && mAuth.getUid().equals(order.getCustomerID())){
+                        mOrderList.add(order);
+                    }
+                    else if(Constants.ROLE == 1 && mAuth.getUid().equals(order.getRestaurantID())) {
+                        mOrderList.add(order);
+                    }
+                    else if(Constants.ROLE == 2){
+                        mOrderList.add(order);
+                    }
                 mOrderListAdapter.notifyDataSetChanged();
             }
 

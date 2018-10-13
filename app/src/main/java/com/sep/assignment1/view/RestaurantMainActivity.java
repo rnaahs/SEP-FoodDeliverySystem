@@ -146,6 +146,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user_main, menu);
+        if(mRole == 1 || mRole == 2) menu.clear();
         return true;
     }
 

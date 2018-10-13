@@ -70,6 +70,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
     private TextView mImagePath;
+    private int mRole;
 
 
     @Override
@@ -160,7 +161,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -198,7 +199,10 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             startActivity(intent);
             ActivityCompat.finishAffinity(AddRestaurantActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(AddRestaurantActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddRestaurantActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(AddRestaurantActivity.this, LoginActivity.class);
@@ -293,6 +297,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

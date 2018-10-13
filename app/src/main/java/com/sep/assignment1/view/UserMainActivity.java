@@ -51,6 +51,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private DatabaseReference mFirebaseUserReference;
     private final int REQUEST_CODE = 1;
     private int mRole;
+    private boolean isUSER = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +131,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -140,12 +141,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_cart) {
-            Intent intent = new Intent(UserMainActivity.this, CartActivity.class);
-            startActivity(intent);
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -167,7 +162,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             startActivity(intent);
             ActivityCompat.finishAffinity(UserMainActivity.this);
         } else if (id == R.id.nav_order_history) {
-            Intent intent = new Intent(UserMainActivity.this, OrderActivity.class);
+            Intent intent = new Intent(UserMainActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
@@ -190,7 +186,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             if (resultCode == RESULT_OK) {
                 Restaurant restaurant = (Restaurant) data.getParcelableExtra(Constants.RESULT);
                 mRestaurantList.add(restaurant);
-                Log.d("TEST", "Restaurant name is " + restaurant.Name);
                 mFirebaseReference.child(mAuth.getUid()).child(restaurant.Id).setValue(restaurant);
                 mRestaurantAdapter.notifyDataSetChanged();
             }
@@ -259,6 +254,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mRole = user.getRole();
+                    Constants.ROLE = mRole;
+                    Log.d("TEST", "Role is " + user.getRole());
                     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_restaurant_btn);
                     if(mRole == 0){
                         fab.setVisibility(View.GONE);

@@ -173,7 +173,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -211,7 +211,10 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             startActivity(intent);
             ActivityCompat.finishAffinity(CartActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(CartActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(CartActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(CartActivity.this, LoginActivity.class);
@@ -233,7 +236,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                         mCartArrayList.add(cart);
                         mPrice = cart.getmPrice();
                         mRestaurantID = cart.getmRestaurantID();
-                        txtTotalPrice.setText(mPrice);
+                        txtTotalPrice.setText("Price: $"+mPrice);
 
                         if (cart.getmFoodArrayList() != null) {
                             for (Food food : cart.getmFoodArrayList()) {

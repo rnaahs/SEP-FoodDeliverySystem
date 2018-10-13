@@ -83,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
         mBtnReset = (Button) findViewById(R.id.btn_reset_password);
 
         //Get Firebase mAuth instance
-        mAuth = FirebaseAuth.getInstance();
 
         mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override

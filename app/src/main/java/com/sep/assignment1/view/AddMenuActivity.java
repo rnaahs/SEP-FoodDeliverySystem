@@ -73,6 +73,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     private Button mImageUploadBtn;
     private TextView mImagePath;
     private ProgressBar mProgressBar;
+    private int mRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,35 +176,6 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     private void uploadFile(){
         if(mFilePath != null) {
             final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mFilePath));
-
-           /* fileReference.putFile(mFilePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setProgress(0);
-                        }
-                    }, 5000);
-                    mImageUri = taskSnapshot.getTask().getResult().toString();
-                    mImagePath.setText(mImageUri);
-                    Toast.makeText(AddMenuActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()/ taskSnapshot.getTotalByteCount());
-                    mProgressBar.setProgress((int) progress);
-                }
-            }); */
-
             final UploadTask uploadTask = fileReference.putFile(mFilePath);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -295,7 +267,10 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
             startActivity(intent);
             ActivityCompat.finishAffinity(AddMenuActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(AddMenuActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddMenuActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(AddMenuActivity.this, LoginActivity.class);
@@ -318,6 +293,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

@@ -52,7 +52,10 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.MyViewHolder>
         food = mFoodList.get(position);
         Log.d("MENUTEST", "Food Id: " + food.getFoodId());
         Log.d("MENUTEST", "Food Id: " + food.getFoodName());
-        holder.image.setImageResource(mContext.getResources().getIdentifier("drawable/"+food.getFoodImgURL(),null , mContext.getPackageName()));
+        if(!food.getFoodImgURL().equals(""))  {
+            Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.image);
+        }
+
         holder.name.setText(food.getFoodName());
         holder.price.setText("$"+food.getFoodPrice());
     }
