@@ -161,6 +161,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
                 mImageView.setImageBitmap(bitmap);
+                mAddMenuBtn.setEnabled(false);
                 uploadFile();
             }
             catch (IOException e)
@@ -175,7 +176,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         if(mFilePath != null) {
             final StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mFilePath));
 
-            fileReference.putFile(mFilePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+           /* fileReference.putFile(mFilePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Handler handler = new Handler();
@@ -185,7 +186,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                             mProgressBar.setProgress(0);
                         }
                     }, 5000);
-                    mImageUri = taskSnapshot.toString();
+                    mImageUri = taskSnapshot.getTask().getResult().toString();
                     mImagePath.setText(mImageUri);
                     Toast.makeText(AddMenuActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
                 }
@@ -201,16 +202,15 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                     double progress = (100.0 * taskSnapshot.getBytesTransferred()/ taskSnapshot.getTotalByteCount());
                     mProgressBar.setProgress((int) progress);
                 }
-            });
+            }); */
 
-            /*final UploadTask uploadTask = fileReference.putFile(mFilePath);
+            final UploadTask uploadTask = fileReference.putFile(mFilePath);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-                    task.getResult()
                     return fileReference.getDownloadUrl();
                 }
             }).addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -229,7 +229,8 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         mImageUri = task.getResult().toString();
-                        mImagePath.setText(mImageUri);
+                        mProgressBar.setProgress(100);
+                        mAddMenuBtn.setEnabled(true);
                         Toast.makeText(AddMenuActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddMenuActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
@@ -240,7 +241,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(AddMenuActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });*/
+            });
         }
         else {
             Toast.makeText(AddMenuActivity.this, "No File selected", Toast.LENGTH_SHORT).show();

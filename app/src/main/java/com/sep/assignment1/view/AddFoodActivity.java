@@ -115,7 +115,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
                     String foodName = mFoodNameET.getText().toString();
                     Double foodPrice = Double.parseDouble(mFoodPriceET.getText().toString());
                     String foodDescription = mFoodDescriptionET.getText().toString();
-                    String foodImgURL = mFoodImgURLTV.getText().toString();
+                    String foodImgURL = mImageUri;
                     Food food = new Food(foodId, foodName, foodPrice, foodDescription, foodImgURL);
 
                     Intent result = new Intent();
@@ -220,6 +220,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
                 mFoodImageView.setImageBitmap(bitmap);
+                mAddFoodBtn.setEnabled(false);
                 uploadFile();
             }
             catch (IOException e)
@@ -254,7 +255,8 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         mImageUri = task.getResult().toString();
-                        mFoodImgURLTV.setText(mImageUri);
+                        mProgressBar.setProgress(100);
+                        mAddFoodBtn.setEnabled(true);
                         Toast.makeText(AddFoodActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddFoodActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();

@@ -109,14 +109,6 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        mUploadBtn = (Button) findViewById(R.id.add_restaurant_uploadBtn);
-        mUploadBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                uploadFile();
-            }
-        });
-
         mSubmitBtn = (Button) findViewById(R.id.add_restaurantBtn);
 
         mSubmitBtn.setOnClickListener(new View.OnClickListener(){
@@ -238,6 +230,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mFilePath);
                 mImageView.setImageBitmap(bitmap);
+                mSubmitBtn.setEnabled(false);
                 uploadFile();
             }
             catch (IOException e)
@@ -272,7 +265,8 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         mImageUri = task.getResult().toString();
-                        mImagePath.setText(mImageUri);
+                        mProgressBar.setProgress(100);
+                        mSubmitBtn.setEnabled(true);
                         Toast.makeText(AddRestaurantActivity.this, "Upload Success!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(AddRestaurantActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
