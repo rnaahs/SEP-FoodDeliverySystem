@@ -1,5 +1,8 @@
 package com.sep.assignment1.view;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -19,6 +23,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,25 +36,43 @@ import com.sep.assignment1.R;
 import com.sep.assignment1.model.Cart;
 import com.sep.assignment1.model.CartAdapter;
 import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.Order;
+import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 public class CartActivity extends AppCompatActivity   implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseReference;
     private RecyclerView recyclerView;
-    private String mUserID;
-    private String mRestaurantID;
+
     private TextView txtTotalPrice;
-    private Button orderBtn;
+    private EditText mAddressET;
+    private Button orderBtn, addressBtn;
     private ArrayList<Food> mFoodCartArrayList;
     private ArrayList<Cart> mCartArrayList;
     private List<User> mUserList = new ArrayList<>();
+    private List<Restaurant> mRestaurantList = new ArrayList<>();
     private CartAdapter mCartAdapter;
     private DatabaseReference mFirebaseUserReference;
+    private DatabaseReference mFirebaseOrderReferencce;
+    private DatabaseReference mFirebaseRestaurantRefence;
+    private String mUserID;
+    private String mRestaurantID;
+    private String mOrderID;
+    private String mRestaurantAddress;
+    private String mCustomerAddress;
+    private String mPrice;
+    private String mStatus = "Placed";
+    private int mRole;
+    private double mBalance;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +89,21 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseReference = mFirebaseInstance.getReference("cart");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
+        mFirebaseOrderReferencce = mFirebaseInstance.getReference("order");
+        mFirebaseRestaurantRefence = mFirebaseInstance.getReference("restaurant");
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView);
+        }
 
         mFoodCartArrayList = new ArrayList<>();
         mCartArrayList = new ArrayList<>();
@@ -82,33 +120,43 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         setCartItemsFromDB();
         mCartAdapter.notifyDataSetChanged();
 
+        addressBtn = (Button) findViewById(R.id.editAddressBtn);
+        mAddressET = (EditText) findViewById(R.id.cart_delivery_address);
+        mAddressET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                mAddressET.setBackgroundColor(getResources().getColor(R.color.colorAccentDark));
+                addressBtn.setVisibility(View.VISIBLE);
+            }
+        });
+        addressBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressBtn.setVisibility(View.GONE);
+                mAddressET.setBackgroundColor(getResources().getColor(R.color.transparent));
+                mCustomerAddress = mAddressET.getText().toString();
+            }
+        });
+        if(mCartArrayList!=null){
+            //Get Restaurant Name
+            getRestaurantDetails();
+        }
+
+
         txtTotalPrice = (TextView) findViewById(R.id.cart_totalTV);
         orderBtn = (Button) findViewById(R.id.placeOrderBtn);
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
-                intent.putExtra("CartID", mUserID);
-                intent.putExtra("RestaurantID", mRestaurantID);
-                startActivity(intent);
+                submitOrder();
+
             }
         });
 
 
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View headerView = navigationView.getHeaderView(0);
-        if (mAuth.getCurrentUser() != null) {
-            getUserProfile(headerView);
-        }
     }
 
 
@@ -183,7 +231,9 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                     if(dataSnapshot.getKey().toString().equals(mUserID)) {
                         Cart cart = dataSnapshot.getValue(Cart.class);
                         mCartArrayList.add(cart);
-                        txtTotalPrice.setText(cart.getmPrice());
+                        mPrice = cart.getmPrice();
+                        mRestaurantID = cart.getmRestaurantID();
+                        txtTotalPrice.setText(mPrice);
 
                         if (cart.getmFoodArrayList() != null) {
                             for (Food food : cart.getmFoodArrayList()) {
@@ -229,18 +279,28 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
                 if(user.getUserid().equals(mAuth.getUid())) {
+                    mUserList.add(user);
                     TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mCustomerAddress = user.getAddress();
+                    mBalance = user.getBalance();
+                    mRole = user.getRole();
+
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                user = dataSnapshot.getValue(User.class);
+                if (user.getUserid().equals(mUserID)) {
+                    mUserList.add(user);
+                    mBalance = user.getBalance();
+                    return;
+                }
             }
 
             @Override
@@ -257,6 +317,107 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
             }
         });
+    }
+
+    private void submitOrder(){
+        try{
+            //Get Random number for orderID
+            Random random = new Random();
+            mOrderID = "U" + String.valueOf(random.nextInt(9999));
+
+            //Get date for start time
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            String startTime = dateFormat.format(Calendar.getInstance().getTime());
+
+            if(mBalance < Double.parseDouble(mPrice)){
+                AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+
+                builder.setMessage("Balance has not enough credit. Please top up now")
+                        .setTitle("Not Enough Balance")
+                        // Set the action buttons
+                        .setPositiveButton("Top up", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(CartActivity.this, BalanceActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+
+                 AlertDialog dialog = builder.create();
+                 dialog.show();
+            }else{
+                double newBalance = mBalance - Double.parseDouble(mPrice);
+                for(User user : mUserList) {
+                    if (user.getUserid().equals(mUserID)) {
+                        updateBalance(user, newBalance);
+                    }
+                }
+                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
+                mFirebaseOrderReferencce.child(mOrderID).setValue(order);
+                mCartArrayList.clear();
+                mFirebaseReference.child(mUserID).removeValue();
+                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
+                intent.putExtra("CartID", mUserID);
+                intent.putExtra("RestaurantID", mRestaurantID);
+                intent.putExtra("OrderID", mOrderID);
+                startActivity(intent);
+                finish();
+            }
+
+        }catch (Exception ex){
+            Log.e("Submit Order", "Exception:" + ex);
+        }
+
+
+    }
+    private void getRestaurantDetails(){
+        mFirebaseRestaurantRefence.addChildEventListener(new ChildEventListener() {
+            private Restaurant restaurant;
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                try {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if (mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())) {
+                            restaurant = ds.getValue(Restaurant.class);
+                            mRestaurantAddress = restaurant.Address;
+                        }
+                    }
+                }catch (Exception ex){
+                    Log.e("Cart", "Exception: " + ex);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateBalance(User user, double newBalance){
+        user = new User(user.getUserid(),user.getFirstname(),user.getLastname(),user.getEmail(),user.getRole(),user.getAddress(),newBalance,user.getBsb(),user.getLicenceDr(),user.getVehicle());
+        mFirebaseUserReference.child(mUserID).setValue(user);
     }
 }
 

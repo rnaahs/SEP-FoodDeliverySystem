@@ -79,21 +79,22 @@
     <string name="signQuestion">Would you like to Sign up as?</string>
 
     <!-- app header for user screens -->
-    <string name="title_activity_restaurant_main">RestaurantMainActivity</string>
-    <string name="title_activity_delivery_main">DeliveryMainActivity</string>
-    <string name="title_activity_user_main">UserMainActivity</string>
+    <string name="title_activity_restaurant_main">Menus</string>
+    <string name="title_activity_delivery_main">Delivery Information</string>
+    <string name="title_activity_user_main">Restaurants</string>
     <string name="restaurant_txt">Restaurant</string>
-    <string name="title_activity_signup_main">MainSignupActivity</string>
+    <string name="title_activity_signup_main">Signup</string>
 
     <!-- String related to add restaurant -->
     <string name="NameEmpty">Enter name</string>
-    <string name="title_activity_add_food">AddFoodActivity</string>
-    <string name="title_activity_menu_main">MenuMainActivity</string>
+    <string name="title_activity_add_food">Adding Food</string>
+    <string name="title_activity_menu_main">Foods</string>
     <string name="title_activity_user_menu">UserMenuActivity</string>
     <string name="title_activity_user_food">UserFoodActivity</string>
-    <string name="title_activity_balanc">BalancActivity</string>
-    <string name="title_activity_balance_topup">BalanceTopupActivity</string>
-    <string name="title_activity_cart">CartActivity</string>
+    <string name="title_activity_balanc">Balance</string>
+    <string name="title_activity_balance_topup">Top up</string>
+    <string name="title_activity_balance_withdraw">Withdrawn</string>
+    <string name="title_activity_cart">Cart</string>
 
     <string-array name="quantity_arrays">
         <item>1</item>
@@ -105,14 +106,15 @@
         <item>7</item>
         <item>8</item>
     </string-array>
-    <string name="title_activity_account">AccountActivity</string>
-    <string name="title_activity_balance">BalanceActivity</string>
-    <string name="title_activity_restaurant_signup">RestaurantSignupActivity</string>
+    <string name="title_activity_account">Manage Account</string>
+    <string name="title_activity_balance">Balance</string>
+    <string name="title_activity_restaurant_signup">Sign up as Restaurant</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="address">Address</string>
     <string name="bsb">bsb</string>
-    <string name="driver_signup_activity">DriverSignupActivity</string>
-    <string name="orderactivity">OrderActivity</string>
+    <string name="driver_signup_activity">Sign up as Driver</string>
+    <string name="orderactivity">Order Confirmation</string>
     <string name="edit_account">Edit Account</string>
+    <string name="title_activity_order_list">Orders</string>
 </resources>

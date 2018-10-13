@@ -68,6 +68,13 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
             }
         });
         mWithdrawnBtn = (Button) findViewById(R.id.withdrawnBtn);
+        mWithdrawnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BalanceActivity.this, BalanceWithdrawn.class);
+                startActivity(intent);
+            }
+        });
 
         addBalanceListener();
 

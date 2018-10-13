@@ -1,44 +1,68 @@
 package com.sep.assignment1.model;
 
+import java.util.ArrayList;
+
 public class Order {
-    private String FoodID;
-    private String FoodName;
-    private String Quantity;
+    private String OrderID;
+    private ArrayList<Food> FoodArrayList;
+    private String RestaurantAddress;
+    private String CustomerAddress;
     private String Price;
+    private String StartTime;
+    private String EndTime;
+    private String CustomerID;
+    private String RestaurantID;
+    private String Status;
 
     public Order(){
 
     }
 
-    public Order(String foodID, String foodName, String quantity, String price){
-        FoodID = foodID;
-        FoodName = foodName;
-        Quantity = quantity;
-        Price = price;
+    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
+        this.OrderID = OrderID;
+        this.FoodArrayList = FoodArrayList;
+        this.RestaurantAddress = RestaurantAddress;
+        this.CustomerAddress = CustomerAddress;
+        this.Price = Price;
+        this.StartTime = StartTime;
+        this.EndTime = EndTime;
+        this.CustomerID = CustomerID;
+        this.RestaurantID = RestaurantID;
+        this.Status = Status;
+
     }
 
-    public String getFoodID() {
-        return FoodID;
+    public String getOrderID() {
+
+        return OrderID;
     }
 
-    public void setFoodID(String foodID) {
-        FoodID = foodID;
+    public void setOrderID(String orderID) {
+        OrderID = orderID;
     }
 
-    public String getFoodName() {
-        return FoodName;
+    public ArrayList<Food> getFoodArrayList() {
+        return FoodArrayList;
     }
 
-    public void setFoodName(String foodName) {
-        FoodName = foodName;
+    public void setFoodArrayList(ArrayList<Food> foodArrayList) {
+        FoodArrayList = foodArrayList;
     }
 
-    public String getQuantity() {
-        return Quantity;
+    public String getRestaurantAddress() {
+        return RestaurantAddress;
     }
 
-    public void setQuantity(String quantity) {
-        Quantity = quantity;
+    public void setRestaurantAddress(String restaurantAddress) {
+        RestaurantAddress = restaurantAddress;
+    }
+
+    public String getCustomerAddress() {
+        return CustomerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        CustomerAddress = customerAddress;
     }
 
     public String getPrice() {
@@ -49,4 +73,43 @@ public class Order {
         Price = price;
     }
 
+    public String getRestaurantID() {
+        return RestaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        RestaurantID = restaurantID;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
+    }
+
+    public void setStartTime(String startTime) {
+        StartTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        EndTime = endTime;
+    }
+
+    public String getStartTime() {
+        return StartTime;
+    }
+
+    public String getEndTime() {
+        return EndTime;
+    }
+
+    public String getCustomerID() {
+        return CustomerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        CustomerID = customerID;
+    }
 }

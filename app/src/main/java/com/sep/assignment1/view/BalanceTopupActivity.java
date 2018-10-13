@@ -36,7 +36,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
     private EditText mCardNumET, mCardExpireET, mCardCCVET, mNameET, mAmountET;
     private Button mTopupBtn;
     private List<User> mUserList = new ArrayList<>();
-    private Double mBalance;
+    private Double mBalance, amount;
     private User user;
     private int mPosition;
     private DatabaseReference mFirebaseUserReference;
@@ -66,9 +66,9 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         mTopupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Double amount = Double.parseDouble(mAmountET.getText().toString());
-                uploadBalanceListener(amount);
-
+                amount = Double.parseDouble(mAmountET.getText().toString());
+                uploadBalanceListener();
+                finish();
             }
         });
 
@@ -153,17 +153,23 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
         return true;
     }
 
-    private void uploadBalanceListener(Double amount){
+    private void uploadBalanceListener(){
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
                 user = dataSnapshot.getValue(User.class);
                 if (user.getUserid().equals(mUserID)) {
                     mUserList.add(user);
                     mPosition = mUserList.indexOf(user);
                     mBalance = user.getBalance();
-                    return;
+                        Double balance = mBalance + amount;
+                        if(user.getUserid().equals(mUserID)) {
+                            user = mUserList.get(mPosition);
+                            user = new User(user.getUserid(), user.getFirstname(), user.getLastname(), user.getEmail(), user.getRole(), user.getAddress(), balance, null, user.getLicenceDr(), user.getVehicle());
+                            mFirebaseUserReference.child(mUserID).setValue(user);
+                        }
+
+                    return ;
                 }
 
             }
@@ -188,13 +194,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
 
             }
         });
-        if(mBalance!=null){
-            Double balance = mBalance + amount;
-            user = mUserList.get(mPosition);
-            user = new User(user.getUserid(), user.getFirstname(), user.getLastname(),user.getEmail(), user.getRole(), user.getAddress(),balance, null, user.getLicenceDr(),user.getVehicle());
-            mFirebaseUserReference.child(mUserID).setValue(user);
-            finish();
-        }
+
     }
     private void getUserProfile(final View headerView){
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {

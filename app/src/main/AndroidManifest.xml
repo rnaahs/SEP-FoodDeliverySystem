@@ -41,6 +41,7 @@
         <activity
             android:name=".view.AddMenuActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".view.AddFoodActivity"
             android:label="@string/title_activity_add_food"
@@ -52,6 +53,10 @@
         <activity
             android:name=".view.BalanceTopupActivity"
             android:label="@string/title_activity_balance_topup"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.BalanceWithdrawn"
+            android:label="@string/title_activity_balance_withdraw"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.CartActivity"
@@ -74,12 +79,15 @@
         <activity
             android:name=".view.DriverSignupActivity"
             android:label="@string/driver_signup_activity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.OrderActivity"
             android:label="@string/orderactivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity
+            android:name=".view.OrderListActivity"
+            android:label="@string/title_activity_order_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -5,27 +5,55 @@
     android:id="@+id/driver_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverMain">
+    tools:context=".DriverMain"
+    android:background="@color/colorPrimary">
 
-    <Button
-        android:id="@+id/button"
+
+    <RelativeLayout
+        android:id="@+id/btmLinear"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="39dp"
-        android:text="Open with Google Maps "
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:background="@color/green"
-        android:textColor="@color/white" />
+        android:layout_height="120dp"
+        android:layout_below="@+id/topLinear"
+        >
+
+        <Button
+            android:id="@+id/buttonGoogle"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="57dp"
+            android:background="@color/green"
+            android:text="Open with Google Maps "
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttonGoogle"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="280dp"
+            android:layout_marginLeft="81dp"
+            android:layout_marginTop="-54dp"
+            android:text="Finish"
+            android:background="@color/colorAccent"
+            android:textColor="@color/white"
+            android:textSize="15dp"
+            />
+
+
+    </RelativeLayout>
+
 
     <LinearLayout
-        android:layout_width="373dp"
+        android:background="@color/colorPrimary"
+        android:id="@+id/topLinear"
+        android:layout_width="match_parent"
         android:layout_height="315dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="11dp"
         android:layout_marginTop="50dp"
         android:orientation="vertical">
 
@@ -38,6 +66,7 @@
                 android:id="@+id/cutomer_text"
                 android:layout_width="113dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:text="Customer location"
                 android:textSize="18dp"
                 />
@@ -61,6 +90,7 @@
                 android:id="@+id/resturant_text"
                 android:layout_width="113dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:text="Resturant location"
                 android:textSize="18dp" />
 
@@ -86,7 +116,8 @@
                 android:gravity="center"
                 android:text="Order Details"
                 android:textSize="25dp"
-                android:background="@color/white"/>
+                android:background="@color/white"
+                android:backgroundTint="@color/colorPrimary"/>
 
             <EditText
                 android:id="@+id/order_number_input"
@@ -98,8 +129,6 @@
                 android:textSize="30dp" />
         </LinearLayout>
 
-
     </LinearLayout>
-
 
 </RelativeLayout>

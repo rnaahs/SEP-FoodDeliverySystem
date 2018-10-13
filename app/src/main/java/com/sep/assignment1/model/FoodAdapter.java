@@ -60,17 +60,6 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             mCartBtn = (Button) itemView.findViewById(R.id.addCartBtn);
             mQuantitySpi = (Spinner) itemView.findViewById(R.id.quantity_spinner);
 
-            try{
-                mRole = 0;
-                if(mRole == 0){
-                    mCartBtn.setVisibility(View.VISIBLE);
-                }
-                else if (mRole == 1){
-                    mCartBtn.setVisibility(View.INVISIBLE);
-                }
-            }catch (Exception ex){
-                Log.e("Exception", "mRole is null: ", ex );
-            }
         }
     }
 
@@ -97,7 +86,9 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         holder.mFoodNameTv.setText(food.getFoodName());
         holder.mFoodPriceTv.setText("$"+food.getFoodPrice());
         holder.mFoodDescriptionTv.setText(food.getFoodDescription());
-        if(!food.getFoodImgURL().equals(""))  Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.mFoodImageView);
+        if(!food.getFoodImgURL().equals(""))  {
+            Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.mFoodImageView);
+        }
 
     }
 
