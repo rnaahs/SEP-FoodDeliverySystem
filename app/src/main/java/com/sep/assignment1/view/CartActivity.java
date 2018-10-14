@@ -69,6 +69,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private String mRestaurantName;
     private String mRestaurantImageURI;
     private String mRestaurantAddress;
+    private String mRestaurantOwnerID;
     private String mCustomerAddress;
     private String mPrice;
     private String mStatus = "Placed";
@@ -363,7 +364,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                         updateBalance(user, newBalance);
                     }
                 }
-                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantName, mRestaurantImageURI , mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
+                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantOwnerID , mRestaurantName, mRestaurantImageURI , mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
                 mFirebaseOrderReference.child(mOrderID).setValue(order);
                 mCartArrayList.clear();
                 mFirebaseReference.child(mUserID).removeValue();
@@ -393,6 +394,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                             mRestaurantAddress = restaurant.Address;
                             mRestaurantName = restaurant.Name;
                             mRestaurantImageURI = restaurant.ImageUri;
+                            mRestaurantOwnerID = dataSnapshot.getRef().getKey();
                         }
                     }
                 }catch (Exception ex){
