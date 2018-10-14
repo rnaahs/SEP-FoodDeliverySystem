@@ -170,7 +170,10 @@ public class AccountActivity extends AppCompatActivity
             startActivity(intent);
             ActivityCompat.finishAffinity(AccountActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(AccountActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AccountActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(AccountActivity.this, LoginActivity.class);

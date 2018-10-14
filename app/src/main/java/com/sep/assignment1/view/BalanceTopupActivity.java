@@ -40,6 +40,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
     private User user;
     private int mPosition;
     private DatabaseReference mFirebaseUserReference;
+    private int mRole;
 
 
     @Override
@@ -140,7 +141,10 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
             startActivity(intent);
             ActivityCompat.finishAffinity(BalanceTopupActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(BalanceTopupActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceTopupActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(BalanceTopupActivity.this, LoginActivity.class);
@@ -206,6 +210,7 @@ public class BalanceTopupActivity extends AppCompatActivity  implements Navigati
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

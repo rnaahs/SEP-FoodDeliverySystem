@@ -130,9 +130,13 @@ public class BalanceWithdrawn extends AppCompatActivity  implements NavigationVi
             startActivity(intent);
             ActivityCompat.finishAffinity(BalanceWithdrawn.this);
         } else if (id == R.id.nav_manage_balance) {
-
+            Intent intent = new Intent(BalanceWithdrawn.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceWithdrawn.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(BalanceWithdrawn.this, OrderListActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceWithdrawn.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(BalanceWithdrawn.this, LoginActivity.class);

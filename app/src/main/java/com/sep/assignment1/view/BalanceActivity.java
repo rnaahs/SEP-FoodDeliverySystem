@@ -38,6 +38,7 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
     private String mUserID;
     private Double mBalance;
     private DatabaseReference mFirebaseUserReference;
+    private int mRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,8 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        if(mRole == 1 || mRole == 2) menu.clear();
         return true;
     }
 
@@ -144,7 +146,10 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
         } else if (id == R.id.nav_manage_balance) {
 
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(BalanceActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(BalanceActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(BalanceActivity.this, LoginActivity.class);
@@ -216,6 +221,7 @@ public class BalanceActivity extends AppCompatActivity  implements NavigationVie
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

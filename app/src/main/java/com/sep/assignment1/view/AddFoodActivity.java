@@ -46,7 +46,6 @@ import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
-import com.sep.assignment1.model.Upload;
 import com.sep.assignment1.model.User;
 
 import java.io.IOException;
@@ -70,6 +69,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
     private String mMenuKey;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
+    private int mRole;
 
 
     @Override
@@ -188,7 +188,10 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             startActivity(intent);
             ActivityCompat.finishAffinity(AddFoodActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(AddFoodActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(AddFoodActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(AddFoodActivity.this, LoginActivity.class);
@@ -285,6 +288,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 

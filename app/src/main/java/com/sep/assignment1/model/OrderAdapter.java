@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sep.assignment1.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,6 @@ public class OrderAdapter  extends RecyclerView.Adapter<OrderAdapter.ViewHolder>
         // Get the data from an ImageView as bytes
         holder.mFoodNameTV.setText(food.getFoodName());
         holder.mFoodPriceTV.setText("$"+food.getFoodPrice());
-
 
     }
 

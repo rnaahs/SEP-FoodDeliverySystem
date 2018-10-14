@@ -1,16 +1,20 @@
 package com.sep.assignment1.model;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sep.assignment1.R;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -21,10 +25,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private Context mContext;
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView mMenuNameTv;
+        private ImageView mImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mMenuNameTv = (TextView) itemView.findViewById(R.id.menu_item_name_tv);
+            mImageView = (ImageView) itemView.findViewById(R.id.menu_item_iv);
         }
     }
 
@@ -44,7 +50,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Menu menu = mMenuList.get(position);
-        holder.mMenuNameTv.setText(menu.getMenuName());
+        holder.itemView.setDrawingCacheEnabled(true);
+        holder.itemView.buildDrawingCache();
+        holder.mMenuNameTv.setText("  " + menu.getMenuName());
+        if(!menu.getImageURL().equals(""))  {
+            Picasso.with(mContext).load(menu.getImageURL()).into(holder.mImageView);
+        }
+        Log.d("Restaurant", "The adapter menu name is "  + menu.getMenuName());
     }
 
     @Override

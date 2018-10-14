@@ -7,4 +7,5 @@ package com.sep.assignment1;
  **/
 public class Constants {
     public static final String RESULT = "EXTRA_RESULT";
+    public static int ROLE;
 }

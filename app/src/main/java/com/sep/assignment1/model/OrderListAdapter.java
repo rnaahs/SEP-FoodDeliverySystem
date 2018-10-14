@@ -69,7 +69,7 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
     @Override
     public void onBindViewHolder(@NonNull OrderListAdapter.ViewHolder holder, int position) {
         order = mOrderList.get(position);
-        holder.mOrderIDET.setText(order.getOrderID());
+        holder.mOrderIDET.setText("Order ID - #"+order.getOrderID());
         mRestaurantID = order.getRestaurantID();
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
@@ -87,14 +87,14 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
                 String getDate = dateFormat.format(startDate);
                 String getTime = timeFormat.format(startDate);
 
-                holder.mDateTV.setText(getDate);
-                holder.mTimeTV.setText(getTime);
+                holder.mDateTV.setText("Start Date: " +getDate);
+                holder.mTimeTV.setText("Start Time: "+getTime);
 
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-            holder.mAmountTV.setText(order.getPrice());
+            holder.mAmountTV.setText(" $"+order.getPrice());
             if (order.getStatus().equals("Placed")) {
                 holder.mStatusTV.setTextColor(mContext.getResources().getColor(R.color.green));
             }else if (order.getStatus().equals("Delivering")){
@@ -102,13 +102,9 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
             }else {
                 holder.mStatusTV.setTextColor(mContext.getResources().getColor(R.color.colorAccentDark));
             }
-            holder.mStatusTV.setText(order.getStatus());
-            if(mImageUrl!=null)  {
-                Picasso.with(mContext).load(mImageUrl).into(holder.mRestaurantImage);
-            }
-            if (mRestaurantName!=null) {
-                holder.mRestaurantNameTV.setText(mRestaurantName);
-            }
+            holder.mStatusTV.setText(" "+order.getStatus());
+            Picasso.with(mContext).load(order.getRestaurantURI()).into(holder.mRestaurantImage);
+                holder.mRestaurantNameTV.setText("Restaurant Name: " + order.getRestaurantName());
         }
     }
 
@@ -126,7 +122,6 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
                     if(mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())){
                         restaurant = ds.getValue(Restaurant.class);
                         mRestaurantList.add(restaurant);
-                        mRestaurantName = restaurant.Name;
                         mImageUrl = restaurant.ImageUri;
                     }
                 }

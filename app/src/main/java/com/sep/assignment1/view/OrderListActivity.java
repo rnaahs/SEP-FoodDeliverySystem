@@ -15,6 +15,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,7 +26,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sep.assignment1.DriverMain;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Order;
@@ -46,7 +46,10 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     private ArrayList<Order> mOrderList = new ArrayList<>();
     private ArrayList<Restaurant> mRestaurantList = new ArrayList<>();
     private OrderListAdapter mOrderListAdapter;
+    private int mRole;
     private String mRestaurantID, mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
+    private static final String placedStatus = "Placed";
+    private static final String receivedStatus = "Received";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,8 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
         setContentView(R.layout.activity_order_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mRole = getIntent().getIntExtra("mRole", 0);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
@@ -88,24 +93,29 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
         mOrderListAdapter = new OrderListAdapter(mOrderList, getApplicationContext());
         recyclerView.setAdapter(mOrderListAdapter);
 
+            recyclerView.addOnItemTouchListener(new RestaurantRecyclerTouchListener(getApplicationContext(), recyclerView, new RestaurantRecyclerTouchListener.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    Order order = mOrderList.get(position);
+                    if(mRole == 2) {
+                        Intent intent = new Intent(OrderListActivity.this, DriverMain.class);
+                        intent.putExtra("CustomerAddress", order.getCustomerAddress());
+                        intent.putExtra("ResturantAddress", order.getRestaurantAddress());
+                        intent.putExtra("OrderNumber", order.getOrderID());
+                        startActivity(intent);
+                    } else if(mRole == 0) {
+                        Intent intent = new Intent(OrderListActivity.this, OrderActivity.class);
+                        intent.putExtra("OrderID", order.getOrderID());
+                        intent.putExtra("RestaurantID", order.getRestaurantID());
+                        startActivity(intent);
+                    }
+                }
 
-        recyclerView.addOnItemTouchListener(new RestaurantRecyclerTouchListener(getApplicationContext(), recyclerView, new RestaurantRecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Order order = mOrderList.get(position);
-                Intent intent = new Intent(OrderListActivity.this, DriverMain.class);
-                intent.putExtra("CustomerAddress", order.getCustomerAddress());
-                intent.putExtra("ResturantAddress", order.getRestaurantAddress());
-                intent.putExtra("OrderNumber", order.getOrderID());
+                @Override
+                public void onLongClick(View view, int position) {
 
-                startActivity(intent);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
+                }
+            }));
 
         getOrderList();
 
@@ -124,7 +134,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_main, menu);
+        getMenuInflater().inflate(R.menu.restaurant_main, menu);
         return true;
     }
 
@@ -152,15 +162,23 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent intent = new Intent(OrderListActivity.this, UserMainActivity.class);
-            startActivity(intent);
-            ActivityCompat.finishAffinity(OrderListActivity.this);
+            if(mRole != 2){
+                Intent intent = new Intent(OrderListActivity.this, UserMainActivity.class);
+                startActivity(intent);
+                ActivityCompat.finishAffinity(OrderListActivity.this);
+            }else {
+                Intent intent = new Intent(OrderListActivity.this, OrderListActivity.class);
+                startActivity(intent);
+                ActivityCompat.finishAffinity(OrderListActivity.this);
+            }
         } else if (id == R.id.nav_manage_account) {
             Intent intent = new Intent(OrderListActivity.this, AccountActivity.class);
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_manage_balance) {
-
+            Intent intent = new Intent(OrderListActivity.this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_order_history) {
 
         } else if (id == R.id.nav_logout) {
@@ -185,6 +203,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                     TextView email = (TextView) headerView.findViewById(R.id.email);
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
+                    mRole = user.getRole();
                 }
             }
 
@@ -213,7 +232,18 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
-                mOrderList.add(order);
+                if(order.getCustomerID().equals(mAuth.getUid())){
+                    mOrderList.add(order);
+                }
+                else if(mAuth.getUid().equals(order.getRestaurantOwnerID())){
+                    mOrderList.add(order);
+                }
+                else if(mRole == 2 && order.getStatus().equals(placedStatus)) {
+                    mOrderList.add(order);
+                }
+                else{
+                    mOrderList.add(order);
+                }
 
                 mOrderListAdapter.notifyDataSetChanged();
             }

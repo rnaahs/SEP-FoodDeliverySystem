@@ -104,6 +104,7 @@ public class RestaurantMainActivity extends AppCompatActivity
             public void onClick(View view, int position) {
                 Menu menu = mMenuArrayList.get(position);
                 Intent intent = new Intent(RestaurantMainActivity.this, MenuMainActivity.class);
+                intent.putExtra("mRole", mRole);
                 intent.putExtra("MenuKey", menu.getMenuId());
                 intent.putExtra("MenuName", menu.getMenuName());
                 intent.putExtra("RestaurantKey", mRestaurantKey);
@@ -146,6 +147,7 @@ public class RestaurantMainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user_main, menu);
+        if(mRole == 1 || mRole == 2) menu.clear();
         return true;
     }
 
@@ -183,7 +185,9 @@ public class RestaurantMainActivity extends AppCompatActivity
             startActivity(intent);
             ActivityCompat.finishAffinity(RestaurantMainActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(RestaurantMainActivity.this, OrderListActivity.class);
+            intent.putExtra("mRole", mRole);
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(RestaurantMainActivity.this, LoginActivity.class);
@@ -202,7 +206,6 @@ public class RestaurantMainActivity extends AppCompatActivity
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//restaurant ID
-                mMenuArrayList.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(dataSnapshot.getKey().equals(mRestaurantKey)){
                         Menu menu = child.getValue(Menu.class);

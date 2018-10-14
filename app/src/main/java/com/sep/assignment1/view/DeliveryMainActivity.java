@@ -99,7 +99,9 @@ public class DeliveryMainActivity extends AppCompatActivity implements Navigatio
             startActivity(intent);
             ActivityCompat.finishAffinity(DeliveryMainActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(DeliveryMainActivity.this, OrderListActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(DeliveryMainActivity.this);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(DeliveryMainActivity.this, LoginActivity.class);
