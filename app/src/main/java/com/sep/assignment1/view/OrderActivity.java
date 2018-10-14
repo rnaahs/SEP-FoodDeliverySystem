@@ -133,7 +133,6 @@ public class OrderActivity extends AppCompatActivity implements NavigationView.O
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.restaurant_main, menu);
-        if(Constants.ROLE == 1 || Constants.ROLE == 2) menu.clear();
         return true;
     }
 

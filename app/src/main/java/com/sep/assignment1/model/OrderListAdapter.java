@@ -103,8 +103,8 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
                 holder.mStatusTV.setTextColor(mContext.getResources().getColor(R.color.colorAccentDark));
             }
             holder.mStatusTV.setText(" "+order.getStatus());
-            Picasso.with(mContext).load(order.getFoodArrayList().get(0).getFoodImgURL()).into(holder.mRestaurantImage);
-                holder.mRestaurantNameTV.setText("Food Name: " + order.getFoodArrayList().get(0).getFoodName());
+            Picasso.with(mContext).load(order.getRestaurantURI()).into(holder.mRestaurantImage);
+                holder.mRestaurantNameTV.setText("Restaurant Name: " + order.getRestaurantName());
         }
     }
 

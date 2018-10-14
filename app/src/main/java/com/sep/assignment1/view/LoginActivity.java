@@ -65,11 +65,14 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (mAuth.getCurrentUser() != null) {
+
             if(mRole == 0 || mRole == 1) {
                 Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+                intent.putExtra("mRole", mRole);
                 startActivity(intent);
             }else if(mRole == 2){
                 Intent intent = new Intent(LoginActivity.this, OrderListActivity.class);
+                intent.putExtra("mRole", mRole);
                 startActivity(intent);
             }
             LoginActivity.this.finish();
@@ -127,7 +130,6 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    getUserProfile();
                                     if(mRole==2){
                                         Intent intent = new Intent (LoginActivity.this, OrderListActivity.class);
                                         startActivity(intent);
@@ -150,7 +152,8 @@ public class LoginActivity extends AppCompatActivity {
                 if(user.getUserid().equals(mUserId)){
                     mUserList.add(user);
                     mRole = user.getRole();
-                    Log.d("Login", "Role is "+ mRole);
+                    Log.d("Login", "Email is "+ user.getEmail());
+                    Log.d("Login", "Role is " + user.getRole());
                 }
 
             }

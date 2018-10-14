@@ -61,11 +61,13 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private List<Restaurant> mRestaurantList = new ArrayList<>();
     private CartAdapter mCartAdapter;
     private DatabaseReference mFirebaseUserReference;
-    private DatabaseReference mFirebaseOrderReferencce;
-    private DatabaseReference mFirebaseRestaurantRefence;
+    private DatabaseReference mFirebaseOrderReference;
+    private DatabaseReference mFirebaseRestaurantReference;
     private String mUserID;
     private String mRestaurantID;
     private String mOrderID;
+    private String mRestaurantName;
+    private String mRestaurantImageURI;
     private String mRestaurantAddress;
     private String mCustomerAddress;
     private String mPrice;
@@ -89,8 +91,8 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseReference = mFirebaseInstance.getReference("cart");
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
-        mFirebaseOrderReferencce = mFirebaseInstance.getReference("order");
-        mFirebaseRestaurantRefence = mFirebaseInstance.getReference("restaurant");
+        mFirebaseOrderReference = mFirebaseInstance.getReference("order");
+        mFirebaseRestaurantReference = mFirebaseInstance.getReference("restaurant");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -361,8 +363,8 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                         updateBalance(user, newBalance);
                     }
                 }
-                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
-                mFirebaseOrderReferencce.child(mOrderID).setValue(order);
+                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantName, mRestaurantImageURI , mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
+                mFirebaseOrderReference.child(mOrderID).setValue(order);
                 mCartArrayList.clear();
                 mFirebaseReference.child(mUserID).removeValue();
                 Intent intent = new Intent(CartActivity.this, OrderActivity.class);
@@ -380,7 +382,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
 
     }
     private void getRestaurantDetails(){
-        mFirebaseRestaurantRefence.addChildEventListener(new ChildEventListener() {
+        mFirebaseRestaurantReference.addChildEventListener(new ChildEventListener() {
             private Restaurant restaurant;
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -389,6 +391,8 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                         if (mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())) {
                             restaurant = ds.getValue(Restaurant.class);
                             mRestaurantAddress = restaurant.Address;
+                            mRestaurantName = restaurant.Name;
+                            mRestaurantImageURI = restaurant.ImageUri;
                         }
                     }
                 }catch (Exception ex){

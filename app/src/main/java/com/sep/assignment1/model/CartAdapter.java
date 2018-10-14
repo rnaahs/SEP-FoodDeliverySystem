@@ -50,8 +50,6 @@ public class CartAdapter  extends RecyclerView.Adapter<CartAdapter.MyViewHolder>
     @Override
     public void onBindViewHolder(@NonNull CartAdapter.MyViewHolder holder, int position) {
         food = mFoodList.get(position);
-        Log.d("MENUTEST", "Food Id: " + food.getFoodId());
-        Log.d("MENUTEST", "Food Id: " + food.getFoodName());
         if(!food.getFoodImgURL().equals(""))  {
             Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.image);
         }

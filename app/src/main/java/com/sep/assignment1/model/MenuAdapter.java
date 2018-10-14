@@ -51,7 +51,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         Menu menu = mMenuList.get(position);
         holder.itemView.setDrawingCacheEnabled(true);
         holder.itemView.buildDrawingCache();
-        holder.mMenuNameTv.setText(menu.getMenuName());
+        holder.mMenuNameTv.setText("  " + menu.getMenuName());
         if(!menu.getImageURL().equals(""))  {
             Picasso.with(mContext).load(menu.getImageURL()).into(holder.mImageView);
         }

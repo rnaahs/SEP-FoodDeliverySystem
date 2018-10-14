@@ -1,6 +1,7 @@
 package com.sep.assignment1.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -34,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
+    private final Intent mIntent;
     private ArrayList<Food> mFoodList;
     private Context mContext;
     private int mRole;
@@ -63,7 +65,8 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         }
     }
 
-    public FoodAdapter(ArrayList<Food> foods, Context context) {
+    public FoodAdapter(ArrayList<Food> foods, Context context, Intent intent) {
+        mIntent = intent;
         mFoodList = foods;
         mContext = context;
     }
@@ -89,6 +92,10 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         if(!food.getFoodImgURL().equals(""))  {
             Picasso.with(mContext).load(food.getFoodImgURL()).into(holder.mFoodImageView);
         }
+        if(mIntent.getIntExtra("mRole", 0) == 1){
+            holder.mCartBtn.setVisibility(View.GONE);
+        }
+
 
     }
 

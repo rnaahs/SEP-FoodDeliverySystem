@@ -51,7 +51,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private DatabaseReference mFirebaseUserReference;
     private final int REQUEST_CODE = 1;
     private int mRole;
-    private boolean isUSER = false;
+    private android.view.Menu MENU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_user_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mRole = getIntent().getIntExtra("mRole", 0);
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node
         mFirebaseReference = mFirebaseInstance.getReference("restaurant");
@@ -75,15 +76,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        //Navigation View
-        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View headerView = navigationView.getHeaderView(0);
-
-        if (mAuth.getCurrentUser() != null) {
-            getUserProfile(headerView);
-        }
-
         //Recycle View
         mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
         mRestaurantAdapter = new RestaurantAdapter(mRestaurantList, this);
@@ -131,7 +123,15 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_main, menu);
+        getMenuInflater().inflate(R.menu.user_main, menu);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.user_nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+
+        if (mAuth.getCurrentUser() != null) {
+            getUserProfile(headerView, menu);
+        }
+
         return true;
     }
 
@@ -141,6 +141,11 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (id == R.id.action_cart) {
+            Intent intent = new Intent(UserMainActivity.this, CartActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -243,7 +248,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         });
     }
 
-    private void getUserProfile(final View headerView){
+    private void getUserProfile(final View headerView, final android.view.Menu menu){
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -267,6 +272,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                     }
                     else if(mRole == 1) {
                         fab.setVisibility(View.VISIBLE);
+                        menu.clear();
                     }
                 }
             }

@@ -13,13 +13,17 @@ public class Order {
     private String CustomerID;
     private String RestaurantID;
     private String Status;
+    private String mRestaurantName;
+    private String mRestaurantURI;
 
     public Order(){
 
     }
 
-    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
+    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantName, String RestaurantImageURI, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
         this.OrderID = OrderID;
+        mRestaurantName = RestaurantName;
+        mRestaurantURI = RestaurantImageURI;
         this.FoodArrayList = FoodArrayList;
         this.RestaurantAddress = RestaurantAddress;
         this.CustomerAddress = CustomerAddress;
@@ -39,6 +43,22 @@ public class Order {
 
     public void setOrderID(String orderID) {
         OrderID = orderID;
+    }
+
+    public String getRestaurantName() {
+        return mRestaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        mRestaurantName = restaurantName;
+    }
+
+    public String getRestaurantURI() {
+        return mRestaurantURI;
+    }
+
+    public void setRestaurantURI(String restaurantURI) {
+        mRestaurantURI = restaurantURI;
     }
 
     public ArrayList<Food> getFoodArrayList() {

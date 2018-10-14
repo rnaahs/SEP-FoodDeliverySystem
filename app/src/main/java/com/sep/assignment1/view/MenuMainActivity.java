@@ -73,6 +73,7 @@ public class MenuMainActivity extends AppCompatActivity
 
         if(FirebaseAuth.getInstance()!=null) mAuth = FirebaseAuth.getInstance();
 
+        mRole = getIntent().getIntExtra("mRole", 0);
         mMenuKey = getIntent().getStringExtra("MenuKey");
         mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
         mMenuName = getIntent().getStringExtra("MenuName");
@@ -86,8 +87,9 @@ public class MenuMainActivity extends AppCompatActivity
         mFoodItemRv.removeItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
         mFoodItemRv.setItemAnimator(new DefaultItemAnimator());
 
-
-        mFoodAdapter = new FoodAdapter(mFoodArrayList, getApplicationContext());
+        Intent intent = new Intent();
+        intent.putExtra("mRole", mRole);
+        mFoodAdapter = new FoodAdapter(mFoodArrayList, getApplicationContext(), intent);
         mFoodItemRv.setAdapter(mFoodAdapter);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
@@ -120,51 +122,54 @@ public class MenuMainActivity extends AppCompatActivity
             getUserProfile(headerView);
         }
 
-        mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
-            @Override
-            public void onClick(View view, int position) {
+        if(mRole != 1) {
+            mFoodItemRv.addOnItemTouchListener(new FoodRecyclerTouchListener(getApplicationContext(),mFoodItemRv, new FoodRecyclerTouchListener.ClickListener(){
+                @Override
+                public void onClick(View view, int position) {
 
 
-                try {
+                    try {
 
-                    food = mFoodArrayList.get(position);
-                    mFoodCartList.add(food);
+                        food = mFoodArrayList.get(position);
+                        mFoodCartList.add(food);
 
 
-                    mFirebaseCartReference.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Cart currentCart = dataSnapshot.getValue(Cart.class);
-                            try {
-                                mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
-                            }catch (Exception ex){
-                                Log.e("Menu", "onDataChange: ", ex);
+                        mFirebaseCartReference.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Cart currentCart = dataSnapshot.getValue(Cart.class);
+                                try {
+                                    mCurrentPrice = Double.parseDouble(currentCart.getmPrice());
+                                }catch (Exception ex){
+                                    Log.e("Menu", "onDataChange: ", ex);
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
-                    double newPrice = mCurrentPrice + food.getFoodPrice();
+                            }
+                        });
+                        double newPrice = mCurrentPrice + food.getFoodPrice();
 
-                    Cart cart = new Cart(mAuth.getUid(), mFoodCartList, mQuantity, String.valueOf(newPrice), null, mRestaurantKey);
-                    mFirebaseCartReference.child(mAuth.getUid()).setValue(cart);
-                    Snackbar addedCartMessage = Snackbar.make(findViewById(R.id.drawer_layout),
-                            food.getFoodName() + "has been added to cart.", Snackbar.LENGTH_SHORT);
-                    addedCartMessage.show();
-                }catch (Exception ex){
-                    Log.e("Food Adapter", "Exception:" + ex);
+                        Cart cart = new Cart(mAuth.getUid(), mFoodCartList, mQuantity, String.valueOf(newPrice), null, mRestaurantKey);
+                        mFirebaseCartReference.child(mAuth.getUid()).setValue(cart);
+                        Snackbar addedCartMessage = Snackbar.make(findViewById(R.id.drawer_layout),
+                                food.getFoodName() + "has been added to cart.", Snackbar.LENGTH_SHORT);
+                        addedCartMessage.show();
+                    }catch (Exception ex){
+                        Log.e("Food Adapter", "Exception:" + ex);
+                    }
+
                 }
 
-            }
+                @Override
+                public void onLongClick(View view, int position) {
 
-            @Override
-            public void onLongClick(View view, int position) {
+                }
+            }));
+        }
 
-            }
-        }));
     }
 
     @Override
