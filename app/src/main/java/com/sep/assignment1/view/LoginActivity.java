@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("mRole", mRole);
                 startActivity(intent);
             }else if(mRole == 2){
-                Intent intent = new Intent(LoginActivity.this, OrderListActivity.class);
+                Intent intent = new Intent(LoginActivity.this, DriverProfile.class);
                 intent.putExtra("mRole", mRole);
                 startActivity(intent);
             }
@@ -131,9 +131,9 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     if(mRole==2){
-                                        Intent intent = new Intent (LoginActivity.this, OrderListActivity.class);
+                                        Intent intent = new Intent(LoginActivity.this, DriverProfile.class);
                                         startActivity(intent);
-                                        finish();
+                                        ActivityCompat.finishAffinity(LoginActivity.this);
                                     }else{
                                     Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
                                     startActivity(intent);

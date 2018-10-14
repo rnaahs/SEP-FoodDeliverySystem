@@ -65,7 +65,6 @@ public class AccountActivity extends AppCompatActivity
         mAddressEt = findViewById(R.id.address_et);
         mBSBEt = findViewById(R.id.bsb_et);
         mEditAccBtn = findViewById(R.id.edit_account_btn);
-        mBSBTil = findViewById(R.id.bsb_til);
         mEditAccBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -73,7 +72,7 @@ public class AccountActivity extends AppCompatActivity
                 String firstname = mFirstNameEt.getText().toString();
                 String lastname = mLastNameEt.getText().toString();
                 String email = mEmailEt.getText().toString();
-                int bsb = Integer.parseInt(mBSBEt.getText().toString());
+                String bsb = mBSBEt.getText().toString();
                 String address = mAddressEt.getText().toString();
 
                 if (TextUtils.isEmpty(email)) {
@@ -98,7 +97,7 @@ public class AccountActivity extends AppCompatActivity
                 }
 
                 else {
-                    User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, String.valueOf(bsb), "", "");
+                    User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, bsb, "", "");
                     mFirebaseUserReference.child(mAuth.getUid()).removeValue();
                     mFirebaseUserReference.child(mAuth.getUid()).setValue(user);
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.EditAccountSuccess), Toast.LENGTH_SHORT).show();
@@ -203,10 +202,6 @@ public class AccountActivity extends AppCompatActivity
                     mBSBEt.setText(String.valueOf(user.getBsb()));
                     mRole = user.getRole();
                     mBalance = user.getBalance();
-                    if(mRole == 0) {
-                        mBSBEt.setVisibility(View.GONE);
-                        mBSBTil.setVisibility(View.GONE);
-                    }
                 }
 
             }

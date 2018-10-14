@@ -97,6 +97,7 @@
             android:name=".view.OrderListActivity"
             android:label="@string/title_activity_order_list"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -115,6 +116,10 @@
         <activity
             android:name=".view.PickupOrder"
             android:label="@string/title_activity_pickup_order"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.DriverProfile"
+            android:label="@string/title_activity_driver_profile"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

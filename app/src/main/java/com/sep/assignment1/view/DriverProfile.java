@@ -1,23 +1,25 @@
 package com.sep.assignment1.view;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-
 import android.content.Intent;
-import android.view.View;
-import android.widget.Button;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,15 +34,15 @@ import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.User;
 
-
-public class DriverProfileMain extends AppCompatActivity {
+public class DriverProfile extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseUserReference;
     private StorageReference mStorageReference;
     private FirebaseStorage mStorageInstance;
-    private TextView mFirstNameEt, mLastNameEt, mEmailEt, mAddressEt, mBSBEt;
+    private TextView mFirstNameEt, mLastNameEt, mEmailEt, mAddressEt, mBSBEt, mLicence, mVehicleName;
     private TextInputLayout mBSBTil;
     private Button mEditAccBtn, mViewOrderButton;
     private int mRole;
@@ -50,15 +52,29 @@ public class DriverProfileMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_profile_main);
+        setContentView(R.layout.activity_driver_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-      //  setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
+
+        if(FirebaseAuth.getInstance()!=null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         mViewOrderButton = findViewById(R.id.btn_view_orders);
         mViewOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent in = new Intent(DriverProfileMain.this, OrderActivity.class);
+                Intent in = new Intent(DriverProfile.this, OrderListActivity.class);
+                startActivity(in);
             }
         });
 
@@ -76,63 +92,36 @@ public class DriverProfileMain extends AppCompatActivity {
         mAddressEt = findViewById(R.id.driver_address);
         mBSBEt = findViewById(R.id.bsb_et);
         mEditAccBtn = findViewById(R.id.edit_account_btn);
-        mBSBTil = findViewById(R.id.bsb_til);
-
+        mLicence = findViewById(R.id.driver_licence_number);
+        mVehicleName = findViewById(R.id.driver_vehicle);
 
 
         String firstname = mFirstNameEt.getText().toString();
         String lastname = mLastNameEt.getText().toString();
         String email = mEmailEt.getText().toString();
-      // int bsb = Integer.parseInt(mBSBEt.getText().toString());
+        String licence = mLicence.getText().toString();
+        // int bsb = Integer.parseInt(mBSBEt.getText().toString());
         String address = mAddressEt.getText().toString();
-
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.EmailEmpty), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if (TextUtils.isEmpty(firstname)) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.FirstNameEmpty), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if (TextUtils.isEmpty(lastname)) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.LastNameEmpty), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if (TextUtils.isEmpty(address)) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.AddressEmpty), Toast.LENGTH_SHORT).show();
-            return;
-        }
+        String vehicle = mVehicleName.getText().toString();
 
 
-        else {
-            User user = new User(mAuth.getUid(), firstname, lastname, email, mRole, address, mBalance, String.valueOf(""), "", "");
-            mFirebaseUserReference.child(mAuth.getUid()).removeValue();
-            mFirebaseUserReference.child(mAuth.getUid()).setValue(user);
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.EditAccountSuccess), Toast.LENGTH_SHORT).show();
-        }
+        getUserProfile();
     }
 
-
-
-
-
-
-
-
-//    @Override
-//    public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.account, menu);
+        getMenuInflater().inflate(R.menu.driver_profile, menu);
         return true;
     }
 
@@ -152,54 +141,56 @@ public class DriverProfileMain extends AppCompatActivity {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            Intent intent = new Intent(DriverProfileMain.this, UserMainActivity.class);
-            startActivity(intent);
-            ActivityCompat.finishAffinity(DriverProfileMain.this);
         } else if (id == R.id.nav_manage_account) {
-
-        } else if (id == R.id.nav_manage_balance) {
-            Intent intent = new Intent(DriverProfileMain.this, BalanceActivity.class);
+            Intent intent = new Intent(this, AccountActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(DriverProfileMain.this);
+            ActivityCompat.finishAffinity(this);
+        } else if (id == R.id.nav_manage_balance) {
+            Intent intent = new Intent(this, BalanceActivity.class);
+            startActivity(intent);
+            ActivityCompat.finishAffinity(this);
         } else if (id == R.id.nav_order_history) {
+            Intent intent = new Intent(this, OrderListActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
-            Intent intent = new Intent(DriverProfileMain.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-            ActivityCompat.finishAffinity(DriverProfileMain.this);
+            ActivityCompat.finishAffinity(this);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    private void getUserProfile(final View headerView){
+    private void getUserProfile(){
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user.getUserid().equals(mAuth.getUid())) {
-                  //  TextView fullname = (TextView) headerView.findViewById(R.id.fullname);
-                   // TextView email = (TextView) headerView.findViewById(R.id.email);
-                    //fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
-                    //email.setText(user.getEmail());
-                    mFirstNameEt.setText(user.getFirstname());
-                    mLastNameEt.setText(user.getLastname());
-                    mEmailEt.setText(user.getEmail());
-                    mAddressEt.setText(user.getAddress());
-                    mBSBEt.setText(String.valueOf(user.getBsb()));
-                    mRole = user.getRole();
-                    mBalance = user.getBalance();
-                    if(mRole == 2) {
-                        mBSBEt.setVisibility(View.GONE);
-                        mBSBTil.setVisibility(View.GONE);
+                    try {
+                        mFirstNameEt.setText(user.getFirstname());
+                        mLastNameEt.setText(user.getLastname());
+                        mEmailEt.setText(user.getEmail());
+                        mAddressEt.setText(user.getAddress());
+                        mLicence.setText(user.getLicenceDr());
+                        mVehicleName.setText(user.getVehicle());
+                        mRole = user.getRole();
+                        mBalance = user.getBalance();
+                        if (mRole == 2) {
+                            mBSBEt.setVisibility(View.GONE);
+                            mBSBTil.setVisibility(View.GONE);
+                        }
+                    }catch (Exception ex){
+                        Log.d("Driver", "onChildAdded: " +ex);
                     }
                 }
 
@@ -225,4 +216,5 @@ public class DriverProfileMain extends AppCompatActivity {
             }
         });
     }
+
 }
