@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Order;
@@ -194,6 +195,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void getUserProfile(final View headerView){
+
         mFirebaseUserReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -232,7 +234,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
-                if(order.getCustomerID().equals(mAuth.getUid())){
+                if(mRole  == 1 && order.getCustomerID().equals(mAuth.getUid())){
                     mOrderList.add(order);
                 }
                 else if(mAuth.getUid().equals(order.getRestaurantOwnerID())){
@@ -240,8 +242,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                 }
                 else if(mRole == 2 && order.getStatus().equals(placedStatus)) {
                     mOrderList.add(order);
-                }
-                else{
+                }else{
                     mOrderList.add(order);
                 }
 

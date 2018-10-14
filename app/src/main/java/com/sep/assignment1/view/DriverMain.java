@@ -13,23 +13,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,23 +43,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Order;
-import com.sep.assignment1.model.User;
-
-import com.sep.assignment1.view.UserMainActivity;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class DriverMain extends AppCompatActivity   implements OnMapReadyCallback {
-
+public class DriverMain extends AppCompatActivity   implements OnMapReadyCallback , NavigationView.OnNavigationItemSelectedListener{
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
     private DatabaseReference mFirebaseOrderReference;
@@ -76,7 +57,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     private FirebaseStorage mStorageInstance;
     private TextView  mOrderNumber;
     private EditText mRestaurantAdressET;
-    private Button btnGoogle, mBtnFinish;
+    private Button btnGoogle, mBtnGet, mBtnStart;
     private GoogleMap mMap;
     private ArrayList <Order> orderList = new ArrayList<>();
     private String mCustomerAdress, mRestaurantAdress, mOrderNo, title;
@@ -85,7 +66,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     private Boolean mLocationPermissionGranted = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final String pickupStatus = "Pickup";
+    private String pickupStatus = "Driver Received";
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private List<Address> mAddressList = new ArrayList<>();
@@ -94,6 +75,10 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseOrderReference = mFirebaseInstance.getReference("order");
@@ -131,11 +116,22 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
                 startActivity(mapIntent);
             }
         });
-        mBtnFinish = (Button) findViewById(R.id.btnFinish);
-        mBtnFinish.setOnClickListener(new View.OnClickListener() {
+        mBtnGet = (Button) findViewById(R.id.getOrderBtn);
+        mBtnGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateStatus();
+                pickupStatus = "Get Order";
+                updateStatus(pickupStatus);
+                mBtnGet.setVisibility(View.GONE);
+                mBtnStart.setVisibility(View.VISIBLE);
+            }
+        });
+        mBtnStart = (Button) findViewById(R.id.startOrderBtn);
+        mBtnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickupStatus = "Arrived Restaurant";
+                updateStatus(pickupStatus);
                 // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
                 Intent intent = new Intent(DriverMain.this, PickupOrder.class);
                 intent.putExtra("OrderNumber", mOrderNo);
@@ -146,6 +142,70 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
         });
 
     }
+
+
+        @Override
+        public void onBackPressed() {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
+
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.driver_profile, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_settings) {
+                return true;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+        @SuppressWarnings("StatementWithEmptyBody")
+        @Override
+        public boolean onNavigationItemSelected(MenuItem item) {
+            // Handle navigation view item clicks here.
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+            } else if (id == R.id.nav_manage_account) {
+                Intent intent = new Intent(this, AccountActivity.class);
+                startActivity(intent);
+                ActivityCompat.finishAffinity(this);
+            } else if (id == R.id.nav_manage_balance) {
+                Intent intent = new Intent(this, BalanceActivity.class);
+                startActivity(intent);
+                ActivityCompat.finishAffinity(this);
+            } else if (id == R.id.nav_order_history) {
+                Intent intent = new Intent(this, OrderListActivity.class);
+                startActivity(intent);
+
+            } else if (id == R.id.nav_logout) {
+                mAuth.signOut();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                ActivityCompat.finishAffinity(this);
+            }
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
 
     private void geoLocate(){
         String SearchString = mRestaurantAdressET.getText().toString();
@@ -285,7 +345,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     }
 
 
-    private void updateStatus(){
+    private void updateStatus(String pickupStatus){
         Order order = orderList.get(0);
         order.setStatus(pickupStatus);
         //Order newOrder = new Order(order.getOrderID(),order.getFoodArrayList(),order.getRestaurantName(), order.getRestaurantURI(),order.getRestaurantAddress(),order.getCustomerAddress(),order.getPrice(),order.getStartTime(),order.getEndTime(),order.getCustomerID(),order.getRestaurantID(),pickupStatus);
