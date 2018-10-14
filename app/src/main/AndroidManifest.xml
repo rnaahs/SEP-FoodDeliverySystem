@@ -120,7 +120,8 @@
         <activity
             android:name=".view.DriverProfile"
             android:label="@string/title_activity_driver_profile"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".view.DeliveryReview"></activity>
     </application>
 
 </manifest>
