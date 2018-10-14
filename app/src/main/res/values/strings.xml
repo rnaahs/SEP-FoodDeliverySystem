@@ -119,5 +119,6 @@
     <string name="title_activity_order_list">Orders</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_pickup_order">PickupOrder</string>
+    <string name="title_activity_driver_profile">DriverProfile</string>
     <string name="title_activity_delivery">DeliveryActivity</string>
 </resources>

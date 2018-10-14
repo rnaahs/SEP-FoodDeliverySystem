@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,73 +8,160 @@
     tools:context=".view.AccountActivity"
     tools:showIn="@layout/app_bar_account">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/header_cover_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="150dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        android:src="@drawable/nav_menu_background"
+        app:srcCompat="@drawable/nav_menu_background" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        android:clickable="true"
+        app:civ_border_width="3dp"
+        app:civ_border_color="#FFFFFFFF"
+
+        android:id="@+id/profile"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@+id/header_cover_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-130dp"
+        android:elevation="5dp"
+        android:padding="20dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/man" />
+
+    <RelativeLayout
+        android:id="@+id/profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/header_cover_image"
+        android:background="@color/greyDark"
+        android:elevation="4dp"
+        android:paddingBottom="24dp">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/first_name_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/last_name_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="60dp"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="227dp"
+        android:layout_below="@+id/profile_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@color/white">
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/email_et"
+            <LinearLayout
+                android:layout_width="348dp"
+                android:layout_height="275dp"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:hint="@string/email"
-                    android:inputType="text" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/firstname_et"
+                    <EditText
+                        android:id="@+id/email_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:hint="@string/email"
+                        android:inputType="text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:hint="@string/first_name"
-                    android:inputType="textCapWords" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/lastname_et"
+                    <EditText
+                        android:id="@+id/firstname_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:hint="@string/first_name"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:hint="@string/last_name"
-                    android:inputType="textCapWords" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/lastname_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:hint="@string/last_name"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/address_et"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/address"
-                    android:inputType="textPostalAddress"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:layout_height="wrap_content">
 
-            </android.support.design.widget.TextInputLayout>
+                    <EditText
+                        android:id="@+id/address_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/address"
+                        android:inputType="textPostalAddress"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id ="@+id/bsb_til">
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/bsb_til"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                </android.support.design.widget.TextInputLayout>
 
                 <EditText
                     android:id="@+id/bsb_et"
@@ -82,30 +169,37 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/bsb"
                     android:inputType="number"
-                    android:maxLines="1"
                     android:singleLine="true" />
 
-            </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:gravity="bottom">
 
             <Button
                 android:id="@+id/edit_account_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="59dp"
+                android:layout_alignParentTop="true"
                 android:layout_gravity="bottom"
-                android:text="@string/edit_account"/>
+                android:layout_marginTop="302dp"
+                android:text="@string/edit_account" />
             />
-        </LinearLayout>
-
-    </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

@@ -157,7 +157,6 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
         } else if (id == R.id.nav_manage_account) {
             Intent intent = new Intent(UserMainActivity.this, AccountActivity.class);
             startActivity(intent);
@@ -266,7 +265,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                         fab.setVisibility(View.GONE);
                     }
                     else if (mRole == 2){
-                        Intent intent = new Intent(UserMainActivity.this, OrderListActivity.class);
+                        Intent intent = new Intent(UserMainActivity.this, DriverProfile.class);
                         startActivity(intent);
                         finish();
                     }

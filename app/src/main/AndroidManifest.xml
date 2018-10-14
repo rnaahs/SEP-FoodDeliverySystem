@@ -117,6 +117,10 @@
             android:label="@string/title_activity_pickup_order"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".view.DriverProfile"
+            android:label="@string/title_activity_driver_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".view.DeliveryActivity"
             android:label="@string/title_activity_delivery"
             android:theme="@style/AppTheme.NoActionBar"></activity>
