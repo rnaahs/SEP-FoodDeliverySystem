@@ -26,7 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sep.assignment1.DriverMain;
+import com.sep.assignment1.MapsActivity;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Order;
@@ -179,7 +179,8 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_order_history) {
-
+            Intent intent = new Intent(OrderListActivity.this, MapsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(OrderListActivity.this, LoginActivity.class);
