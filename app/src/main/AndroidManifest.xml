@@ -41,7 +41,6 @@
         <activity
             android:name=".view.AddMenuActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".view.AddFoodActivity"
             android:label="@string/title_activity_add_food"
@@ -87,7 +86,10 @@
         <activity
             android:name=".view.OrderListActivity"
             android:label="@string/title_activity_order_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".view.DriverProfileMain"></activity>
+
+
     </application>
 
 </manifest>

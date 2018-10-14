@@ -39,6 +39,7 @@ import com.sep.assignment1.R;
 import com.sep.assignment1.model.Order;
 import com.sep.assignment1.model.User;
 
+import com.sep.assignment1.view.DriverProfileMain;
 import com.sep.assignment1.view.UserMainActivity;
 
 import java.util.ArrayList;
@@ -90,8 +91,18 @@ public class DriverMain extends AppCompatActivity {
         });
 
         getDeliveryInfo();
+        mBtnFinish = findViewById(R.id.btnFinish);
+        mBtnFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DriverMain.this, DriverProfileMain.class);
+                startActivity(intent);
+
+            }
+        });
 
     }
+
 
     public void getDeliveryInfo(){
         mFirebaseOrderReference.addChildEventListener(new ChildEventListener() {
@@ -100,11 +111,6 @@ public class DriverMain extends AppCompatActivity {
                 Order order = dataSnapshot.getValue(Order.class);
 
 
-
-//                if(order.getRestaurantAddress().equals(dataSnapshot.getRef().getKey())){
-//                    orderList.add(order);
-//                    mResturantLocation.setText(order.getRestaurantAddress());
-//                }
 
             }
 
