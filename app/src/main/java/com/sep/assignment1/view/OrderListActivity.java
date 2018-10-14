@@ -26,7 +26,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.sep.assignment1.MapsActivity;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
 import com.sep.assignment1.model.Order;
@@ -179,8 +178,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             startActivity(intent);
             ActivityCompat.finishAffinity(OrderListActivity.this);
         } else if (id == R.id.nav_order_history) {
-            Intent intent = new Intent(OrderListActivity.this, MapsActivity.class);
-            startActivity(intent);
+
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             Intent intent = new Intent(OrderListActivity.this, LoginActivity.class);
@@ -232,12 +230,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
-                Log.d("TEST", "Order get restaurant id is " + order.getRestaurantID());
-                Log.d("TEST", "restuarant get key id is " + mFirebaseRestaurantReference.child(mAuth.getUid()).getRef().getKey());
                 if(order.getCustomerID().equals(mAuth.getUid())){
-                    mOrderList.add(order);
-                }
-                else if(order.getRestaurantID().equals(mFirebaseRestaurantReference)){
                     mOrderList.add(order);
                 }
                 else if(mRole == 2){

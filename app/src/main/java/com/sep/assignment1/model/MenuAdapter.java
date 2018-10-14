@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         if(!menu.getImageURL().equals(""))  {
             Picasso.with(mContext).load(menu.getImageURL()).into(holder.mImageView);
         }
+        Log.d("Restaurant", "The adapter menu name is "  + menu.getMenuName());
     }
 
     @Override

@@ -262,7 +262,6 @@ public class MenuMainActivity extends AppCompatActivity
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {//menu ID
-                mFoodArrayList.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(child.getKey().toString().equals(mMenuKey)){
                         Menu menu = child.getValue(Menu.class);
