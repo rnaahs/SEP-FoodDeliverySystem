@@ -108,16 +108,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
         mRestaurantAdressET.setText(mRestaurantAdress);
         mOrderNumber.setText(mOrderNo);
 
-        mBtnFinish = (Button) findViewById(R.id.btnFinish);
-        mBtnFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateStatus();
-                // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
-                Intent intent = new Intent(DriverMain.this, PickupOrder.class);
-                startActivity(intent);
-            }
-        });
+
 
 
 
@@ -140,6 +131,19 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
                 startActivity(mapIntent);
             }
         });
+        mBtnFinish = (Button) findViewById(R.id.btnFinish);
+        mBtnFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateStatus();
+                // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
+                Intent intent = new Intent(DriverMain.this, PickupOrder.class);
+                intent.putExtra("OrderNumber", mOrderNo);
+                intent.putExtra("CustomerAddress" , mCustomerAdress);
+                intent.putExtra("RestaurantAddress", mRestaurantAdress);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -159,6 +163,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
             Log.d("DriverMain","groLocate: Address" + address.toString());
             moveCamera(address.getLatitude(), address.getLongitude(), DEFAULT_ZOOM, address.getAddressLine(0));
         }
+
     }
 
     private void moveCamera(double latitude, double longitude, float zoom, String title){
@@ -209,7 +214,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
-
+                orderList.add(order);
 
 
 

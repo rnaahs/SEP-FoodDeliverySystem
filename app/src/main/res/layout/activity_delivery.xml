@@ -10,7 +10,7 @@
 
 
     <include
-        layout="@layout/content_pickup_order"/>
+        layout="@layout/content_delivery"/>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/delivery_nav_view"

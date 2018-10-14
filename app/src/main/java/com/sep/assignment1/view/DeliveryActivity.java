@@ -13,23 +13,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,22 +38,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
-import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Order;
-import com.sep.assignment1.model.User;
-
-import com.sep.assignment1.view.UserMainActivity;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallback {
+public class DeliveryActivity extends AppCompatActivity   implements OnMapReadyCallback {
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
@@ -85,7 +62,7 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
     private Boolean mLocationPermissionGranted = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final String deliveryStatus = "Delivering";
+    private static final String finishStatus = "Finished";
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private List<Address> mAddressList = new ArrayList<>();
@@ -93,7 +70,7 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pickup_order);
+        setContentView(R.layout.activity_delivery);
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseOrderReference = mFirebaseInstance.getReference("order");
@@ -102,7 +79,6 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
 
         mCustomerAdress = getIntent().getStringExtra("CustomerAddress");
         mOrderNo = getIntent().getStringExtra("OrderNumber");
-        mRestaurantAdress = getIntent().getStringExtra("RestaurantAddress");
 
 
         mCustomerAddressET.setText(mCustomerAdress);
@@ -127,16 +103,12 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
                 startActivity(mapIntent);
             }
         });
-        mBtnFinish = (Button) findViewById(R.id.pickupBtn);
+        mBtnFinish = (Button) findViewById(R.id.finishBtn);
         mBtnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateStatus();
-                // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
-                Intent intent = new Intent(PickupOrder.this, DeliveryActivity.class);
-                intent.putExtra("CustomerAddress", mCustomerAdress);
-                intent.putExtra("OrderNumber", mOrderNo);
-                intent.putExtra("RestaurantAddress", mRestaurantAdress);
+                Intent intent = new Intent(DeliveryActivity.this, OrderListActivity.class);
                 startActivity(intent);
             }
         });
@@ -146,7 +118,7 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
     private void geoLocate(){
         String SearchString = mCustomerAddressET.getText().toString();
 
-        Geocoder geocoder = new Geocoder(PickupOrder.this);
+        Geocoder geocoder = new Geocoder(DeliveryActivity.this);
         mAddressList = new ArrayList<>();
         try{
             mAddressList = geocoder.getFromLocationName(SearchString,1);
@@ -172,14 +144,14 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
         mMap.addMarker(options);
     }
     public boolean isServiceOK(){
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(PickupOrder.this);
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(DeliveryActivity.this);
         if(available == ConnectionResult.SUCCESS){
             Log.d("DriverMain", "isServiceOK: Google play service is working");
             return true;
         }
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
             Log.d("DriverMain", "isServiceOK: Error");
-            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(PickupOrder.this,available, 9001);
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(DeliveryActivity.this,available, 9001);
             dialog.show();
             return true;
         }
@@ -192,7 +164,7 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
     private void initMap(){
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_driver_main);
 
-        mapFragment.getMapAsync(PickupOrder.this);
+        mapFragment.getMapAsync(DeliveryActivity.this);
     }
 
     @Override
@@ -283,7 +255,7 @@ public class PickupOrder extends AppCompatActivity   implements OnMapReadyCallba
 
     private void updateStatus(){
         Order order = orderList.get(0);
-        order.setStatus(deliveryStatus);
+        order.setStatus(finishStatus);
         //Order newOrder = new Order(order.getOrderID(),order.getFoodArrayList(),order.getRestaurantName(), order.getRestaurantURI(),order.getRestaurantAddress(),order.getCustomerAddress(),order.getPrice(),order.getStartTime(),order.getEndTime(),order.getCustomerID(),order.getRestaurantID(),pickupStatus);
         mFirebaseOrderReference.child(mOrderNo).setValue(order);
     }

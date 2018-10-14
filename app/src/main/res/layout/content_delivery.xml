@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.DriverMain"
-    tools:showIn="@layout/content_driver_main">
+    tools:context=".view.DeliveryActivity"
+    tools:showIn="@layout/content_delivery">
 
 
     <LinearLayout
@@ -59,8 +59,8 @@
                     android:id="@+id/ic_magnify"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/ic_restaurant_black_24dp"/>
-                
+                    android:src="@drawable/ic_home_black_24dp"/>
+
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -77,39 +77,39 @@
             </RelativeLayout>
         </fragment>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/buttonGoogle"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/green"
-            android:text="Open with Google Maps "
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnFinish"
-            android:layout_width="320dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:text="Get Order"
-            android:background="@color/colorAccent"
-            android:textColor="@color/white"
-            android:textSize="15dp"/>
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/buttonGoogle"
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/green"
+                android:text="Open with Google Maps "
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/finishBtn"
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:text="Finish Order"
+                android:background="@color/colorAccent"
+                android:textColor="@color/white"
+                android:textSize="15dp"/>
 
 
 
 
-    </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
