@@ -48,6 +48,8 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
     private OrderListAdapter mOrderListAdapter;
     private int mRole;
     private String mRestaurantID, mRestaurantName, mStartTime, mOrderID, mAmount, mStatus, mCustomerAddress, mRestaurantAddress;
+    private static final String placedStatus = "Placed";
+    private static final String receivedStatus = "Received";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,7 +235,10 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                 if(order.getCustomerID().equals(mAuth.getUid())){
                     mOrderList.add(order);
                 }
-                else if(mRole == 1){
+                else if(mAuth.getUid().equals(order.getRestaurantOwnerID())){
+                    mOrderList.add(order);
+                }
+                else if(mRole == 2 && order.getStatus().equals(placedStatus)) {
                     mOrderList.add(order);
                 }
 

@@ -15,12 +15,13 @@ public class Order {
     private String Status;
     private String mRestaurantName;
     private String mRestaurantURI;
+    private String mRestaurantOwnerID;
 
     public Order(){
 
     }
 
-    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantName, String RestaurantImageURI, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
+    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantOwnerID, String RestaurantName, String RestaurantImageURI, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
         this.OrderID = OrderID;
         mRestaurantName = RestaurantName;
         mRestaurantURI = RestaurantImageURI;
@@ -32,6 +33,7 @@ public class Order {
         this.EndTime = EndTime;
         this.CustomerID = CustomerID;
         this.RestaurantID = RestaurantID;
+        this.mRestaurantOwnerID = RestaurantOwnerID;
         this.Status = Status;
 
     }
@@ -47,6 +49,14 @@ public class Order {
 
     public String getRestaurantName() {
         return mRestaurantName;
+    }
+
+    public String getRestaurantOwnerID() {
+        return mRestaurantOwnerID;
+    }
+
+    public void setRestaurantOwnerID(String restaurantOwnerID) {
+        mRestaurantOwnerID = restaurantOwnerID;
     }
 
     public void setRestaurantName(String restaurantName) {
