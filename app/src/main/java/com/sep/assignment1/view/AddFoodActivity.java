@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,7 +30,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -40,12 +38,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Food;
+import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.User;
 
 import java.io.IOException;
@@ -66,7 +64,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
     private ImageView mFoodImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
     private String mImageUri;
-    private String mMenuKey;
+    private String mMenuKey, mFoodKey,mRestaurantKey;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
     private int mRole;
@@ -92,6 +90,12 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
+        mFoodKey = getIntent().getStringExtra("FoodKey");
+        mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
+        if(mFoodKey!=null){
+            getFood(mFoodKey,mRestaurantKey);
+        }
+
         mFoodImgURLTV = (TextView) findViewById(R.id.add_food_image_path_tv);
         mFoodNameET = (EditText) findViewById(R.id.add_food_name_et);
         mFoodPriceET = (EditText) findViewById(R.id.add_food_price_et);
@@ -112,6 +116,9 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 try{
                     String foodId = mFirebaseReference.push().getKey();
+                    if(foodId!=null) {
+                        foodId = mFoodKey;
+                    }
                     String foodName = mFoodNameET.getText().toString();
                     Double foodPrice = Double.parseDouble(mFoodPriceET.getText().toString());
                     String foodDescription = mFoodDescriptionET.getText().toString();
@@ -312,5 +319,46 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             }
 
         });
+    }
+    private void getFood(final String mFoodKey, final String mRestaurantKey){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(child.getKey().toString().equals(mMenuKey)){
+                        Menu menu = child.getValue(Menu.class);
+                        if(menu.getFoodArrayList()!=null){
+                            for(Food food : menu.getFoodArrayList()){
+                                mFoodNameET.setText(food.getFoodName());
+                                mFoodPriceET.setText(String.valueOf(food.getFoodPrice()));
+                                mFoodDescriptionET.setText(food.getFoodDescription());
+                                mImageUri = food.getFoodImgURL();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

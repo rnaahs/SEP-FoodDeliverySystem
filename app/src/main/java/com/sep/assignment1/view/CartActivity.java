@@ -53,7 +53,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private RecyclerView recyclerView;
 
     private TextView txtTotalPrice;
-    private EditText mAddressET;
+    private EditText mAddressET, mDescriptionET;
     private Button orderBtn, addressBtn;
     private ArrayList<Food> mFoodCartArrayList;
     private ArrayList<Cart> mCartArrayList;
@@ -63,15 +63,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
     private DatabaseReference mFirebaseUserReference;
     private DatabaseReference mFirebaseOrderReference;
     private DatabaseReference mFirebaseRestaurantReference;
-    private String mUserID;
-    private String mRestaurantID;
-    private String mOrderID;
-    private String mRestaurantName;
-    private String mRestaurantImageURI;
-    private String mRestaurantAddress;
-    private String mRestaurantOwnerID;
-    private String mCustomerAddress;
-    private String mPrice;
+    private String mUserID, mRestaurantID, mOrderID, mRestaurantName, mRestaurantImageURI, mRestaurantAddress, mRestaurantOwnerID, mCustomerAddress, mPrice, mDescription;
     private String mStatus = "Placed";
     private int mRole;
     private double mBalance;
@@ -132,6 +124,9 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                 addressBtn.setVisibility(View.VISIBLE);
             }
         });
+        mDescriptionET = (EditText) findViewById(R.id.cart_description);
+
+
         addressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +288,7 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mCustomerAddress = user.getAddress();
+                    mAddressET.setText(mCustomerAddress);
                     mBalance = user.getBalance();
                     mRole = user.getRole();
 
@@ -364,7 +360,8 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
                         updateBalance(user, newBalance);
                     }
                 }
-                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantOwnerID , mRestaurantName, mRestaurantImageURI , mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus);
+                mDescription = mDescriptionET.getText().toString();
+                Order order = new Order(mOrderID, mFoodCartArrayList, mRestaurantOwnerID , mRestaurantName, mRestaurantImageURI , mRestaurantAddress, mCustomerAddress, mPrice, startTime, null, mUserID, mRestaurantID, mStatus, mDescription);
                 mFirebaseOrderReference.child(mOrderID).setValue(order);
                 mCartArrayList.clear();
                 mFirebaseReference.child(mUserID).removeValue();

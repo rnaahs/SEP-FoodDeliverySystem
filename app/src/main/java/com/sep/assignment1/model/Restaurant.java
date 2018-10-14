@@ -14,8 +14,9 @@ public class Restaurant implements Parcelable{
     public String Address;
     public String Status;
     public String ImageUri;
+    public String OwnerID;
 
-    public Restaurant(String Id, String name, String type, String country, String image, String status, String ImageUri) {
+    public Restaurant(String Id, String name, String type, String country, String image, String status, String ImageUri,String OwnerID) {
         this.Id = Id;
         this.Name = name;
         this.Type = type;
@@ -23,6 +24,7 @@ public class Restaurant implements Parcelable{
         this.Address = image;
         this.Status = status;
         this.ImageUri = ImageUri;
+        this.OwnerID = OwnerID;
     }
 
     public Restaurant(){
@@ -37,6 +39,7 @@ public class Restaurant implements Parcelable{
         Address = in.readString();
         Status = in.readString();
         ImageUri = in.readString();
+        OwnerID = in.readString();
     }
 
     public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
@@ -65,5 +68,6 @@ public class Restaurant implements Parcelable{
         dest.writeString(Address);
         dest.writeString(Status);
         dest.writeString(ImageUri);
+        dest.writeString(OwnerID);
     }
 }

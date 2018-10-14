@@ -40,6 +40,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -63,7 +64,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     private FirebaseStorage mStorageInstance;
     private EditText mMenuName;
     private Button mAddMenuBtn;
-    private String mRestaurantKey;
+    private String mRestaurantKey, mMenuKey;
     private ImageView mImageView;
     private Uri mFilePath;
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -91,6 +92,11 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
 
+        mMenuKey = getIntent().getStringExtra("MenuKey");
+        if(mMenuKey!=null){
+            getMenu(mMenuKey);
+        }
+
         mStorageInstance = FirebaseStorage.getInstance();
         mStorageReference = mStorageInstance.getReference();
         mImageView = (ImageView) findViewById(R.id.add_menu_image_iv);
@@ -112,6 +118,9 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 try{
                     String menuId = mFirebaseReference.push().getKey();
+                    if(menuId!=null) {
+                        menuId = mMenuKey;
+                    }
                     String menuName = mMenuName.getText().toString();
                     String menuImgURL = mImageUri;
 
@@ -304,6 +313,39 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getMenu(final String mMenuKey){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(dataSnapshot.child(mRestaurantKey).child(mMenuKey).getKey().equals(mMenuKey)){
+                        Menu menu = child.getValue(Menu.class);
+                        mMenuName.setText(menu.getMenuName());
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
             }
 
             @Override

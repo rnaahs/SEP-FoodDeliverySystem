@@ -1,5 +1,6 @@
 package com.sep.assignment1.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sep.assignment1.Constants;
 import com.sep.assignment1.R;
 import com.sep.assignment1.RestaurantRecyclerTouchListener;
@@ -50,6 +53,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private RestaurantAdapter mRestaurantAdapter;
     private DatabaseReference mFirebaseUserReference;
     private final int REQUEST_CODE = 1;
+    private String mUserID;
     private int mRole;
     private android.view.Menu MENU;
 
@@ -69,6 +73,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         if(FirebaseAuth.getInstance()!=null) {
             mAuth = FirebaseAuth.getInstance();
+            mUserID = mAuth.getUid();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
@@ -76,6 +81,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
         //Recycle View
         mRecycleView = (RecyclerView) findViewById(R.id.user_restaurant_recycler_view);
         mRestaurantAdapter = new RestaurantAdapter(mRestaurantList, this);
@@ -89,7 +95,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         mRecycleView.setAdapter(mRestaurantAdapter);
         try {
             //Call method to add restaurants from database
-            addRestaurantChangeListener();
+            //addRestaurantChangeListener();
         }catch (Exception ex){
             Log.e("Exception", "onCreate: ",ex );
         }
@@ -104,7 +110,32 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             }
 
             @Override
-            public void onLongClick(View view, int position) {
+            public void onLongClick(View view, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+                final Restaurant restaurant = mRestaurantList.get(position);
+                builder.setMessage("Select the following option to edit or delete the item")
+                        .setTitle("Editing")
+                        // Set the action buttons
+                        .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                Intent intent = new Intent(UserMainActivity.this, AddRestaurantActivity.class);
+                                intent.putExtra("RestaurantKey", restaurant.Id);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                mRestaurantList.remove(position);
+                                mFirebaseReference.child(restaurant.Id).removeValue();
+                                mRestaurantAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
             }
         }));
@@ -130,6 +161,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         if (mAuth.getCurrentUser() != null) {
             getUserProfile(headerView, menu);
+            addRestaurantChangeListener();
         }
 
         return true;
@@ -190,7 +222,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             if (resultCode == RESULT_OK) {
                 Restaurant restaurant = (Restaurant) data.getParcelableExtra(Constants.RESULT);
                 mRestaurantList.add(restaurant);
-                mFirebaseReference.child(mAuth.getUid()).child(restaurant.Id).setValue(restaurant);
+                mFirebaseReference.child(restaurant.Id).setValue(restaurant);
                 mRestaurantAdapter.notifyDataSetChanged();
             }
         }
@@ -200,19 +232,15 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private void addRestaurantChangeListener(){
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
                 private Restaurant restaurant;
-            @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                mRestaurantList.clear();
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if(mRole == 0) {
-                        restaurant = ds.getValue(Restaurant.class);
+                restaurant = dataSnapshot.getValue(Restaurant.class);
+                    if (restaurant.OwnerID.equals(mAuth.getUid())) {
+                        mRestaurantList.add(restaurant);
+                    } else if (mRole == 0) {
                         mRestaurantList.add(restaurant);
                     }
-                    else if(mRole == 1 && mAuth.getUid().equals(dataSnapshot.getKey())){
-                        restaurant = ds.getValue(Restaurant.class);
-                        mRestaurantList.add(restaurant);
-                    }
-                }
+
+
                 //Check for null
                 if (restaurant == null) {
                     Log.e("UserMainActivity", "There is no data from firebase");
@@ -273,7 +301,9 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
                         fab.setVisibility(View.VISIBLE);
                         menu.clear();
                     }
+
                 }
+
             }
 
             @Override

@@ -16,12 +16,13 @@ public class Order {
     private String mRestaurantName;
     private String mRestaurantURI;
     private String mRestaurantOwnerID;
+    private String mDescription;
 
     public Order(){
 
     }
 
-    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantOwnerID, String RestaurantName, String RestaurantImageURI, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status){
+    public Order(String OrderID, ArrayList<Food> FoodArrayList, String RestaurantOwnerID, String RestaurantName, String RestaurantImageURI, String RestaurantAddress, String CustomerAddress, String Price, String StartTime, String EndTime, String CustomerID,String RestaurantID, String Status, String mDescription){
         this.OrderID = OrderID;
         mRestaurantName = RestaurantName;
         mRestaurantURI = RestaurantImageURI;
@@ -35,7 +36,7 @@ public class Order {
         this.RestaurantID = RestaurantID;
         this.mRestaurantOwnerID = RestaurantOwnerID;
         this.Status = Status;
-
+        this.mDescription = mDescription;
     }
 
     public String getOrderID() {
@@ -141,5 +142,37 @@ public class Order {
 
     public void setCustomerID(String customerID) {
         CustomerID = customerID;
+    }
+
+    public String getmRestaurantName() {
+        return mRestaurantName;
+    }
+
+    public void setmRestaurantName(String mRestaurantName) {
+        this.mRestaurantName = mRestaurantName;
+    }
+
+    public String getmRestaurantURI() {
+        return mRestaurantURI;
+    }
+
+    public void setmRestaurantURI(String mRestaurantURI) {
+        this.mRestaurantURI = mRestaurantURI;
+    }
+
+    public String getmRestaurantOwnerID() {
+        return mRestaurantOwnerID;
+    }
+
+    public void setmRestaurantOwnerID(String mRestaurantOwnerID) {
+        this.mRestaurantOwnerID = mRestaurantOwnerID;
+    }
+
+    public String getmDescription() {
+        return mDescription;
+    }
+
+    public void setmDescription(String mDescription) {
+        this.mDescription = mDescription;
     }
 }

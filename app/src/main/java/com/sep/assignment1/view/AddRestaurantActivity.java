@@ -66,7 +66,7 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private Uri mFilePath;
     private ImageView mImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private String mImageUri;
+    private String mImageUri,mRestaurantKey;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
     private TextView mImagePath;
@@ -92,6 +92,10 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
         mFirebaseUserReference = mFirebaseInstance.getReference("user");
         //keeping data fresh
         mFirebaseReference.keepSynced(true);
+        mRestaurantKey = getIntent().getStringExtra("RestaurantKey");
+        if(mRestaurantKey!=null){
+            getRestaurant(mRestaurantKey);
+        }
 
         mNameET = (EditText) findViewById(R.id.add_restaurant_nameET);
         mTypeET = (EditText) findViewById(R.id.add_restaurant_typeET);
@@ -117,6 +121,9 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
             public void onClick(View v) {
                 try{
                     String restaurantId = mFirebaseReference.push().getKey();
+                    if(mRestaurantKey!=null) {
+                        restaurantId = mRestaurantKey;
+                    }
                     String name = mNameET.getText().toString();
                     String type = mTypeET.getText().toString();
                     String country = mCountryET.getText().toString();
@@ -126,7 +133,8 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
                         Toast.makeText(AddRestaurantActivity.this, getResources().getString(R.string.NameEmpty), Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, mImageUri);
+
+                    Restaurant restaurant = new Restaurant(restaurantId, name, type, country, address, status, mImageUri, mAuth.getUid());
 
                     Intent result = new Intent();
                     result.putExtra(Constants.RESULT, restaurant);
@@ -308,6 +316,46 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getRestaurant(final String mRestaurantKey){
+        mFirebaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                        if(dataSnapshot.getKey().equals(mRestaurantKey)){
+                            mNameET.setText(restaurant.Name);
+                            mTypeET.setText(restaurant.Type);
+                            mCountryET.setText(restaurant.Country);
+                            mAddressET.setText(restaurant.Address);
+                            mStatusET.setText(restaurant.Status);
+                            mImageUri = restaurant.ImageUri;
+
+                        }
+                }
+
+
+
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
             }
 
             @Override

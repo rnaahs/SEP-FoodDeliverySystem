@@ -1,11 +1,13 @@
 package com.sep.assignment1.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +33,7 @@ import com.sep.assignment1.MenuRecyclerTouchListener;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Menu;
 import com.sep.assignment1.model.MenuAdapter;
+import com.sep.assignment1.model.Restaurant;
 import com.sep.assignment1.model.User;
 
 import java.util.ArrayList;
@@ -113,8 +116,33 @@ public class RestaurantMainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onLongClick(View view, int position) {
+            public void onLongClick(View view, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RestaurantMainActivity.this);
+                final Menu menu = mMenuArrayList.get(position);
+                builder.setMessage("Select the following option to edit or delete the item")
+                        .setTitle("Editing")
+                        // Set the action buttons
+                        .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
 
+                                Intent intent = new Intent(RestaurantMainActivity.this, AddMenuActivity.class);
+                                intent.putExtra("RestaurantKey", mRestaurantKey);
+                                intent.putExtra("MenuKey", menu.getMenuId());
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                mMenuArrayList.remove(position);
+                                mDatabaseReference.child(mRestaurantKey).child(menu.getMenuId()).removeValue();
+                                mMenuAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }));
     }

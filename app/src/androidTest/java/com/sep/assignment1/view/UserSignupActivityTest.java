@@ -21,11 +21,11 @@ public class UserSignupActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.email)).perform(typeText("newuser@gmail.com"),closeSoftKeyboard());
-        onView(withId(R.id.firstname)).perform(typeText("newfirstname"),closeSoftKeyboard());
-        onView(withId(R.id.lastname)).perform(typeText("newlastname"),closeSoftKeyboard());
-        onView(withId(R.id.address)).perform(typeText("new Road,new suburb,NSW,2000"),closeSoftKeyboard());
-        onView(withId(R.id.password)).perform(typeText("newopassword"),closeSoftKeyboard());
+        onView(withId(R.id.email)).perform(typeText("test@gmail.com"),closeSoftKeyboard());
+        onView(withId(R.id.firstname)).perform(typeText("Tung"),closeSoftKeyboard());
+        onView(withId(R.id.lastname)).perform(typeText("Wu"),closeSoftKeyboard());
+        onView(withId(R.id.address)).perform(typeText("1 Sussex St,Haymarket,NSW,2000"),closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("123456"),closeSoftKeyboard());
         onView(withId(R.id.sign_in_button)).perform(click());
     }
 

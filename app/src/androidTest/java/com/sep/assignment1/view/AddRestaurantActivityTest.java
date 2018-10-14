@@ -22,11 +22,13 @@ public class AddRestaurantActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.add_restaurant_nameET)).perform(typeText("new restaurant name"),closeSoftKeyboard());
-        onView(withId(R.id.add_restaurant_typeET)).perform(typeText("test type"),closeSoftKeyboard());
-        onView(withId(R.id.add_restaurant_countryET)).perform(typeText("test country"),closeSoftKeyboard());
-        onView(withId(R.id.add_restaurant_addressET)).perform(typeText("test Road,test suburb,NSW,2000"),closeSoftKeyboard());
-        onView(withId(R.id.add_restaurant_statusET)).perform(typeText("test status"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_nameET)).perform(typeText("Pizza Hut"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_typeET)).perform(typeText("Pizza"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_countryET)).perform(typeText("Australia"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_addressET)).perform(typeText("30 Pitt St, Sydney ,NSW,2000"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_statusET)).perform(typeText("Openning"),closeSoftKeyboard());
+        onView(withId(R.id.add_restaurant_imageView)).perform(click());
+        
         onView(withId(R.id.add_restaurantBtn)).perform(click());
     }
 }
