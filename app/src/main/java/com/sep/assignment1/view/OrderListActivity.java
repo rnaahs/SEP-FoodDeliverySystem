@@ -233,7 +233,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                 if(order.getCustomerID().equals(mAuth.getUid())){
                     mOrderList.add(order);
                 }
-                else if(mRole == 2){
+                else if(mRole == 1){
                     mOrderList.add(order);
                 }
 
