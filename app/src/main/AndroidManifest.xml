@@ -111,7 +111,11 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".view.PickupOrder"
+            android:label="@string/title_activity_pickup_order"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

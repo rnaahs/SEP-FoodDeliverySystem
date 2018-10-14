@@ -236,6 +236,9 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                 else if(mRole == 1){
                     mOrderList.add(order);
                 }
+                else{
+                    mOrderList.add(order);
+                }
 
                 mOrderListAdapter.notifyDataSetChanged();
             }

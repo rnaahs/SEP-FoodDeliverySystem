@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
+import com.sep.assignment1.model.Food;
 import com.sep.assignment1.model.Order;
 import com.sep.assignment1.model.User;
 
@@ -59,7 +61,10 @@ import com.sep.assignment1.view.UserMainActivity;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DriverMain extends AppCompatActivity   implements OnMapReadyCallback {
@@ -80,15 +85,18 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     private Boolean mLocationPermissionGranted = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
+    private static final String pickupStatus = "Pickup";
     private FusedLocationProviderClient mFusedLocationProviderClient;
+
+    private List<Address> mAddressList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_main);
 
-
-        mFirebaseOrderReference = FirebaseDatabase.getInstance().getReference("order");
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseOrderReference = mFirebaseInstance.getReference("order");
         mOrderNumber= (TextView) findViewById(R.id.order_number_input);
         mRestaurantAdressET = (EditText) findViewById(R.id.resturant_location_input);
 
@@ -100,18 +108,18 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
         mRestaurantAdressET.setText(mRestaurantAdress);
         mOrderNumber.setText(mOrderNo);
 
-
-
-        btnGoogle = (Button)findViewById(R.id.buttonGoogle);
-        btnGoogle.setOnClickListener(new View.OnClickListener() {
+        mBtnFinish = (Button) findViewById(R.id.btnFinish);
+        mBtnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-               // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
-                Intent intent = getPackageManager().getLaunchIntentForPackage("com.google.android.apps.maps");
+            public void onClick(View v) {
+                updateStatus();
+                // Intent intent = new Intent(DriverMain.this, UserMainActivity.class);
+                Intent intent = new Intent(DriverMain.this, PickupOrder.class);
                 startActivity(intent);
             }
         });
+
+
 
         getDeliveryInfo();
         isServiceOK();
@@ -120,20 +128,33 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
 
         initMap();
 
+        btnGoogle = (Button)findViewById(R.id.buttonGoogle);
+        btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Address address = mAddressList.get(0);
+                String locationUri = "google.navigation:q="+address.getLatitude()+","+address.getLongitude()+"&mode=d";
+                        Uri gmmIntentUri = Uri.parse(locationUri);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            }
+        });
+
     }
 
     private void geoLocate(){
         String SearchString = mRestaurantAdressET.getText().toString();
 
         Geocoder geocoder = new Geocoder(DriverMain.this);
-        List<Address> list = new ArrayList<>();
+        mAddressList = new ArrayList<>();
         try{
-            list = geocoder.getFromLocationName(SearchString,1);
+            mAddressList = geocoder.getFromLocationName(SearchString,1);
         }catch (IOException e){
             Log.e("DriverMain","groLocate: Ex" + e.getMessage());
         }
-        if(list.size()>0){
-            Address address = list.get(0);
+        if(mAddressList.size()>0){
+            Address address = mAddressList.get(0);
 
             Log.d("DriverMain","groLocate: Address" + address.toString());
             moveCamera(address.getLatitude(), address.getLongitude(), DEFAULT_ZOOM, address.getAddressLine(0));
@@ -188,6 +209,8 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order order = dataSnapshot.getValue(Order.class);
+
+
 
 
 
@@ -256,5 +279,12 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
         }
     }
 
+
+    private void updateStatus(){
+        Order order = orderList.get(0);
+        order.setStatus(pickupStatus);
+        //Order newOrder = new Order(order.getOrderID(),order.getFoodArrayList(),order.getRestaurantName(), order.getRestaurantURI(),order.getRestaurantAddress(),order.getCustomerAddress(),order.getPrice(),order.getStartTime(),order.getEndTime(),order.getCustomerID(),order.getRestaurantID(),pickupStatus);
+        mFirebaseOrderReference.child(mOrderNo).setValue(order);
+    }
 
 }
