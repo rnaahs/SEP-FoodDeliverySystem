@@ -118,14 +118,13 @@ public class OrderListAdapter  extends RecyclerView.Adapter<OrderListAdapter.Vie
             private Restaurant restaurant;
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if(mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())){
-                        restaurant = ds.getValue(Restaurant.class);
+                    if(dataSnapshot.getKey().equals(mRestaurantID)) {
+                        restaurant = dataSnapshot.getValue(Restaurant.class);
                         mRestaurantList.add(restaurant);
                         mImageUrl = restaurant.ImageUri;
                     }
                 }
-            }
+
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {

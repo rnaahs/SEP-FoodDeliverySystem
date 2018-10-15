@@ -93,6 +93,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         mRecycleView.removeItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
         mRecycleView.setAdapter(mRestaurantAdapter);
+
+
         try {
             //Call method to add restaurants from database
             //addRestaurantChangeListener();
@@ -144,7 +146,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(UserMainActivity.this, AddRestaurantActivity.class), REQUEST_CODE);
+                startActivityForResult(new
+                        Intent(UserMainActivity.this, AddRestaurantActivity.class), REQUEST_CODE);
             }
         });
 
@@ -189,6 +192,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            Intent intent = new Intent(UserMainActivity.this, OrderListActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage_account) {
             Intent intent = new Intent(UserMainActivity.this, AccountActivity.class);
             startActivity(intent);

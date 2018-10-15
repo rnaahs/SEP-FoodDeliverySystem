@@ -44,6 +44,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sep.assignment1.R;
 import com.sep.assignment1.model.Order;
+import com.sep.assignment1.model.Restaurant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import java.util.List;
 public class DriverMain extends AppCompatActivity   implements OnMapReadyCallback , NavigationView.OnNavigationItemSelectedListener{
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseInstance;
-    private DatabaseReference mFirebaseOrderReference;
+    private DatabaseReference mFirebaseOrderReference,mFirebaseRestaurantReference;
     private StorageReference mStorageReference;
     private FirebaseStorage mStorageInstance;
     private TextView  mOrderNumber;
@@ -68,6 +69,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
     private static final float DEFAULT_ZOOM = 15f;
     private String pickupStatus = "Driver Received";
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private String mRestaurantID;
 
     private List<Address> mAddressList = new ArrayList<>();
 
@@ -82,6 +84,7 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseOrderReference = mFirebaseInstance.getReference("order");
+        mFirebaseRestaurantReference = mFirebaseInstance.getReference("restaurant");
         mOrderNumber= (TextView) findViewById(R.id.order_number_input);
         mRestaurantAdressET = (EditText) findViewById(R.id.resturant_location_input);
 
@@ -276,13 +279,11 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
                 Order order = dataSnapshot.getValue(Order.class);
                 orderList.add(order);
 
+                mRestaurantID = order.getRestaurantID();
+
+                getRestaurant();
 
 
-
-//                if(order.getRestaurantAddress().equals(dataSnapshot.getRef().getKey())){
-//                    orderList.add(order);
-//                    mResturantLocation.setText(order.getRestaurantAddress());
-//                }
 
             }
 
@@ -350,6 +351,38 @@ public class DriverMain extends AppCompatActivity   implements OnMapReadyCallbac
         order.setStatus(pickupStatus);
         //Order newOrder = new Order(order.getOrderID(),order.getFoodArrayList(),order.getRestaurantName(), order.getRestaurantURI(),order.getRestaurantAddress(),order.getCustomerAddress(),order.getPrice(),order.getStartTime(),order.getEndTime(),order.getCustomerID(),order.getRestaurantID(),pickupStatus);
         mFirebaseOrderReference.child(mOrderNo).setValue(order);
+    }
+    private void getRestaurant(){
+        mFirebaseRestaurantReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                if(restaurant.Id.equals(mRestaurantID)){
+                   mRestaurantAdressET.setText(restaurant.Address);
+                   mRestaurantAdress = restaurant.Address;
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

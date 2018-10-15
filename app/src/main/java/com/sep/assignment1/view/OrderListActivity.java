@@ -163,14 +163,19 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            if(mRole != 2){
-                Intent intent = new Intent(OrderListActivity.this, UserMainActivity.class);
+
+            if(mRole == 2){
+                Intent intent = new Intent(OrderListActivity.this, DriverProfile.class);
                 startActivity(intent);
                 ActivityCompat.finishAffinity(OrderListActivity.this);
-            }else {
+            }else if(mRole ==1){
                 Intent intent = new Intent(OrderListActivity.this, OrderListActivity.class);
                 startActivity(intent);
                 ActivityCompat.finishAffinity(OrderListActivity.this);
+            }
+            else if(mRole==0){
+                Intent intent = new Intent(OrderListActivity.this, UserMainActivity.class);
+                startActivity(intent);
             }
         } else if (id == R.id.nav_manage_account) {
             Intent intent = new Intent(OrderListActivity.this, AccountActivity.class);
@@ -206,6 +211,7 @@ public class OrderListActivity extends AppCompatActivity implements NavigationVi
                     fullname.setText("Welcome, "+ user.getFirstname()+ " " + user.getLastname());
                     email.setText(user.getEmail());
                     mRole = user.getRole();
+
                 }
             }
 

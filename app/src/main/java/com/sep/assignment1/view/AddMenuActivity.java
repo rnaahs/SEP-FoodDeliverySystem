@@ -118,9 +118,10 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 try{
                     String menuId = mFirebaseReference.push().getKey();
-                    if(menuId!=null) {
+                    if(mMenuKey!=null) {
                         menuId = mMenuKey;
                     }
+
                     String menuName = mMenuName.getText().toString();
                     String menuImgURL = mImageUri;
 
@@ -330,11 +331,17 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
         mFirebaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    if(dataSnapshot.child(mRestaurantKey).child(mMenuKey).getKey().equals(mMenuKey)){
-                        Menu menu = child.getValue(Menu.class);
-                        mMenuName.setText(menu.getMenuName());
+                try {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        if(mMenuKey!=null) {
+                            if (dataSnapshot.child(mRestaurantKey).child(mMenuKey).getKey().equals(mMenuKey)) {
+                                Menu menu = child.getValue(Menu.class);
+                                mMenuName.setText(menu.getMenuName());
+                            }
+                        }
                     }
+                }catch (Exception ex){
+                    Log.e("TAG","Error="+ ex);
                 }
             }
 

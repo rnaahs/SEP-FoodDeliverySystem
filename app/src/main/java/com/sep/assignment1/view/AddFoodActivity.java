@@ -116,7 +116,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 try{
                     String foodId = mFirebaseReference.push().getKey();
-                    if(foodId!=null) {
+                    if(mFoodKey!=null) {
                         foodId = mFoodKey;
                     }
                     String foodName = mFoodNameET.getText().toString();
@@ -325,6 +325,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(mMenuKey!=null){
                     if(child.getKey().toString().equals(mMenuKey)){
                         Menu menu = child.getValue(Menu.class);
                         if(menu.getFoodArrayList()!=null){
@@ -336,6 +337,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
                             }
                         }
                     }
+                }
                 }
             }
 

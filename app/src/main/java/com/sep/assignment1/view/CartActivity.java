@@ -385,14 +385,12 @@ public class CartActivity extends AppCompatActivity   implements NavigationView.
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        if (mRestaurantID.equals(dataSnapshot.child(ds.getKey()).getKey())) {
-                            restaurant = ds.getValue(Restaurant.class);
+                    if(dataSnapshot.getKey().equals(mRestaurantID)){
+                            restaurant = dataSnapshot.getValue(Restaurant.class);
                             mRestaurantAddress = restaurant.Address;
                             mRestaurantName = restaurant.Name;
                             mRestaurantImageURI = restaurant.ImageUri;
                             mRestaurantOwnerID = dataSnapshot.getRef().getKey();
-                        }
                     }
                 }catch (Exception ex){
                     Log.e("Cart", "Exception: " + ex);

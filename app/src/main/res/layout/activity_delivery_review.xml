@@ -38,17 +38,17 @@
             android:src="@drawable/delivered" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/reviewBtn"
             android:layout_width="193dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="47dp"
             android:background="@color/colorAccent"
-            android:text="Finish" />
+            android:text="Review" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <EditText
+            android:id="@+id/reviewET"
             android:layout_width="291dp"
             android:layout_height="68dp"
             android:layout_alignStart="@+id/button"
