@@ -37,7 +37,7 @@ public class AddMenuActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.add_menu_name_et)).perform(typeText("New Menu"),closeSoftKeyboard());
+        onView(withId(R.id.add_menu_name_et)).perform(typeText("Pizza"),closeSoftKeyboard());
         onView(withId(R.id.add_menuInstance_btn)).perform(click());
     }
 }

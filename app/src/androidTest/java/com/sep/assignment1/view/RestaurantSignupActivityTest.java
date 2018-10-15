@@ -23,10 +23,10 @@ public class RestaurantSignupActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.email)).perform(typeText("driver@gmail.com"),closeSoftKeyboard());
+        onView(withId(R.id.email)).perform(typeText("restaurant@gmail.com"),closeSoftKeyboard());
         onView(withId(R.id.firstname)).perform(typeText("Hasson"),closeSoftKeyboard());
         onView(withId(R.id.lastname)).perform(typeText("Al"),closeSoftKeyboard());
-        onView(withId(R.id.address)).perform(typeText("23 Pitt St, Sydney,NSW,2000"),closeSoftKeyboard());
+        onView(withId(R.id.address)).perform(typeText("23 Pitt St, Sydney,NSW, 2000"),closeSoftKeyboard());
         onView(withId(R.id.bsb)).perform(typeText("123456"),closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("123456"),closeSoftKeyboard());
         onView(withId(R.id.sign_up_button)).perform(click());

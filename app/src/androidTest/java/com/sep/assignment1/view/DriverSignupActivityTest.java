@@ -25,13 +25,13 @@ public class DriverSignupActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.email)).perform(typeText("newdriver@gmail.com"),closeSoftKeyboard());
-        onView(withId(R.id.firstname)).perform(typeText("newdriverfirstname"),closeSoftKeyboard());
-        onView(withId(R.id.lastname)).perform(typeText("newldriverastname"),closeSoftKeyboard());
-        onView(withId(R.id.address)).perform(typeText("new Road,new suburb,NSW,2000"),closeSoftKeyboard());
+        onView(withId(R.id.email)).perform(typeText("driver@gmail.com"),closeSoftKeyboard());
+        onView(withId(R.id.firstname)).perform(typeText("Darren"),closeSoftKeyboard());
+        onView(withId(R.id.lastname)).perform(typeText("Ho"),closeSoftKeyboard());
+        onView(withId(R.id.address)).perform(typeText("16 Hay St,Sydney,NSW,2000"),closeSoftKeyboard());
         onView(withId(R.id.licence)).perform(typeText("12345678"),closeSoftKeyboard());
-        onView(withId(R.id.vehicle)).perform(typeText("newvehicle"),closeSoftKeyboard());
-        onView(withId(R.id.password)).perform(typeText("driverpassword"),closeSoftKeyboard());
+        onView(withId(R.id.vehicle)).perform(typeText("Toyota"),closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("123456"),closeSoftKeyboard());
         onView(withId(R.id.sign_up_button)).perform(click());
     }
 

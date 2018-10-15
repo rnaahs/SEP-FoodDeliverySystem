@@ -63,6 +63,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_user_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         mRole = getIntent().getIntExtra("mRole", 0);
         mFirebaseInstance = FirebaseDatabase.getInstance();
         // get reference to 'trips' node

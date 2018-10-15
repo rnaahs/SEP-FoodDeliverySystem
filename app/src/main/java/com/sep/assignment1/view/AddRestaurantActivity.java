@@ -66,7 +66,8 @@ public class AddRestaurantActivity extends AppCompatActivity implements Navigati
     private Uri mFilePath;
     private ImageView mImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private String mImageUri,mRestaurantKey;
+    private String mImageUri ="";
+    private String mRestaurantKey;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
     private TextView mImagePath;

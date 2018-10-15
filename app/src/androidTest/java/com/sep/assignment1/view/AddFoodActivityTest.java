@@ -37,9 +37,9 @@ public class AddFoodActivityTest {
     @Test
     public void loginTest() throws Exception{
 
-        onView(withId(R.id.add_food_name_et)).perform(typeText("newfood"),closeSoftKeyboard());
+        onView(withId(R.id.add_food_name_et)).perform(typeText("Pizza"),closeSoftKeyboard());
         onView(withId(R.id.add_food_price_et)).perform(typeText("10"),closeSoftKeyboard());
-        onView(withId(R.id.add_food_description_et)).perform(typeText("New Food Description"),closeSoftKeyboard());
+        onView(withId(R.id.add_food_description_et)).perform(typeText("Pizza is our signature"),closeSoftKeyboard());
         onView(withId(R.id.add_food_btn)).perform(click());
     }
 }

@@ -70,7 +70,7 @@ public class AddMenuActivity extends AppCompatActivity implements NavigationView
     private static final int PICK_IMAGE_REQUEST = 1;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;
-    private String mImageUri;
+    private String mImageUri="";
     private Button mImageUploadBtn;
     private TextView mImagePath;
     private ProgressBar mProgressBar;

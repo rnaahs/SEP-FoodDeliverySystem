@@ -63,7 +63,7 @@ public class AddFoodActivity extends AppCompatActivity implements NavigationView
     private Uri mFilePath;
     private ImageView mFoodImageView;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private String mImageUri;
+    private String mImageUri="";
     private String mMenuKey, mFoodKey,mRestaurantKey;
     private List<User> mUserList = new ArrayList<>();
     private DatabaseReference mFirebaseUserReference;

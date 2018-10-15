@@ -222,7 +222,7 @@ public class MenuMainActivity extends AppCompatActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
                                     mFoodArrayList.remove(position);
-                                    mDatabaseReference.child(mRestaurantKey).child(food.getFoodId()).getRoot().getRoot().removeValue();
+                                    //mDatabaseReference.child(mRestaurantKey).child(food.getFoodId()).getRoot().getRoot().removeValue();
                                     mFoodAdapter.notifyDataSetChanged();
                                 }
                             });

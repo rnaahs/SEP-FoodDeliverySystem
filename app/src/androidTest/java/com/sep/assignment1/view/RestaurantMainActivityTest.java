@@ -23,7 +23,7 @@ public class RestaurantMainActivityTest {
     @Test
     public void scrollToPosition(){
 
-        onView(withId(R.id.menu_item_recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Breakfast")),click()));
+        onView(withId(R.id.menu_item_recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText("Pizza")),click()));
 
     }
 }

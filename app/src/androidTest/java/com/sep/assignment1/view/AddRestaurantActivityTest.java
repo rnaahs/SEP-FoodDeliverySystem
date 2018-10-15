@@ -27,7 +27,7 @@ public class AddRestaurantActivityTest {
         onView(withId(R.id.add_restaurant_countryET)).perform(typeText("Australia"),closeSoftKeyboard());
         onView(withId(R.id.add_restaurant_addressET)).perform(typeText("30 Pitt St, Sydney ,NSW,2000"),closeSoftKeyboard());
         onView(withId(R.id.add_restaurant_statusET)).perform(typeText("Openning"),closeSoftKeyboard());
-        onView(withId(R.id.add_restaurant_imageView)).perform(click());
+
         
         onView(withId(R.id.add_restaurantBtn)).perform(click());
     }
